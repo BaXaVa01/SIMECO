@@ -1,6 +1,8 @@
+#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <string.h>
 
 using namespace std;
 
@@ -16,6 +18,49 @@ struct DatosSimulacion
     string añoInicio, añoActual, desastresOcurridos, desastresIniciadosUsuario;
     string incendios, sequias, inundaciones, huracanes;
 };
+
+char *existeArchivo(const char *nombrebase)
+{
+
+    for (int i = 1; i <= 10; i++)
+    {
+
+        char nombrePrueba[100];
+        sprintf(nombrePrueba, "%s%d.csv", nombrebase, i);
+
+        FILE *prueba = fopen(nombrePrueba, "r");
+
+        if (prueba == NULL)
+        {
+            return strdup(nombrePrueba);
+        }
+
+        fclose(prueba);
+    }
+
+    return NULL;
+}
+
+char* buscarNombreIndice(char* nombreBase, int indice) {
+
+  char nombre[100]; 
+  sprintf(nombre, "%s%d.csv", nombreBase, indice);
+
+  // Verificar que existe el archivo
+
+  return strdup(nombre); 
+}
+
+// Función que cambia el nombre temporalmente
+void actualizarNombre(char* nombreOriginal, char* nombreNuevo) {
+
+  // Renombrar archivo original a nombreNuevo 
+  rename(nombreOriginal,nombreNuevo);  
+}
+void regresarNombre(char*nombreOriginal,char* nombreNuevo)
+{
+    rename(nombreNuevo,nombreOriginal);
+}
 
 void leerCSV(DatosSimulacion &datos)
 {
@@ -70,9 +115,9 @@ void leerCSV(DatosSimulacion &datos)
     archivo.close();
 }
 
-void crearCSV(const DatosSimulacion &datos)
+void crearCSV(const DatosSimulacion &datos, const char *nombreArchivo)
 {
-    ofstream archivo("datos.csv");
+    ofstream archivo(nombreArchivo);
     if (!archivo)
     {
         cerr << "Error al crear el archivo CSV." << endl;
@@ -130,22 +175,31 @@ void crearCSV(const DatosSimulacion &datos)
     cout << "Archivo CSV creado exitosamente." << endl;
 }
 
-void guardarBinario(DatosSimulacion datos)
+void guardarBinario(DatosSimulacion datos, const char *nombreArchivo)
 {
 
-    ofstream archivo("datos.bin", ios::binary);
+    ofstream archivo(nombreArchivo, ios::binary);
 
     archivo.write((char *)&datos, sizeof(datos));
 
     archivo.close();
 }
 
-void cargarDesdeBinario(DatosSimulacion &datos)
+void cargarDatosBinario(DatosSimulacion &datos, const char *nombreArchivo)
 {
 
-    ifstream archivo("datos.bin", ios::binary);
+    ifstream archivo(nombreArchivo, ios::binary);
 
-    archivo.read((char *)&datos, sizeof(datos));
+    if (archivo.is_open())
+    {
+
+        archivo.read((char *)&datos, sizeof(datos));
+    }
+    else
+    {
+
+        cerr << "Error abriendo archivo binario" << endl;
+    }
 
     archivo.close();
 }
@@ -156,7 +210,7 @@ bool verificadorCSV()
     return archivo.good();
 }
 
-int main()
+int main2()
 {
     DatosSimulacion datos;
 
@@ -205,25 +259,29 @@ int main()
     datos.inundaciones = "2";
     datos.huracanes = "2";
 
-    if (!verificadorCSV())
-    {
-        crearCSV(datos);
-        cout << "Creando archivo CSV" << endl;
-    }
-    else
-    {
-        leerCSV(datos);
-        cout << "Leyendo CSV" << endl;
-    }
+    char *nombreCSV;
 
-    guardarBinario(datos);
-    cout << "Guardando a binario" << endl;
+    nombreCSV = existeArchivo("datos");
+
+    crearCSV(datos, nombreCSV);
+
+    char *nombreBin;
+
+    nombreBin = existeArchivo("datos");
+
+    sprintf(nombreBin, "%s.bin", nombreCSV);
+
+    guardarBinario(datos, nombreBin);
+
+    // Lectura del archivo binario
 
     DatosSimulacion datosCargados;
-    cargarDesdeBinario(datosCargados);
-    cout << "Cargando desde binario" << endl;
 
-    cout << "Datos cargados(inicio y fin):\n" << datosCargados.poblacionTotalEspecie1<<"\n"<<datosCargados.huracanes<< endl;
+    cargarDatosBinario(datosCargados, nombreBin);
 
+    // Mostrar datos
+
+    cout << datosCargados.poblacionTotalEspecie1 << endl;
+    cout << datosCargados.huracanes << endl;
     return 0;
 }

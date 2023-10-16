@@ -1,32 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <filesystem>
+#include "csv.cpp"
 using namespace std;
+
+char *existeArchivo(const char *nombrebase);
+int IndiceArchivoExcel(const char *nombrebase);
+char *existeArchivoExcel(const char *nombrebase);
+
 int main()
 {
     FILE *archivoOriginal, *archivoClonado;
-    char buffer[4096]; // Buffer de lectura/escritura de 4 KB (puedes ajustar según tus necesidades)
+    // Declaracion de variables a usar.
+    char *nombreOriginal;
+    char nombreNuevo[] = "macroreg.csv";
+    char buffer[4096];
     size_t bytesRead;
 
-    // Abrir el archivo original en modo de lectura binaria
+    // Abrir archivo original
     archivoOriginal = fopen("SalidasDeSIMECO.xlsm", "rb");
 
-    // Verificar si el archivo original se abrió correctamente
     if (archivoOriginal == NULL)
     {
-        printf("Error al abrir el archivo original.\n");
+        printf("Error abriendo archivo original\n");
         return 1;
     }
 
-    // Abrir un nuevo archivo en modo de escritura binaria
-    archivoClonado = fopen("registro.xlsm", "wb");
+    char *nombreArchivo;
 
-    // Verificar si el archivo clonado se abrió correctamente
+    nombreArchivo = existeArchivoExcel("registro");
+
+    if (nombreArchivo == NULL)
+    {
+        printf("No se pudo generar un nombre de archivo único\n");
+        fclose(archivoOriginal);
+        return 1;
+    }
+
+    archivoClonado = fopen(nombreArchivo, "wb");
+
     if (archivoClonado == NULL)
     {
-        printf("Error al abrir el archivo clonado.\n");
-        fclose(archivoOriginal); // Cerrar el archivo original antes de salir
+        printf("Error abriendo archivo clonado\n");
+        fclose(archivoOriginal);
         return 1;
     }
 
@@ -39,8 +56,56 @@ int main()
     // Cerrar ambos archivos después de la operación
     fclose(archivoOriginal);
     fclose(archivoClonado);
-
+    int Indice;
+    Indice = IndiceArchivoExcel("registro");
+    nombreOriginal = buscarNombreIndice("datos", Indice);
+    actualizarNombre(nombreOriginal, nombreNuevo);
     printf("Archivo clonado exitosamente.\n");
-    system("start registro.xlsm");
+    system("start \"\" \"");
+    system(nombreArchivo);
+    system("pause");
+    regresarNombre(nombreOriginal, nombreNuevo);
+
+    return 0;
+}
+
+// Función existeArchivo
+char *existeArchivoExcel(const char *nombrebase)
+{
+    for (int i = 1; i <= 10; i++)
+    {
+        char nombrePrueba[100];
+        sprintf(nombrePrueba, "%s%d.xlsm", nombrebase, i);
+
+        FILE *prueba = fopen(nombrePrueba, "rb");
+
+        if (prueba == NULL)
+        {
+            return strdup(nombrePrueba);
+        }
+
+        fclose(prueba);
+    }
+
+    return NULL;
+}
+
+int IndiceArchivoExcel(const char *nombrebase)
+{
+    for (int i = 1; i <= 10; i++)
+    {
+        char nombrePrueba[100];
+        sprintf(nombrePrueba, "%s%d.xlsm", nombrebase, i);
+
+        FILE *prueba = fopen(nombrePrueba, "rb");
+
+        if (prueba == NULL)
+        {
+            return i - 1;
+        }
+
+        fclose(prueba);
+    }
+
     return 0;
 }
