@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <filesystem>
 #include "csv.cpp"
 using namespace std;
 
@@ -9,7 +8,7 @@ char *existeArchivo(const char *nombrebase);
 int IndiceArchivoExcel(const char *nombrebase);
 char *existeArchivoExcel(const char *nombrebase);
 
-int main()
+void ExcelGenerador()
 {
     FILE *archivoOriginal, *archivoClonado;
     // Declaracion de variables a usar.
@@ -24,7 +23,6 @@ int main()
     if (archivoOriginal == NULL)
     {
         printf("Error abriendo archivo original\n");
-        return 1;
     }
 
     char *nombreArchivo;
@@ -35,7 +33,6 @@ int main()
     {
         printf("No se pudo generar un nombre de archivo único\n");
         fclose(archivoOriginal);
-        return 1;
     }
 
     archivoClonado = fopen(nombreArchivo, "wb");
@@ -44,7 +41,6 @@ int main()
     {
         printf("Error abriendo archivo clonado\n");
         fclose(archivoOriginal);
-        return 1;
     }
 
     // Leer bloques de datos del archivo original y escribirlos en el archivo clonado
@@ -65,8 +61,6 @@ int main()
     system(nombreArchivo);
     system("pause");
     regresarNombre(nombreOriginal, nombreNuevo);
-
-    return 0;
 }
 
 // Función existeArchivo

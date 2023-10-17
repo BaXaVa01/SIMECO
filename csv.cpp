@@ -204,13 +204,7 @@ void cargarDatosBinario(DatosSimulacion &datos, const char *nombreArchivo)
     archivo.close();
 }
 
-bool verificadorCSV()
-{
-    ifstream archivo("datos.csv");
-    return archivo.good();
-}
-
-int main2()
+void GuardardatosSIMECO()
 {
     DatosSimulacion datos;
 
@@ -283,5 +277,4 @@ int main2()
 
     cout << datosCargados.poblacionTotalEspecie1 << endl;
     cout << datosCargados.huracanes << endl;
-    return 0;
 }
