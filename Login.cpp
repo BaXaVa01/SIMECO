@@ -3,6 +3,7 @@
 #include <cstring>
 #include <conio.h>
 #include <locale.h>
+#include <cctype> // Incluir cctype para funciones de manipulaci贸n de caracteres
 
 using namespace std;
 
@@ -12,20 +13,20 @@ struct Usuario {
     char contrasena[100];
 };
 
-// Funci髇 para registrar un nuevo usuario
+// Funci贸n para registrar un nuevo usuario
 void registrarUsuario(const char* archivo, const Usuario& usuario) {
     FILE* archivoUsuarios = fopen(archivo, "a");
 
     if (archivoUsuarios != NULL) {
         fprintf(archivoUsuarios, "%s,%s\n", usuario.nombreUsuario, usuario.contrasena);
         fclose(archivoUsuarios);
-        cout << "Usuario registrado con 閤ito." << endl;
+        cout << "Usuario registrado con 茅xito." << endl;
     } else {
         cout << "No se pudo abrir el archivo de usuarios." << endl;
     }
 }
 
-// Funci髇 para verificar las credenciales de inicio de sesi髇
+// Funci贸n para verificar las credenciales de inicio de sesi贸n
 bool verificarCredenciales(const char* archivo, const char* nombreUsuario, const char* contrasena) {
     FILE* archivoUsuarios = fopen(archivo, "r");
 
@@ -36,25 +37,15 @@ bool verificarCredenciales(const char* archivo, const char* nombreUsuario, const
             char pass[100];
             sscanf(linea, "%[^,],%s", usuario, pass);
 
-            // Comparar las cadenas manualmente sin strcmp
-            bool usuarioIgual = true;
-            bool contrasenaIgual = true;
-            for (int i = 0; usuario[i] != '\0' || nombreUsuario[i] != '\0'; i++) {
-                if (usuario[i] != nombreUsuario[i]) {
-                    usuarioIgual = false;
-                    break;
-                }
+            // Convertir los nombres de usuario a min煤sculas para la comparaci贸n
+            for (int i = 0; usuario[i] != '\0'; i++) {
+                usuario[i] = tolower(usuario[i]);
             }
-            for (int i = 0; pass[i] != '\0' || contrasena[i] != '\0'; i++) {
-                if (pass[i] != contrasena[i]) {
-                    contrasenaIgual = false;
-                    break;
-                }
-            }
-            
-            if (usuarioIgual && contrasenaIgual) {
+
+            // Comparar las cadenas
+            if (strcmp(usuario, nombreUsuario) == 0 && strcmp(pass, contrasena) == 0) {
                 fclose(archivoUsuarios);
-                return true;  // Credenciales v醠idas
+                return true;  // Credenciales v谩lidas
             }
         }
         fclose(archivoUsuarios);
@@ -62,15 +53,51 @@ bool verificarCredenciales(const char* archivo, const char* nombreUsuario, const
         cout << "No se pudo abrir el archivo de usuarios." << endl;
     }
 
-    return false;  // Credenciales inv醠idas
+    return false;  // Credenciales inv谩lidas
+}
+
+// Funci贸n para comprobar si un nombre de usuario ya existe en el archivo
+bool nombreUsuarioExistente(const char* archivo, const char* nombreUsuario) {
+    FILE* archivoUsuarios = fopen(archivo, "r");
+
+    if (archivoUsuarios != NULL) {
+        char linea[256];
+        while (fgets(linea, sizeof(linea), archivoUsuarios) != NULL) {
+            char usuario[100];
+            sscanf(linea, "%[^,]", usuario);
+
+            // Convertir los nombres de usuario a min煤sculas para la comparaci贸n
+            for (int i = 0; usuario[i] != '\0'; i++) {
+                usuario[i] = tolower(usuario[i]);
+            }
+
+            // Comparar las cadenas
+            if (strcmp(usuario, nombreUsuario) == 0) {
+                fclose(archivoUsuarios);
+                return true; // Nombre de usuario ya existe
+            }
+        }
+        fclose(archivoUsuarios);
+    }
+
+    return false;  // Nombre de usuario no existe
+}
+
+// Funci贸n para limpiar la pantalla
+void limpiarPantalla() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
 int main() {
-	setlocale(LC_ALL, "spanish");
+    setlocale(LC_ALL, "spanish");
+
     const char* archivoUsuarios = "usuarios.txt";
     int opcion;
 
-    // Crear el archivo si no existe
     FILE* archivoExistencia = fopen(archivoUsuarios, "r");
     if (archivoExistencia == NULL) {
         FILE* archivoNuevo = fopen(archivoUsuarios, "w");
@@ -80,46 +107,68 @@ int main() {
     }
 
     do {
-        cout << "Bienvenido al sistema de registro e inicio de sesi髇:" << endl;
+        limpiarPantalla();
+        cout << "Bienvenido a SIMECO:" << endl;
         cout << "1. Crear cuenta" << endl;
-        cout << "2. Iniciar sesi髇" << endl;
+        cout << "2. Iniciar sesi贸n" << endl;
         cout << "3. Salir" << endl;
-        cout << "Elija una opci髇: ";
+        cout << "Elija una opci贸n: ";
         cin >> opcion;
 
         if (opcion == 1) {
+            limpiarPantalla();
             Usuario nuevoUsuario;
-            cout << "Nombre de usuario: ";
-            cin >> nuevoUsuario.nombreUsuario;
-            cout << "Contrase馻: ";
+            cout << "Crear una nueva cuenta:" << endl;
+            bool nombreUsuarioDuplicado;
+            do {
+                nombreUsuarioDuplicado = false;
+                cout << "Nombre de usuario: ";
+                cin >> nuevoUsuario.nombreUsuario;
+                // Convertir el nombre de usuario a min煤sculas para la comparaci贸n
+                for (int i = 0; nuevoUsuario.nombreUsuario[i] != '\0'; i++) {
+                    nuevoUsuario.nombreUsuario[i] = tolower(nuevoUsuario.nombreUsuario[i]);
+                }
+                if (nombreUsuarioExistente(archivoUsuarios, nuevoUsuario.nombreUsuario)) {
+                    nombreUsuarioDuplicado = true;
+                    cout << "El nombre de usuario ya existe. Por favor, elija otro." << endl;
+                }
+            } while (nombreUsuarioDuplicado);
+
+            cout << "Contrase帽a: ";
             char c;
             int i = 0;
             while (1) {
-                c = _getch(); // Captura el car醕ter sin mostrarlo
-                if (c == 13) { // 13 es el c骴igo ASCII de Enter
-                    nuevoUsuario.contrasena[i] = '\0'; // Agregar terminador nulo al final
-                    cout << endl; // Nueva l韓ea despu閟 de la contrase馻
+                c = _getch();
+                if (c == 13) {
+                    nuevoUsuario.contrasena[i] = '\0';
+                    cout << endl;
                     break;
-                }
-                else if (c == 8) { // 8 es el c骴igo ASCII de Backspace
+                } else if (c == 8) {
                     if (i > 0) {
                         i--;
-                        cout << "\b \b"; // Borrar el 鷏timo car醕ter mostrado
+                        cout << "\b \b";
                     }
-                }
-                else {
+                } else {
                     nuevoUsuario.contrasena[i] = c;
-                    cout << '*'; // Mostrar asterisco en lugar del car醕ter
+                    cout << '*';
                     i++;
                 }
             }
             registrarUsuario(archivoUsuarios, nuevoUsuario);
+            cout << "Presione Enter para continuar...";
+            _getch();
         } else if (opcion == 2) {
+            limpiarPantalla();
             char nombreUsuario[100];
             char contrasena[100];
+            cout << "Iniciar sesi贸n:" << endl;
             cout << "Nombre de usuario: ";
             cin >> nombreUsuario;
-            cout << "Contrase馻: ";
+            // Convertir el nombre de usuario a min煤sculas para la comparaci贸n
+            for (int i = 0; nombreUsuario[i] != '\0'; i++) {
+                nombreUsuario[i] = tolower(nombreUsuario[i]);
+            }
+            cout << "Contrase帽a: ";
             char c;
             int i = 0;
             while (1) {
@@ -131,8 +180,7 @@ int main() {
                         i--;
                         cout << "\b \b";
                     }
-                }
-                else {
+                } else {
                     contrasena[i] = c;
                     cout << '*';
                     i++;
@@ -141,17 +189,20 @@ int main() {
             contrasena[i] = '\0';
             cout << endl;
             if (verificarCredenciales(archivoUsuarios, nombreUsuario, contrasena)) {
-                cout << "Inicio de sesi髇 exitoso." << endl;
+                cout << "Inicio de sesi贸n exitoso." << endl;
             } else {
-                cout << "Inicio de sesi髇 fallido. Verifique sus credenciales." << endl;
+                cout << "Inicio de sesi贸n fallido. Verifique sus credenciales." << endl;
             }
+            cout << "Presione Enter para continuar...";
+            _getch();
         } else if (opcion == 3) {
             cout << "Saliendo del programa." << endl;
         } else {
-            cout << "Opci髇 no v醠ida. Int閚telo de nuevo." << endl;
+            cout << "Opci贸n no v谩lida. Int茅ntelo de nuevo." << endl;
+            cout << "Presione Enter para continuar...";
+            _getch();
         }
     } while (opcion != 3);
 
     return 0;
 }
-
