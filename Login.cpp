@@ -3,17 +3,15 @@
 #include <cstring>
 #include <conio.h>
 #include <locale.h>
-#include <cctype> // Incluir cctype para funciones de manipulación de caracteres
+#include <cctype>
 
 using namespace std;
 
-// Estructura para representar un usuario
 struct Usuario {
     char nombreUsuario[100];
     char contrasena[100];
 };
 
-// Función para registrar un nuevo usuario
 void registrarUsuario(const char* archivo, const Usuario& usuario) {
     FILE* archivoUsuarios = fopen(archivo, "a");
 
@@ -26,7 +24,6 @@ void registrarUsuario(const char* archivo, const Usuario& usuario) {
     }
 }
 
-// Función para verificar las credenciales de inicio de sesión
 bool verificarCredenciales(const char* archivo, const char* nombreUsuario, const char* contrasena) {
     FILE* archivoUsuarios = fopen(archivo, "r");
 
@@ -37,15 +34,13 @@ bool verificarCredenciales(const char* archivo, const char* nombreUsuario, const
             char pass[100];
             sscanf(linea, "%[^,],%s", usuario, pass);
 
-            // Convertir los nombres de usuario a minúsculas para la comparación
             for (int i = 0; usuario[i] != '\0'; i++) {
                 usuario[i] = tolower(usuario[i]);
             }
 
-            // Comparar las cadenas
             if (strcmp(usuario, nombreUsuario) == 0 && strcmp(pass, contrasena) == 0) {
                 fclose(archivoUsuarios);
-                return true;  // Credenciales válidas
+                return true;
             }
         }
         fclose(archivoUsuarios);
@@ -53,10 +48,9 @@ bool verificarCredenciales(const char* archivo, const char* nombreUsuario, const
         cout << "No se pudo abrir el archivo de usuarios." << endl;
     }
 
-    return false;  // Credenciales inválidas
+    return false;
 }
 
-// Función para comprobar si un nombre de usuario ya existe en el archivo
 bool nombreUsuarioExistente(const char* archivo, const char* nombreUsuario) {
     FILE* archivoUsuarios = fopen(archivo, "r");
 
@@ -66,24 +60,21 @@ bool nombreUsuarioExistente(const char* archivo, const char* nombreUsuario) {
             char usuario[100];
             sscanf(linea, "%[^,]", usuario);
 
-            // Convertir los nombres de usuario a minúsculas para la comparación
             for (int i = 0; usuario[i] != '\0'; i++) {
                 usuario[i] = tolower(usuario[i]);
             }
 
-            // Comparar las cadenas
             if (strcmp(usuario, nombreUsuario) == 0) {
                 fclose(archivoUsuarios);
-                return true; // Nombre de usuario ya existe
+                return true;
             }
         }
         fclose(archivoUsuarios);
     }
 
-    return false;  // Nombre de usuario no existe
+    return false;
 }
 
-// Función para limpiar la pantalla
 void limpiarPantalla() {
 #ifdef _WIN32
     system("cls");
@@ -108,7 +99,7 @@ int main() {
 
     do {
         limpiarPantalla();
-        cout << "Bienvenido a SIMECO:" << endl;
+        cout << "Bienvenido al sistema de registro e inicio de sesión:" << endl;
         cout << "1. Crear cuenta" << endl;
         cout << "2. Iniciar sesión" << endl;
         cout << "3. Salir" << endl;
@@ -124,7 +115,6 @@ int main() {
                 nombreUsuarioDuplicado = false;
                 cout << "Nombre de usuario: ";
                 cin >> nuevoUsuario.nombreUsuario;
-                // Convertir el nombre de usuario a minúsculas para la comparación
                 for (int i = 0; nuevoUsuario.nombreUsuario[i] != '\0'; i++) {
                     nuevoUsuario.nombreUsuario[i] = tolower(nuevoUsuario.nombreUsuario[i]);
                 }
@@ -164,7 +154,6 @@ int main() {
             cout << "Iniciar sesión:" << endl;
             cout << "Nombre de usuario: ";
             cin >> nombreUsuario;
-            // Convertir el nombre de usuario a minúsculas para la comparación
             for (int i = 0; nombreUsuario[i] != '\0'; i++) {
                 nombreUsuario[i] = tolower(nombreUsuario[i]);
             }
