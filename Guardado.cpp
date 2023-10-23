@@ -40,11 +40,7 @@ void createFolder(string usuario) {
         cerr << "Error creating the folder." << endl;
     }
 
-<<<<<<< HEAD
     string dirA = directorio + "\\animales";
-=======
-    string dirA = directorio + "\animales";
->>>>>>> f10230b2f0272c9233df754c7ef46a7c7812ec57
     result = CreateDirectoryA(dirA.c_str(), NULL);
 
     if (result == 0) {
@@ -57,7 +53,6 @@ void createFolder(string usuario) {
     if (result == 0) {
         cerr << "Error creating the folder." << endl;
     }
-<<<<<<< HEAD
 
     string dirE = directorio + "\\ecosistema";
     result = CreateDirectoryA(dirE.c_str(), NULL);
@@ -68,13 +63,3 @@ void createFolder(string usuario) {
 }
 
 
-=======
-
-    string dirE = directorio + "\ecosistema";
-    result = CreateDirectoryA(dirE.c_str(), NULL);
-
-    if (result == 0) {
-        cerr << "Error creating the folder." << endl;
-    }
-}
->>>>>>> f10230b2f0272c9233df754c7ef46a7c7812ec57
