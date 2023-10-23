@@ -20,7 +20,7 @@ void searchDir(string& usuario, directorios& directorio) {
     string folder1 = "\\usuarios\\" + usuario + "\\animales";
     string folder2 = "\\usuarios\\" + usuario + "\\desastres";
     string folder3 = "\\usuarios\\" + usuario + "\\ecosistema";
-    string folder4 = "\\partida";    
+    string folder4 = "\\usuarios\\" + usuario + "\\partida";    
 
 
     string directorioActual = getCurrentPath();
@@ -33,7 +33,7 @@ void searchDir(string& usuario, directorios& directorio) {
 
 void createFolder(string usuario) {
     string directorioActual = getCurrentPath();
-    CreateDirectoryA("partida",NULL);
+    
     string directorio = directorioActual + "\\usuarios\\" + usuario;
 
     BOOL result = CreateDirectoryA(directorio.c_str(), NULL);
@@ -61,6 +61,12 @@ void createFolder(string usuario) {
 
     string dirE = directorio + "\\ecosistema";
     result = CreateDirectoryA(dirE.c_str(), NULL);
+
+    if (result == 0) {
+        cerr << "Error creating the folder." << endl;
+    }
+    string dirDa = directorio + "\\partida";
+    result = CreateDirectoryA(dirDa.c_str(), NULL);
 
     if (result == 0) {
         cerr << "Error creating the folder." << endl;
