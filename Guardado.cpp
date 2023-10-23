@@ -15,7 +15,7 @@ string getCurrentPath() {
     return buffer;
 }
 
-void Searchdir(string usuario, directorios& directorio) {
+void searchDir(string usuario, directorios& directorio) {
     string folder1 = "\\usuarios\\" + usuario + "\\animales";
     string folder2 = "\\usuarios\\" + usuario + "\\desastres";
     string folder3 = "\\usuarios\\" + usuario + "\\ecosistema";

@@ -1,12 +1,18 @@
 #include "Login.cpp"
 #include "Excel.cpp"
 
+
 using namespace std;
 
-int main(int argc, char const *argv[])
+int main()
 {
+    directorios folders;
     string usuario;
     MenuLogin(usuario);
-    
+
+    searchDir(usuario, folders);
+    cout << endl << folders.folder1 << endl;
+    cout << folders.folder2 << endl;
+    cout << folders.folder3 << endl;
     return 0;
 }

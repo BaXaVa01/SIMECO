@@ -233,7 +233,8 @@ void MenuLogin(string usuariO)
             cout << "Presione Enter para continuar...";
             _getch();
             usuariO = nombreUsuario;
-            exit(0);
+            
+            opcion = 3;
         }
         else if (opcion == 3)
         {
