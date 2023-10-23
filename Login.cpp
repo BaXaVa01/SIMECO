@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <locale.h>
 #include <cctype>
+#include "Guardado.cpp"
 
 using namespace std;
 
@@ -145,6 +146,7 @@ int main() {
                 }
             }
             registrarUsuario(archivoUsuarios, nuevoUsuario);
+            createFolder(nuevoUsuario.nombreUsuario);
             cout << "Presione Enter para continuar...";
             _getch();
         } else if (opcion == 2) {
