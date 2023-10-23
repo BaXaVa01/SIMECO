@@ -9,6 +9,7 @@ int main()
     directorios folders;
     string usuario;
     MenuLogin(usuario);
+    cout<< usuario << endl;
 
     searchDir(usuario, folders);
     cout << endl << folders.folder1 << endl;

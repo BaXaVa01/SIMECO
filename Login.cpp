@@ -102,7 +102,7 @@ void limpiarPantalla()
 #endif
 }
 
-void MenuLogin(string usuariO)
+void MenuLogin(string& usuariO)
 {
     setlocale(LC_ALL, "spanish");
 
@@ -224,7 +224,8 @@ void MenuLogin(string usuariO)
             if (verificarCredenciales(archivoUsuarios, nombreUsuario, contrasena))
             {
                 cout << "Inicio de sesión exitoso." << endl;
-                // Searchdir(nombreUsuario, *directorio);
+                usuariO = nombreUsuario;
+                opcion = 3;
             }
             else
             {
@@ -232,9 +233,9 @@ void MenuLogin(string usuariO)
             }
             cout << "Presione Enter para continuar...";
             _getch();
-            usuariO = nombreUsuario;
             
-            opcion = 3;
+
+ 
         }
         else if (opcion == 3)
         {
