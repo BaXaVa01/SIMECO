@@ -15,5 +15,6 @@ int main()
     cout << endl << folders.folder1 << endl;
     cout << folders.folder2 << endl;
     cout << folders.folder3 << endl;
+    cout << folders.folderD << endl;
     return 0;
 }

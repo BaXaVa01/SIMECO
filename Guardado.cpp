@@ -7,6 +7,7 @@ struct directorios {
     string folder1; // = Animales
     string folder2; // = Desastres 
     string folder3; // = ecosistema
+    string folderD;
 };
 
 string getCurrentPath() {
@@ -19,16 +20,20 @@ void searchDir(string& usuario, directorios& directorio) {
     string folder1 = "\\usuarios\\" + usuario + "\\animales";
     string folder2 = "\\usuarios\\" + usuario + "\\desastres";
     string folder3 = "\\usuarios\\" + usuario + "\\ecosistema";
+    string folder4 = "\\partida";    
+
 
     string directorioActual = getCurrentPath();
 
     directorio.folder1 = directorioActual + folder1;
     directorio.folder2 = directorioActual + folder2;
     directorio.folder3 = directorioActual + folder3;
+    directorio.folderD = directorioActual + folder4;
 }
 
 void createFolder(string usuario) {
     string directorioActual = getCurrentPath();
+    CreateDirectoryA("partida",NULL);
     string directorio = directorioActual + "\\usuarios\\" + usuario;
 
     BOOL result = CreateDirectoryA(directorio.c_str(), NULL);
