@@ -1,53 +1,63 @@
-#include<iostream>
-#include<stdio.h>
-#include<filesystem>
+#include <iostream>
+#include <Windows.h>
 
 using namespace std;
-namespace fs = std::filesystem;
 
-
-struct directorios{
+struct directorios {
     string folder1; // = Animales
     string folder2; // = Desastres 
     string folder3; // = ecosistema
 };
 
-fs::path directorio = fs::current_path();
+string getCurrentPath() {
+    char buffer[MAX_PATH];
+    GetCurrentDirectoryA(MAX_PATH, buffer);
+    return buffer;
+}
 
-void Searchdir (string usuario, directorios &directorio){
+void Searchdir(string usuario, directorios& directorio) {
     string folder1 = "\\usuarios\\" + usuario + "\\animales";
     string folder2 = "\\usuarios\\" + usuario + "\\desastres";
     string folder3 = "\\usuarios\\" + usuario + "\\ecosistema";
 
-    fs::path directorioActual = fs::current_path();
+    string directorioActual = getCurrentPath();
 
-    directorio.folder1 = directorioActual.string() + folder1;
-    directorio.folder2 = directorioActual.string() + folder2;
-    directorio.folder3 = directorioActual.string() + folder3;
-
+    directorio.folder1 = directorioActual + folder1;
+    directorio.folder2 = directorioActual + folder2;
+    directorio.folder3 = directorioActual + folder3;
 }
 
-void createFolder (string usuario){
+void createFolder(string usuario) {
+    string directorioActual = getCurrentPath();
+    string directorio = directorioActual + "\\usuarios\\" + usuario;
 
-    fs::path directorio = fs::current_path(); 
-    directorio += "\\usuarios\\" + usuario; 
-    fs::path pathToFolder = directorio.string();
+    BOOL result = CreateDirectoryA(directorio.c_str(), NULL);
 
-    try {
-        create_directory(pathToFolder);
+    if (result != 0) {
         cout << "Folder created successfully." << endl;
-    } catch (fs::filesystem_error &e) {
-        cerr << "Error creating the folder: " << e.what() << endl;
+    }
+    else {
+        cerr << "Error creating the folder." << endl;
     }
 
-    fs::path dirA = directorio.string() + "\\animales";
-    create_directory(dirA);
+    string dirA = directorio + "\animales";
+    result = CreateDirectoryA(dirA.c_str(), NULL);
 
-    fs::path dirD = directorio.string() + "\\desastres";
-    create_directory(dirD);
+    if (result == 0) {
+        cerr << "Error creating the folder." << endl;
+    }
 
-    fs::path dirE = directorio.string() + "\\ecosistema";
-    create_directory(dirE);
+    string dirD = directorio + "\\desastres";
+    result = CreateDirectoryA(dirD.c_str(), NULL);
 
+    if (result == 0) {
+        cerr << "Error creating the folder." << endl;
+    }
+
+    string dirE = directorio + "\ecosistema";
+    result = CreateDirectoryA(dirE.c_str(), NULL);
+
+    if (result == 0) {
+        cerr << "Error creating the folder." << endl;
+    }
 }
-
