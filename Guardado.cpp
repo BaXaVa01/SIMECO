@@ -4,7 +4,7 @@
 
 using namespace std;
 namespace fs = std::filesystem;
-using namespace fs;
+
 
 struct directorios{
     string folder1; // = Animales
@@ -12,14 +12,14 @@ struct directorios{
     string folder3; // = ecosistema
 };
 
-path directorio = current_path();
+fs::path directorio = fs::current_path();
 
 void Searchdir (string usuario, directorios &directorio){
     string folder1 = "\\usuarios\\" + usuario + "\\animales";
     string folder2 = "\\usuarios\\" + usuario + "\\desastres";
     string folder3 = "\\usuarios\\" + usuario + "\\ecosistema";
 
-    path directorioActual = current_path();
+    fs::path directorioActual = fs::current_path();
 
     directorio.folder1 = directorioActual.string() + folder1;
     directorio.folder2 = directorioActual.string() + folder2;
@@ -29,24 +29,24 @@ void Searchdir (string usuario, directorios &directorio){
 
 void createFolder (string usuario){
 
-    path directorio = current_path(); 
+    fs::path directorio = fs::current_path(); 
     directorio += "\\usuarios\\" + usuario; 
-    path pathToFolder = directorio.string();
+    fs::path pathToFolder = directorio.string();
 
     try {
         create_directory(pathToFolder);
         cout << "Folder created successfully." << endl;
-    } catch (filesystem_error &e) {
+    } catch (fs::filesystem_error &e) {
         cerr << "Error creating the folder: " << e.what() << endl;
     }
 
-    path dirA = directorio.string() + "\\animales";
+    fs::path dirA = directorio.string() + "\\animales";
     create_directory(dirA);
 
-    path dirD = directorio.string() + "\\desastres";
+    fs::path dirD = directorio.string() + "\\desastres";
     create_directory(dirD);
 
-    path dirE = directorio.string() + "\\ecosistema";
+    fs::path dirE = directorio.string() + "\\ecosistema";
     create_directory(dirE);
 
 }
