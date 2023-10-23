@@ -51,18 +51,3 @@ void createFolder (string usuario){
 
 }
 
-
-
-// int main()
-// {
-//     string usuario = "baxava";
-//     directorios directorio;
-//     Searchdir(usuario, directorio);
-//     cout << directorio.folder1 << endl;
-//     cout << directorio.folder2 << endl;
-//     cout << directorio.folder3 << endl;
-    
-//     createFolder("JuanElMecanico");
-
-//     return 0;
-// }

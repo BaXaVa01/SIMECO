@@ -181,6 +181,7 @@ int main() {
             cout << endl;
             if (verificarCredenciales(archivoUsuarios, nombreUsuario, contrasena)) {
                 cout << "Inicio de sesión exitoso." << endl;
+                //Searchdir(nombreUsuario, *directorio);
             } else {
                 cout << "Inicio de sesión fallido. Verifique sus credenciales." << endl;
             }
