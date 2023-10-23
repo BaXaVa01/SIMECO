@@ -102,7 +102,7 @@ void limpiarPantalla()
 #endif
 }
 
-void MenuLogin()
+void MenuLogin(string usuariO)
 {
     setlocale(LC_ALL, "spanish");
 
@@ -232,6 +232,8 @@ void MenuLogin()
             }
             cout << "Presione Enter para continuar...";
             _getch();
+            usuariO = nombreUsuario;
+            exit(0);
         }
         else if (opcion == 3)
         {
