@@ -1,5 +1,7 @@
 #include <iostream>
 #include <Windows.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -37,7 +39,7 @@ void createFolder(string usuario) {
     string directorio = directorioActual + "\\usuarios\\" + usuario;
 
     BOOL result = CreateDirectoryA(directorio.c_str(), NULL);
-
+    
     if (result != 0) {
         cout << "Folder created successfully." << endl;
     }
@@ -71,6 +73,96 @@ void createFolder(string usuario) {
     if (result == 0) {
         cerr << "Error creating the folder." << endl;
     }
+
+    //------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------
+
+    // En esta parte se crean los archivos binarios que contendran los datos iniciales
+    // se denominaran como Ciclo 0 a cada uno. 
+    
+    //Varaibles necesarias para el clonado de informacion
+    size_t bytesRead;
+    char buffer[4096];
+
+    //Declaro las variables para clonar los archivos binarios originales y ponerlos en las carpetas
+    FILE *animalFileOriginal, *animalFileClonado;
+    
+    //Ubico el path donde voy a guardar los archivos binarios principales
+    //Declaro como UserO al usuario original, el cual sera el que se clonara para cada usuario
+    string directorioUserO = directorioActual + "\\usuarios\\user";
+    
+    //declaro la ubicacion de la carpeta animales dentro del usuario O
+    string dirAo = directorioUserO + "\\animales\\animales.bin";
+    
+    animalFileOriginal = fopen(dirAo.c_str(), "rb");
+
+    if (animalFileOriginal == NULL)
+    {
+        printf("Error abriendo archivo animales\n");
+    }
+
+    dirA += "\\ciclo0.bin";
+
+    animalFileClonado = fopen(dirA.c_str(), "wb");
+
+    //Este es el algoritmo que copia el archivo original en el fake
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), animalFileOriginal)) > 0)
+    {
+        fwrite(buffer, 1, bytesRead, animalFileClonado);
+    }
+
+    fclose(animalFileOriginal);
+    fclose(animalFileClonado);
+
+    //Este es el algoritmo que usare para los otros 2 archivos binarios
+ 
+    FILE *desastreFileOriginal, *desastreFileClonado;
+    
+    string dirDo = directorioUserO + "\\desastres\\desastres.bin";
+    
+    desastreFileOriginal = fopen(dirDo.c_str(), "rb");
+
+    if (desastreFileOriginal == NULL)
+    {
+        printf("Error abriendo archivo Desastresl\n");
+    }
+    
+    dirD += "\\ciclo0.bin";
+
+    desastreFileClonado = fopen(dirD.c_str(), "wb");
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), desastreFileOriginal)) > 0)
+    {
+        fwrite(buffer, 1, bytesRead, desastreFileClonado);
+    }
+
+    fclose(desastreFileOriginal);
+    fclose(desastreFileClonado);
+
+    FILE *ecosistemaFileOriginal, *ecosistemaFileClonado;
+    
+    string dirEo = directorioUserO + "\\ecosistema\\ecosistema.bin";
+    
+    ecosistemaFileOriginal = fopen(dirEo.c_str(), "rb");
+
+    if (ecosistemaFileOriginal == NULL)
+    {
+        printf("Error abriendo archivo Ecosisitema\n");
+    }
+
+    dirE += "\\ciclo0.bin";
+
+    ecosistemaFileClonado = fopen(dirE.c_str(), "wb");
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), ecosistemaFileOriginal)) > 0)
+    {
+        fwrite(buffer, 1, bytesRead, ecosistemaFileClonado);
+    }
+
+    fclose(ecosistemaFileOriginal);
+    fclose(ecosistemaFileClonado);
 }
+
 
 

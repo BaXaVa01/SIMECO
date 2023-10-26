@@ -3,17 +3,19 @@
 
 using namespace std;
 
+directorios path;
+
 int main()
 {
-    directorios folders;
+    
     string usuario;
     MenuLogin(usuario);
     cout<< usuario << endl;
 
-    searchDir(usuario, folders);
-    cout << endl << folders.folder1 << endl;
-    cout << folders.folder2 << endl;
-    cout << folders.folder3 << endl;
-    cout << folders.folderD << endl;
+    searchDir(usuario, path);
+    cout << endl << path.folder1 << endl;
+    cout << path.folder2 << endl;
+    cout << path.folder3 << endl;
+    cout << path.folderD << endl;
     return 0;
 }
