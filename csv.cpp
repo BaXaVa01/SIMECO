@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <string.h>
+#include "Guardado.cpp"
 
 using namespace std;
 
@@ -19,105 +19,59 @@ struct DatosSimulacion
     string incendios, sequias, inundaciones, huracanes;
 };
 
-char *existeArchivo(const char *nombrebase)
+string existeArchivo(const string &nombrebase, const string &ruta)
 {
-
     for (int i = 1; i <= 10; i++)
     {
+        string nombrePrueba = nombrebase + to_string(i) + ".csv";
 
-        char nombrePrueba[100];
-        sprintf(nombrePrueba, "%s%d.csv", nombrebase, i);
+        ifstream prueba(ruta + "\\" + nombrePrueba);
 
-        FILE *prueba = fopen(nombrePrueba, "r");
-
-        if (prueba == NULL)
+        if (!prueba)
         {
-            return strdup(nombrePrueba);
+            return nombrePrueba;
         }
-
-        fclose(prueba);
     }
 
-    return NULL;
+    return "";
 }
 
-char* buscarNombreIndice(char* nombreBase, int indice) {
+string buscarNombreIndice(const string &nombreBase, int indice, const string &ruta)
+{
+    string nombre = nombreBase + to_string(indice) + ".csv";
 
-  char nombre[100]; 
-  sprintf(nombre, "%s%d.csv", nombreBase, indice);
+    string nombrePrueba = ruta + "\\" + nombre;
 
-  // Verificar que existe el archivo
+    // Intentar abrir el archivo
+    ifstream prueba(nombrePrueba);
 
-  return strdup(nombre); 
+    if (!prueba)
+    {
+        return "";
+    }
+    return nombrePrueba;
 }
 
 // Función que cambia el nombre temporalmente
-void actualizarNombre(char* nombreOriginal, char* nombreNuevo) {
-
-  // Renombrar archivo original a nombreNuevo 
-  rename(nombreOriginal,nombreNuevo);  
-}
-void regresarNombre(char*nombreOriginal,char* nombreNuevo)
+bool actualizarNombre(const string& nombreOriginal, const string& nombreNuevo)
 {
-    rename(nombreNuevo,nombreOriginal);
+    if (rename(nombreOriginal.c_str(), nombreNuevo.c_str()) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false; 
+    }
 }
-
-void leerCSV(DatosSimulacion &datos)
+void regresarNombre(string &nombreOriginal, string &nombreNuevo)
 {
-
-    ifstream archivo("datos.csv");
-
-    getline(archivo, datos.poblacionTotalEspecie1, ',');
-    getline(archivo, datos.poblacionTotalEspecie2, ',');
-    getline(archivo, datos.poblacionTotalEspecie3, ',');
-    getline(archivo, datos.poblacionTotalEspecie4, ',');
-
-    getline(archivo, datos.edadPromedioEspecie1, ',');
-    getline(archivo, datos.edadPromedioEspecie2, ',');
-    getline(archivo, datos.edadPromedioEspecie3, ',');
-    getline(archivo, datos.edadPromedioEspecie4, ',');
-
-    getline(archivo, datos.tasaNatalidadEspecie1, ',');
-    getline(archivo, datos.tasaNatalidadEspecie2, ',');
-    getline(archivo, datos.tasaNatalidadEspecie3, ',');
-    getline(archivo, datos.tasaNatalidadEspecie4, ',');
-
-    getline(archivo, datos.tasaMortalidadEspecie1, ',');
-    getline(archivo, datos.tasaMortalidadEspecie2, ',');
-    getline(archivo, datos.tasaMortalidadEspecie3, ',');
-    getline(archivo, datos.tasaMortalidadEspecie4, ',');
-
-    getline(archivo, datos.crecimientoPoblacionEspecie1, ',');
-    getline(archivo, datos.crecimientoPoblacionEspecie2, ',');
-    getline(archivo, datos.crecimientoPoblacionEspecie3, ',');
-    getline(archivo, datos.crecimientoPoblacionEspecie4, ',');
-
-    getline(archivo, datos.promedioIndividuos, ',');
-    getline(archivo, datos.poblacionTotal, ',');
-    getline(archivo, datos.aguaDisponible, ',');
-    getline(archivo, datos.hierbaDisponible, ',');
-
-    getline(archivo, datos.carneDisponible, ',');
-    getline(archivo, datos.carroñaDisponible, ',');
-    getline(archivo, datos.estacionInicial, ',');
-    getline(archivo, datos.estacionActual, ',');
-
-    getline(archivo, datos.añoInicio, ',');
-    getline(archivo, datos.añoActual, ',');
-    getline(archivo, datos.desastresOcurridos, ',');
-    getline(archivo, datos.desastresIniciadosUsuario, ',');
-
-    getline(archivo, datos.incendios, ',');
-    getline(archivo, datos.sequias, ',');
-    getline(archivo, datos.inundaciones, ',');
-    getline(archivo, datos.huracanes);
-
-    archivo.close();
+    rename(nombreNuevo.c_str(), nombreOriginal.c_str());
 }
-
-void crearCSV(const DatosSimulacion &datos, const char *nombreArchivo)
+void crearCSV(const DatosSimulacion &datos, string &nombreArchivo, string rutacsv)
 {
-    ofstream archivo(nombreArchivo);
+    string rutacompleta = rutacsv + "\\" + nombreArchivo;
+    ofstream archivo(rutacompleta);
     if (!archivo)
     {
         cerr << "Error al crear el archivo CSV." << endl;
@@ -172,39 +126,52 @@ void crearCSV(const DatosSimulacion &datos, const char *nombreArchivo)
 
     archivo.close();
 
-    cout << "Archivo CSV creado exitosamente." << endl;
+    cout << "Archivo CSV creado exitosamente en: " << rutacompleta << endl;
 }
 
-void guardarBinario(DatosSimulacion datos, const char *nombreArchivo)
+void guardarBinario(const DatosSimulacion &datos, const string &nombreArchivo, const string &ruta)
 {
+    string rutaCompleta = ruta + "/" + nombreArchivo;
+    ofstream archivo(rutaCompleta, ios::binary);
 
-    ofstream archivo(nombreArchivo, ios::binary);
-
-    archivo.write((char *)&datos, sizeof(datos));
-
-    archivo.close();
-}
-
-void cargarDatosBinario(DatosSimulacion &datos, const char *nombreArchivo)
-{
-
-    ifstream archivo(nombreArchivo, ios::binary);
-
-    if (archivo.is_open())
+    if (!archivo)
     {
+        cerr << "Error al abrir el archivo binario." << endl;
+        return;
+    }
 
-        archivo.read((char *)&datos, sizeof(datos));
+    archivo.write(reinterpret_cast<const char *>(&datos), sizeof(datos));
+
+    if (archivo.fail())
+    {
+        cerr << "Error al escribir en el archivo binario." << endl;
     }
     else
     {
-
-        cerr << "Error abriendo archivo binario" << endl;
+        cout << "Datos guardados exitosamente en el archivo binario: " << rutaCompleta << endl;
     }
 
     archivo.close();
 }
 
-void GuardardatosSIMECO()
+void cargarDatosBinario(DatosSimulacion &datos, const string &nombreArchivo, const string &ruta)
+{
+    string rutaCompleta = ruta + "\\" + nombreArchivo;
+    ifstream archivo(rutaCompleta, ios::binary);
+
+    if (archivo.is_open())
+    {
+        archivo.read(reinterpret_cast<char *>(&datos), sizeof(datos));
+    }
+    else
+    {
+        cerr << "Error al abrir el archivo binario." << endl;
+    }
+
+    archivo.close();
+}
+
+void GuardardatosSIMECO(string &usuario, directorios &directorio)
 {
     DatosSimulacion datos;
 
@@ -253,25 +220,25 @@ void GuardardatosSIMECO()
     datos.inundaciones = "2";
     datos.huracanes = "2";
 
-    char *nombreCSV;
+    string nombreCSV;
+    searchDir(usuario, directorio);
+    nombreCSV = existeArchivo("datos", directorio.folderD);
 
-    nombreCSV = existeArchivo("datos");
+    crearCSV(datos, nombreCSV, directorio.folderD);
 
-    crearCSV(datos, nombreCSV);
+    string nombreBin;
 
-    char *nombreBin;
+    nombreBin = existeArchivo("datos", directorio.folderD);
 
-    nombreBin = existeArchivo("datos");
+    nombreBin = nombreCSV + ".bin";
 
-    sprintf(nombreBin, "%s.bin", nombreCSV);
-
-    guardarBinario(datos, nombreBin);
+    guardarBinario(datos, nombreBin, directorio.folderD);
 
     // Lectura del archivo binario
 
     DatosSimulacion datosCargados;
 
-    cargarDatosBinario(datosCargados, nombreBin);
+    cargarDatosBinario(datosCargados, nombreBin, directorio.folderD);
 
     // Mostrar datos
 

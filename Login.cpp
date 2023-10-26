@@ -4,7 +4,7 @@
 #include <conio.h>
 #include <locale.h>
 #include <cctype>
-#include "Guardado.cpp"
+#include "Excel.cpp"
 
 using namespace std;
 
@@ -102,7 +102,7 @@ void limpiarPantalla()
 #endif
 }
 
-void MenuLogin(string& usuariO)
+void MenuLogin(string &usuariO)
 {
     setlocale(LC_ALL, "spanish");
 
@@ -130,7 +130,9 @@ void MenuLogin(string& usuariO)
         cout << "Elija una opción: ";
         cin >> opcion;
 
-        if (opcion == 1)
+        switch (opcion)
+        {
+        case 1:
         {
             limpiarPantalla();
             Usuario nuevoUsuario;
@@ -179,12 +181,15 @@ void MenuLogin(string& usuariO)
                     i++;
                 }
             }
+
             registrarUsuario(archivoUsuarios, nuevoUsuario);
             createFolder(nuevoUsuario.nombreUsuario);
             cout << "Presione Enter para continuar...";
             _getch();
+            break;
         }
-        else if (opcion == 2)
+
+        case 2:
         {
             limpiarPantalla();
             char nombreUsuario[100];
@@ -223,8 +228,11 @@ void MenuLogin(string& usuariO)
             cout << endl;
             if (verificarCredenciales(archivoUsuarios, nombreUsuario, contrasena))
             {
+                directorios directorio;
                 cout << "Inicio de sesión exitoso." << endl;
                 usuariO = nombreUsuario;
+                searchDir(usuariO,directorio);
+                ExcelGenerador(usuariO,directorio);
                 opcion = 3;
             }
             else
@@ -233,19 +241,22 @@ void MenuLogin(string& usuariO)
             }
             cout << "Presione Enter para continuar...";
             _getch();
-            
-
- 
+            break;
         }
-        else if (opcion == 3)
+
+        case 3:
         {
             cout << "Saliendo del programa." << endl;
+            break;
         }
-        else
+
+        default:
         {
             cout << "Opción no válida. Inténtelo de nuevo." << endl;
             cout << "Presione Enter para continuar...";
             _getch();
+            break;
+        }
         }
     } while (opcion != 3);
     return;

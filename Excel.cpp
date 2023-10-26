@@ -4,16 +4,15 @@
 #include "csv.cpp"
 using namespace std;
 
-char *existeArchivo(const char *nombrebase);
-int IndiceArchivoExcel(const char *nombrebase);
-char *existeArchivoExcel(const char *nombrebase);
+int IndiceArchivoExcel(const string &nombrebase, const string &ruta);
+string existeArchivoExcel(const string &nombrebase, const string &ruta);
 
-void ExcelGenerador()
+void ExcelGenerador(string &usuario, directorios &directorio)
 {
     FILE *archivoOriginal, *archivoClonado;
     // Declaracion de variables a usar.
-    char *nombreOriginal;
-    char nombreNuevo[] = "macroreg.csv";
+    string nombreOriginal;
+    string nombreNuevo = directorio.folderD + "\\" + "macroreg.csv";
     char buffer[4096];
     size_t bytesRead;
 
@@ -23,24 +22,29 @@ void ExcelGenerador()
     if (archivoOriginal == NULL)
     {
         printf("Error abriendo archivo original\n");
+        return;
     }
 
-    char *nombreArchivo;
+    string nombreArchivo;
+    searchDir(usuario, directorio);
 
-    nombreArchivo = existeArchivoExcel("registro");
+    nombreArchivo = existeArchivoExcel("registro", directorio.folderD);
 
-    if (nombreArchivo == NULL)
+    if (nombreArchivo == "")
     {
         printf("No se pudo generar un nombre de archivo único\n");
         fclose(archivoOriginal);
+        return;
     }
 
-    archivoClonado = fopen(nombreArchivo, "wb");
+    string rutaArchivoClonado = directorio.folderD + "/" + nombreArchivo;
+    archivoClonado = fopen(rutaArchivoClonado.c_str(), "wb");
 
     if (archivoClonado == NULL)
     {
         printf("Error abriendo archivo clonado\n");
         fclose(archivoOriginal);
+        return;
     }
 
     // Leer bloques de datos del archivo original y escribirlos en el archivo clonado
@@ -52,53 +56,56 @@ void ExcelGenerador()
     // Cerrar ambos archivos después de la operación
     fclose(archivoOriginal);
     fclose(archivoClonado);
+
     int Indice;
-    Indice = IndiceArchivoExcel("registro");
-    nombreOriginal = buscarNombreIndice("datos", Indice);
-    actualizarNombre(nombreOriginal, nombreNuevo);
-    printf("Archivo clonado exitosamente.\n");
-    system("start \"\" \"");
-    system(nombreArchivo);
+    Indice = IndiceArchivoExcel("registro", directorio.folderD);
+    nombreOriginal = buscarNombreIndice("datos", Indice, directorio.folderD);
+    cout<<nombreOriginal;
     system("pause");
-    regresarNombre(nombreOriginal, nombreNuevo);
+    if (actualizarNombre(nombreOriginal, nombreNuevo))
+    {
+        printf("Archivo clonado exitosamente.\n");
+        system("start \"\" \"");
+        system(rutaArchivoClonado.c_str());
+        system("pause");
+
+        regresarNombre(nombreOriginal, nombreNuevo);
+    }
+    else{
+        cout<<"vamos mal";
+    }
 }
 
 // Función existeArchivo
-char *existeArchivoExcel(const char *nombrebase)
+string existeArchivoExcel(const string &nombrebase, const string &ruta)
 {
     for (int i = 1; i <= 10; i++)
     {
-        char nombrePrueba[100];
-        sprintf(nombrePrueba, "%s%d.xlsm", nombrebase, i);
+        string nombrePrueba = nombrebase + to_string(i) + ".xlsm";
 
-        FILE *prueba = fopen(nombrePrueba, "rb");
+        ifstream prueba(ruta + "\\" + nombrePrueba);
 
-        if (prueba == NULL)
+        if (!prueba)
         {
-            return strdup(nombrePrueba);
+            return nombrePrueba;
         }
-
-        fclose(prueba);
     }
 
-    return NULL;
+    return "";
 }
 
-int IndiceArchivoExcel(const char *nombrebase)
+int IndiceArchivoExcel(const string &nombrebase, const string &ruta)
 {
     for (int i = 1; i <= 10; i++)
     {
-        char nombrePrueba[100];
-        sprintf(nombrePrueba, "%s%d.xlsm", nombrebase, i);
+        string nombrePrueba = nombrebase + to_string(i) + ".xlsm";
 
-        FILE *prueba = fopen(nombrePrueba, "rb");
+        ifstream prueba(ruta + "\\" + nombrePrueba);
 
-        if (prueba == NULL)
+        if (!prueba)
         {
             return i - 1;
         }
-
-        fclose(prueba);
     }
 
     return 0;
