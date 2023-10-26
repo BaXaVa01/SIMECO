@@ -184,6 +184,10 @@ void MenuLogin(string &usuariO)
 
             registrarUsuario(archivoUsuarios, nuevoUsuario);
             createFolder(nuevoUsuario.nombreUsuario);
+            usuariO=nuevoUsuario.nombreUsuario;
+            directorios directorio;
+            searchDir(usuariO,directorio);
+            GuardardatosSIMECO(usuariO,directorio);
             cout << "Presione Enter para continuar...";
             _getch();
             break;
