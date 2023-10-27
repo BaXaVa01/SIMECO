@@ -189,7 +189,6 @@ void MenuLogin(string &usuariO)
             searchDir(usuariO,directorio);
             GuardardatosSIMECO(usuariO,directorio);
             cout << "Presione Enter para continuar...";
-            _getch();
             break;
         }
 
@@ -237,7 +236,6 @@ void MenuLogin(string &usuariO)
                 usuariO = nombreUsuario;
                 searchDir(usuariO,directorio);
                 ExcelGenerador(usuariO,directorio);
-                opcion = 3;
             }
             else
             {
@@ -262,6 +260,6 @@ void MenuLogin(string &usuariO)
             break;
         }
         }
-    } while (opcion != 3);
+    } while (opcion!=3);
     return;
 }

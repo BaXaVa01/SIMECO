@@ -14,8 +14,8 @@ struct DatosSimulacion
     string tasaMortalidadEspecie1, tasaMortalidadEspecie2, tasaMortalidadEspecie3, tasaMortalidadEspecie4;
     string crecimientoPoblacionEspecie1, crecimientoPoblacionEspecie2, crecimientoPoblacionEspecie3, crecimientoPoblacionEspecie4;
     string promedioIndividuos, poblacionTotal, aguaDisponible, hierbaDisponible;
-    string carneDisponible, carroñaDisponible, estacionInicial, estacionActual;
-    string añoInicio, añoActual, desastresOcurridos, desastresIniciadosUsuario;
+    string carneDisponible, carronaDisponible, estacionInicial, estacionActual;
+    string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
     string incendios, sequias, inundaciones, huracanes;
 };
 
@@ -110,12 +110,12 @@ void crearCSV(const DatosSimulacion &datos, string &nombreArchivo, string rutacs
     archivo << datos.hierbaDisponible << ',';
 
     archivo << datos.carneDisponible << ',';
-    archivo << datos.carroñaDisponible << ',';
+    archivo << datos.carronaDisponible << ',';
     archivo << datos.estacionInicial << ',';
     archivo << datos.estacionActual << ',';
 
-    archivo << datos.añoInicio << ',';
-    archivo << datos.añoActual << ',';
+    archivo << datos.anoInicio << ',';
+    archivo << datos.anoActual << ',';
     archivo << datos.desastresOcurridos << ',';
     archivo << datos.desastresIniciadosUsuario << ',';
 
@@ -127,6 +127,7 @@ void crearCSV(const DatosSimulacion &datos, string &nombreArchivo, string rutacs
     archivo.close();
 
     cout << "Archivo CSV creado exitosamente en: " << rutacompleta << endl;
+    return;
 }
 
 void guardarBinario(const DatosSimulacion &datos, const string &nombreArchivo, const string &ruta)
@@ -152,6 +153,7 @@ void guardarBinario(const DatosSimulacion &datos, const string &nombreArchivo, c
     }
 
     archivo.close();
+    return;
 }
 
 void cargarDatosBinario(DatosSimulacion &datos, const string &nombreArchivo, const string &ruta)
@@ -169,6 +171,7 @@ void cargarDatosBinario(DatosSimulacion &datos, const string &nombreArchivo, con
     }
 
     archivo.close();
+    return;
 }
 
 void GuardardatosSIMECO(string &usuario, directorios &directorio)
@@ -206,12 +209,12 @@ void GuardardatosSIMECO(string &usuario, directorios &directorio)
     datos.hierbaDisponible = "100000";
 
     datos.carneDisponible = "20000";
-    datos.carroñaDisponible = "10000";
+    datos.carronaDisponible = "10000";
     datos.estacionInicial = "Verano";
-    datos.estacionActual = "Otoño";
+    datos.estacionActual = "Otono";
 
-    datos.añoInicio = "2020";
-    datos.añoActual = "2023";
+    datos.anoInicio = "2020";
+    datos.anoActual = "2023";
     datos.desastresOcurridos = "2";
     datos.desastresIniciadosUsuario = "3";
 
@@ -233,15 +236,5 @@ void GuardardatosSIMECO(string &usuario, directorios &directorio)
     nombreBin = nombreCSV + ".bin";
 
     guardarBinario(datos, nombreBin, directorio.folderD);
-
-    // Lectura del archivo binario
-
-    DatosSimulacion datosCargados;
-
-    cargarDatosBinario(datosCargados, nombreBin, directorio.folderD);
-
-    // Mostrar datos
-
-    cout << datosCargados.poblacionTotalEspecie1 << endl;
-    cout << datosCargados.huracanes << endl;
+    return;
 }
