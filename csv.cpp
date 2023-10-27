@@ -16,8 +16,6 @@ struct DatosSimulacion
     string promedioIndividuos, poblacionTotal, aguaDisponible, hierbaDisponible;
     string carneDisponible, carronaDisponible, estacionInicial, estacionActual;
     string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
-    string carneDisponible, carronaDisponible, estacionInicial, estacionActual;
-    string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
     string incendios, sequias, inundaciones, huracanes;
 };
 
