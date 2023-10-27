@@ -64,6 +64,15 @@ bool verificarCredenciales(const char *archivo, const char *nombreUsuario, const
     return false;
 }
 
+bool esNumero(const string& cadena) {
+    for (char c : cadena) {
+        if (!isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool nombreUsuarioExistente(const char *archivo, const char *nombreUsuario)
 {
     FILE *archivoUsuarios = fopen(archivo, "rb");
@@ -128,8 +137,11 @@ void MenuLogin(string &usuariO)
         cout << "2. Iniciar sesión" << endl;
         cout << "3. Salir" << endl;
         cout << "Elija una opción: ";
-        cin >> opcion;
-
+        string opcionc;
+        cin >> opcionc;
+        if(esNumero(opcionc))
+        {
+            opcion=stoi(opcionc);
         switch (opcion)
         {
         case 1:
@@ -260,6 +272,9 @@ void MenuLogin(string &usuariO)
             break;
         }
         }
+        }
+        cout<<"ingrese un numero porfavor."<<endl;
+        system("pause");
     } while (opcion!=3);
     return;
 }
