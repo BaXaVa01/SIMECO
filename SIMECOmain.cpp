@@ -7,6 +7,8 @@ directorios path;
 
 int main()
 {
+    setlocale(LC_ALL, "spanish");
+    setlocale(LC_CTYPE, "es_ES.UTF-8");
     
     string usuario;
     MenuLogin(usuario);
@@ -17,5 +19,6 @@ int main()
     cout << path.folder2 << endl;
     cout << path.folder3 << endl;
     cout << path.folderD << endl;
+    
     return 0;
 }

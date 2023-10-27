@@ -104,7 +104,7 @@ void limpiarPantalla()
 
 void MenuLogin(string &usuariO)
 {
-    setlocale(LC_ALL, "spanish");
+
 
     const char *archivoUsuarios = "usuarios.bin";
     int opcion;
@@ -119,7 +119,8 @@ void MenuLogin(string &usuariO)
     {
         fclose(archivoExistencia);
     }
-
+    
+    bool continuar = true;
     do
     {
         limpiarPantalla();
@@ -186,10 +187,12 @@ void MenuLogin(string &usuariO)
             createFolder(nuevoUsuario.nombreUsuario);
             usuariO=nuevoUsuario.nombreUsuario;
             directorios directorio;
+            
             searchDir(usuariO,directorio);
+            
             GuardardatosSIMECO(usuariO,directorio);
-            cout << "Presione Enter para continuar...";
-            _getch();
+            system("pause");
+           
             break;
         }
 
@@ -237,7 +240,7 @@ void MenuLogin(string &usuariO)
                 usuariO = nombreUsuario;
                 searchDir(usuariO,directorio);
                 ExcelGenerador(usuariO,directorio);
-                opcion = 3;
+                continuar = false;
             }
             else
             {
@@ -251,7 +254,7 @@ void MenuLogin(string &usuariO)
         case 3:
         {
             cout << "Saliendo del programa." << endl;
-            break;
+            continuar = false;
         }
 
         default:
@@ -262,6 +265,7 @@ void MenuLogin(string &usuariO)
             break;
         }
         }
-    } while (opcion != 3);
+    } while (continuar);
+    
     return;
 }
