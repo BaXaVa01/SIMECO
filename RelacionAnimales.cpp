@@ -1,39 +1,43 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <locale.h>
-
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
 struct Animal {
-    string name;
-    double energy;
-    string type;
+    string nombre;
+    double energia;
+    string tipo;
 
-    Animal(string _name, double _energy, string _type) : name(_name), energy(_energy), type(_type) {}
+    Animal(string _nombre, double _energia, string _tipo) : nombre(_nombre), energia(_energia), tipo(_tipo) {}
 };
 
-void Simulate(vector<Animal>& animals) {
-    for (int i = 0; i < 10; i++) {
-        cout << "Ciclo " << i + 1 << ":" << endl;
+bool Probabilidad(double prob) {
+    return (rand() % 100) < prob;
+}
 
-        for (size_t j = 0; j < animals.size(); j++) {
-            animals[j].energy -= 1;
-            cout << animals[j].name << " perdió 1 de energía." << endl;
+void Simular(vector<Animal>& animales) {
+    for (int i = 0; i < 13; i++) {
+        cout << "Semana " << i + 1 << ":" << endl;
+
+        for (size_t j = 0; j < animales.size(); j++) {
+            animales[j].energia -= 1;
+            cout << animales[j].nombre << " perdio 1 de energia." << endl;
         }
 
-        for (size_t j = 0; j < animals.size(); j++) {
-            for (size_t k = 0; k < animals.size(); k++) {
-                if (j != k && animals[j].type == "Puma" && animals[k].type == "Venado") {
-                    animals[j].energy += 10;
-                    animals[k].energy = 0;
-                    cout << animals[j].name << " comió a " << animals[k].name << " y ganó 10 de energía." << endl;
+        for (size_t j = 0; j < animales.size(); j++) {
+            for (size_t k = 0; k < animales.size(); k++) {
+                if (j != k && animales[j].tipo == "Puma" && animales[k].tipo == "Venado" && Probabilidad(30)) {
+                    animales[j].energia += 10;
+                    animales[k].energia = 0;
+                    cout << animales[j].nombre << " comio a " << animales[k].nombre << " y gano 10 de energia." << endl;
                 }
-                else if (j != k && animals[j].type == "Lobo" && animals[k].type == "Venado") {
-                    animals[j].energy += 10;
-                    animals[k].energy = 0;
-                    cout << animals[j].name << " comió a " << animals[k].name << " y ganó 10 de energía." << endl;
+                else if (j != k && animales[j].tipo == "Lobo" && animales[k].tipo == "Venado" && Probabilidad(30)) {
+                    animales[j].energia += 10;
+                    animales[k].energia = 0;
+                    cout << animales[j].nombre << " comio a " << animales[k].nombre << " y gano 10 de energia." << endl;
                 }
             }
         }
@@ -41,20 +45,18 @@ void Simulate(vector<Animal>& animals) {
 }
 
 int main() {
-	setlocale(LC_ALL, "spanish");
-	setlocale(LC_CTYPE, "es_ES.UTF-8");
-    vector<Animal> animals;
-    animals.push_back(Animal("Puma1", 50.0, "Puma"));
-    animals.push_back(Animal("Venado1", 50.0, "Venado"));
-    animals.push_back(Animal("Lobo1", 50.0, "Lobo"));
-    animals.push_back(Animal("Cuervo1", 50.0, "Cuervo"));
+    srand(static_cast<unsigned>(time(0))); // Inicializa la semilla para números aleatorios
+    vector<Animal> animales;
+    animales.push_back(Animal("Puma1", 50.0, "Puma"));
+    animales.push_back(Animal("Venado1", 50.0, "Venado"));
+    animales.push_back(Animal("Lobo1", 50.0, "Lobo"));
+    animales.push_back(Animal("Cuervo1", 50.0, "Cuervo"));
 
-    Simulate(animals);
+    Simular(animales);
 
-    for (size_t i = 0; i < animals.size(); i++) {
-        cout << animals[i].name << " tiene " << animals[i].energy << " de energía." << endl;
+    for (size_t i = 0; i < animales.size(); i++) {
+        cout << animales[i].nombre << " tiene " << animales[i].energia << " de energia." << endl;
     }
 
     return 0;
 }
-
