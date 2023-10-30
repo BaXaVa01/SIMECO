@@ -3,54 +3,67 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <set>
 
 using namespace std;
 
-struct Animal {
-    string nombre;
-    double energia;
+struct NombreAnimal {
     string tipo;
-    int semanasParaReproducir;  // Número de semanas requeridas para la reproducción
-    int semanasPasadas;  // Número de semanas pasadas desde la última reproducción
+    int generacion;
+    
+    NombreAnimal(string _tipo, int _generacion) : tipo(_tipo), generacion(_generacion) {}
+};
 
-    Animal(string _nombre, double _energia, string _tipo, int _semanasParaReproducir) : nombre(_nombre), energia(_energia), tipo(_tipo), semanasParaReproducir(_semanasParaReproducir), semanasPasadas(0) {}
+struct Animal {
+    NombreAnimal nombre;
+    double energia;
+    int semanasParaReproducir;
+    int semanasPasadas;
+
+    Animal(NombreAnimal _nombre, double _energia, int _semanasParaReproducir) : nombre(_nombre), energia(_energia), semanasParaReproducir(_semanasParaReproducir), semanasPasadas(0) {}
 };
 
 bool Probabilidad(double prob) {
     return (rand() % 100) < prob;
 }
 
-void Simular(vector<Animal>& animales) {
+void Simular(vector<Animal>& animales, set<string>& generaciones) {
     for (int i = 0; i < 13; i++) {
         cout << "Semana " << i + 1 << ":" << endl;
 
         for (size_t j = 0; j < animales.size(); j++) {
             animales[j].energia -= 1;
-            cout << animales[j].nombre << " perdio 1 de energia." << endl;
+            cout << animales[j].nombre.tipo << animales[j].nombre.generacion << " perdió 1 de energía." << endl;
 
-            // Verificar si el animal puede reproducirse
             if (animales[j].semanasPasadas >= animales[j].semanasParaReproducir) {
-                string nuevoNombre = animales[j].nombre + "Hijo";  // Nuevo nombre para el hijo
-                Animal hijo(nuevoNombre, 50.0, animales[j].tipo, animales[j].semanasParaReproducir);  // Crear el nuevo animal hijo
-                animales.push_back(hijo);  // Agregar el hijo a la lista de animales
-                cout << animales[j].nombre << " se reprodujo y nacio " << nuevoNombre << "." << endl;
-                animales[j].semanasPasadas = 0;  // Reiniciar las semanas pasadas
+                int nuevaGeneracion = animales[j].nombre.generacion + 1;
+                string nuevoNombre = animales[j].nombre.tipo + to_string(nuevaGeneracion);
+                while (generaciones.count(nuevoNombre) > 0) {
+                    nuevaGeneracion++;
+                    nuevoNombre = animales[j].nombre.tipo + to_string(nuevaGeneracion);
+                }
+                generaciones.insert(nuevoNombre);
+                NombreAnimal nuevoNombreAnimal(animales[j].nombre.tipo, nuevaGeneracion);
+                Animal hijo(nuevoNombreAnimal, 50.0, animales[j].semanasParaReproducir);
+                animales.push_back(hijo);
+                cout << animales[j].nombre.tipo << animales[j].nombre.generacion << " se reprodujo y nació " << nuevoNombreAnimal.tipo << nuevoNombreAnimal.generacion << "." << endl;
+                animales[j].semanasPasadas = 0;
             } else {
-                animales[j].semanasPasadas++;  // Incrementar las semanas pasadas
+                animales[j].semanasPasadas++;
             }
         }
 
         for (size_t j = 0; j < animales.size(); j++) {
             for (size_t k = 0; k < animales.size(); k++) {
-                if (j != k && animales[j].tipo == "Puma" && animales[k].tipo == "Venado" && Probabilidad(30)) {
+                if (j != k && animales[j].nombre.tipo == "Puma" && animales[k].nombre.tipo == "Venado" && Probabilidad(30)) {
                     animales[j].energia += 10;
                     animales[k].energia = 0;
-                    cout << animales[j].nombre << " comio a " << animales[k].nombre << " y gano 10 de energia." << endl;
+                    cout << animales[j].nombre.tipo << animales[j].nombre.generacion << " comió a " << animales[k].nombre.tipo << animales[k].nombre.generacion << " y ganó 10 de energía." << endl;
                 }
-                else if (j != k && animales[j].tipo == "Lobo" && animales[k].tipo == "Venado" && Probabilidad(30)) {
+                else if (j != k && animales[j].nombre.tipo == "Lobo" && animales[k].nombre.tipo == "Venado" && Probabilidad(30)) {
                     animales[j].energia += 10;
                     animales[k].energia = 0;
-                    cout << animales[j].nombre << " comio a " << animales[k].nombre << " y gano 10 de energia." << endl;
+                    cout << animales[j].nombre.tipo << animales[j].nombre.generacion << " comió a " << animales[k].nombre.tipo << animales[k].nombre.generacion << " y ganó 10 de energía." << endl;
                 }
             }
         }
@@ -58,18 +71,23 @@ void Simular(vector<Animal>& animales) {
 }
 
 int main() {
-    srand(static_cast<unsigned>(time(0))); // Inicializa la semilla para números aleatorios
+    srand(static_cast<unsigned>(time(0)));
     vector<Animal> animales;
-    animales.push_back(Animal("Puma1", 50.0, "Puma", 5));  // Se requieren 5 semanas para la reproducción
-    animales.push_back(Animal("Venado1", 50.0, "Venado", 3));  // Se requieren 3 semanas para la reproducción
-    animales.push_back(Animal("Lobo1", 50.0, "Lobo", 4));  // Se requieren 4 semanas para la reproducción
-    animales.push_back(Animal("Cuervo1", 50.0, "Cuervo", 2));  // Se requieren 2 semanas para la reproducción
+    set<string> generaciones;
+    NombreAnimal nombrePuma("Puma", 1);
+    NombreAnimal nombreVenado("Venado", 1);
+    NombreAnimal nombreLobo("Lobo", 1);
+    NombreAnimal nombreCuervo("Cuervo", 1);
+    animales.push_back(Animal(nombrePuma, 50.0, 5));
+    animales.push_back(Animal(nombreVenado, 50.0, 3));
+    animales.push_back(Animal(nombreLobo, 50.0, 4));
+    animales.push_back(Animal(nombreCuervo, 50.0, 2));
 
-    Simular(animales);
+    Simular(animales, generaciones);
 
     for (size_t i = 0; i < animales.size(); i++) {
-        cout << animales[i].nombre << " tiene " << animales[i].energia << " de energia." << endl;
+        cout << animales[i].nombre.tipo << animales[i].nombre.generacion << " tiene " << animales[i].energia << " de energía." << endl;
     }
 
-    return 0;
+    return 0;   
 }
