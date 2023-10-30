@@ -3,6 +3,7 @@
 #include <vector>
 #include <locale.h>
 
+
 using namespace std;
 
 struct Animal {
@@ -24,7 +25,12 @@ void Simulate(vector<Animal>& animals) {
 
         for (size_t j = 0; j < animals.size(); j++) {
             for (size_t k = 0; k < animals.size(); k++) {
-                if (j != k && animals[j].type == "Venado" && animals[k].type == "Puma") {
+                if (j != k && animals[j].type == "Puma" && animals[k].type == "Venado") {
+                    animals[j].energy += 10;
+                    animals[k].energy = 0;
+                    cout << animals[j].name << " comió a " << animals[k].name << " y ganó 10 de energía." << endl;
+                }
+                else if (j != k && animals[j].type == "Lobo" && animals[k].type == "Venado") {
                     animals[j].energy += 10;
                     animals[k].energy = 0;
                     cout << animals[j].name << " comió a " << animals[k].name << " y ganó 10 de energía." << endl;
@@ -36,6 +42,7 @@ void Simulate(vector<Animal>& animals) {
 
 int main() {
 	setlocale(LC_ALL, "spanish");
+	setlocale(LC_CTYPE, "es_ES.UTF-8");
     vector<Animal> animals;
     animals.push_back(Animal("Puma1", 50.0, "Puma"));
     animals.push_back(Animal("Venado1", 50.0, "Venado"));

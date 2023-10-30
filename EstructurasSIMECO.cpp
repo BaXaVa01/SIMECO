@@ -36,8 +36,8 @@ struct Especie
     int edadMax;
     int timeMaxSinComer;
     int timeMaxSinBeber; //Agregue esto para que no se muera de sed
-
 };
+
 struct Animal
 {
     int ID;
