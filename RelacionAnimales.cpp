@@ -20,7 +20,7 @@ void Simulate(vector<Animal>& animals) {
 
         for (size_t j = 0; j < animals.size(); j++) {
             animals[j].energy -= 1;
-            cout << animals[j].name << " perdió 1 de energía." << endl;
+            cout << animals[j].name << " perdiÃ³ 1 de energÃ­a." << endl;
         }
 
         for (size_t j = 0; j < animals.size(); j++) {
@@ -28,12 +28,12 @@ void Simulate(vector<Animal>& animals) {
                 if (j != k && animals[j].type == "Puma" && animals[k].type == "Venado") {
                     animals[j].energy += 10;
                     animals[k].energy = 0;
-                    cout << animals[j].name << " comió a " << animals[k].name << " y ganó 10 de energía." << endl;
+                    cout << animals[j].name << " comiÃ³ a " << animals[k].name << " y ganÃ³ 10 de energÃ­a." << endl;
                 }
                 else if (j != k && animals[j].type == "Lobo" && animals[k].type == "Venado") {
                     animals[j].energy += 10;
                     animals[k].energy = 0;
-                    cout << animals[j].name << " comió a " << animals[k].name << " y ganó 10 de energía." << endl;
+                    cout << animals[j].name << " comiÃ³ a " << animals[k].name << " y ganÃ³ 10 de energÃ­a." << endl;
                 }
             }
         }
@@ -52,7 +52,7 @@ int main() {
     Simulate(animals);
 
     for (size_t i = 0; i < animals.size(); i++) {
-        cout << animals[i].name << " tiene " << animals[i].energy << " de energía." << endl;
+        cout << animals[i].name << " tiene " << animals[i].energy << " de energÃ­a." << endl;
     }
 
     return 0;
