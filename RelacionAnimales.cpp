@@ -28,6 +28,13 @@ struct Animal {
     Animal(NombreAnimal _nombre, double _energia, int _semanasParaReproducir) : nombre(_nombre), semanasSinCazar(0), energia(_energia), semanasParaReproducir(_semanasParaReproducir), semanasPasadas(0), haComido(false), venadosCazados(0) {}
 };
 
+struct Recurso {
+    string tipo;
+    double energia;
+
+    Recurso(string _tipo, double _energia) : tipo(_tipo), energia(_energia) {}
+};
+
 bool Probabilidad(double prob) {
     return (rand() % 100) < prob;
 }
@@ -36,7 +43,7 @@ int GenerarNacimientosAleatorios(std::mt19937& rng, std::uniform_int_distributio
     return distribucion(rng);
 }
 
-void Simular(map<int, vector<Animal>>& animalesPorGeneracion, set<string>& generaciones, int& poblacionVenados) {
+void Simular(map<int, vector<Animal>>& animalesPorGeneracion, set<string>& generaciones, int& poblacionVenados, vector<Recurso>& recursos) {
     for (int i = 0; i < 13; i++) {
         cout << "Semana " << i + 1 << " - Resumen:" << endl;
 
@@ -88,6 +95,17 @@ void Simular(map<int, vector<Animal>>& animalesPorGeneracion, set<string>& gener
                     animales[j].energia = 0;
                 }
 
+                if (animales[j].nombre.tipo == "Venado") {
+                    // Los venados pueden comer recursos
+                    for (auto& recurso : recursos) {
+                        if (animales[j].energia < 100 && Probabilidad(20)) {
+                            animales[j].energia += recurso.energia;
+                            recurso.energia = 0;
+                            animales[j].haComido = true;
+                        }
+                    }
+                }
+
                 if (animales[j].semanasPasadas >= animales[j].semanasParaReproducir) {
                     int nuevaGeneracion = animales[j].nombre.generacion + 1;
                     string nuevoNombre = animales[j].nombre.tipo + to_string(nuevaGeneracion);
@@ -119,60 +137,43 @@ void Simular(map<int, vector<Animal>>& animalesPorGeneracion, set<string>& gener
 
         for (auto& [generacion, animales] : animalesPorGeneracion) {
             for (size_t j = 0; j < animales.size(); j++) {
-                if (!animales[j].haComido) {
+                if (!animales[j].haComido && (animales[j].nombre.tipo == "Lobo" || animales[j].nombre.tipo == "Puma")) {
                     for (size_t k = 0; k < animales.size(); k++) {
-                        if (j != k && (animales[j].nombre.tipo == "Lobo" || animales[j].nombre.tipo == "Puma") && animales[k].nombre.tipo == "Venado") {
+                        if (j != k && animales[k].nombre.tipo == "Venado") {
                             if (!animales[j].haComido && Probabilidad(30)) {
                                 double probExito = 50.0;
-                                double probEscape = 50.0;
+                                double probHerido = 20.0; // Probabilidad de ser herido
+                                double probCazado = 30.0; // Probabilidad de ser cazado
 
                                 if (animales[j].energia < 25) {
                                     // Menor energía, menor probabilidad de caza
                                     probExito = 10.0;
+                                    probHerido = 40.0; // Mayor probabilidad de ser herido
+                                    probCazado = 50.0; // Menor probabilidad de ser cazado
                                 }
                                 else if (animales[j].energia < 50) {
                                     probExito = 30.0;
+                                    probHerido = 20.0;
+                                    probCazado = 50.0;
                                 }
 
                                 if (Probabilidad(probExito)) {
-                                    if (Probabilidad(50)) {
-                                        // Venado escapa
-                                        animales[k].energia -= 5;
+                                    if (Probabilidad(probHerido)) {
+                                        // Venado escapa herido
+                                        animales[k].energia -= 10;
+                                        animales[j].energia -= 10;
                                     }
-                                    else {
+                                    else if (Probabilidad(probCazado)) {
                                         // Venado cazado
-                                        animales[j].energia += 10;
-                                        animales[k].energia = 0;
-                                        if (animales[j].energia > 100) {
-                                            animales[j].energia = 100;
-                                        }
+                                        animales[j].energia = 0;
                                         animales[j].haComido = true;
                                         animales[k].venadosCazados++;
                                         venadosMuertos++;
                                         animales[j].semanasSinCazar = 0;
                                     }
-                                }
-                                else if (Probabilidad(probEscape)) {
-                                    animales[j].energia -= 5;
-                                }
-                            }
-                            else if (Probabilidad(30)) {
-                                if (animales[j].nombre.tipo == "Lobo") {
-                                    // Conflicto con Puma
-                                    if (animales[k].nombre.tipo == "Puma") {
-                                        if (Probabilidad(30)) {
-                                            animales[j].energia -= 10;
-                                            animales[k].energia -= 10;
-                                        }
-                                    }
-                                }
-                                else if (animales[j].nombre.tipo == "Puma") {
-                                    // Conflicto con Lobo
-                                    if (animales[k].nombre.tipo == "Lobo") {
-                                        if (Probabilidad(30)) {
-                                            animales[j].energia -= 10;
-                                            animales[k].energia -= 10;
-                                        }
+                                    else {
+                                        // Venado escapa ileso
+                                        animales[k].energia -= 5;
                                     }
                                 }
                             }
@@ -206,8 +207,14 @@ int main() {
     srand(static_cast<unsigned>(time(0)));
     map<int, vector<Animal>> animalesPorGeneracion;
     set<string> generaciones;
+    vector<Recurso> recursos; // Lista de recursos
 
     int poblacionVenados = 200;
+
+    // Agregar recursos al ecosistema
+    recursos.push_back(Recurso("Pasto", 20.0));
+    recursos.push_back(Recurso("Hoja", 10.0));
+    recursos.push_back(Recurso("Fruta", 30.0));
 
     for (int i = 1; i <= poblacionVenados; i++) {
         animalesPorGeneracion[poblacionVenados].push_back(Animal(NombreAnimal("Venado", poblacionVenados), 50.0, 3));
@@ -222,7 +229,7 @@ int main() {
         animalesPorGeneracion[1].push_back(Animal(NombreAnimal("Cuervo", 1), 50.0, 2));
     }
 
-    Simular(animalesPorGeneracion, generaciones, poblacionVenados);
+    Simular(animalesPorGeneracion, generaciones, poblacionVenados, recursos);
 
     return 0;
 }
