@@ -21,11 +21,14 @@ struct Animal {
 };
 
 // Función para que los animales se reproduzcan
-void reproduccion(vector<Animal>& poblacion) {
+void reproduccion(vector<Animal>& poblacion, int semana_actual) {
     int num_nacimientos = 0;
 
     for (int i = 0; i < poblacion.size(); i++) {
-        const Animal& animal = poblacion[i];
+        Animal& animal = poblacion[i];
+        
+        // Actualizar la edad del animal
+        animal.edad++;
 
         if (animal.edad >= 104) {  // Edad mínima de reproducción para venados y cuervos
             if (animal.tipo == "Venado") {
@@ -110,20 +113,22 @@ int main() {
     }
 
     // Realizar la reproducción
-    reproduccion(poblacion);
+    reproduccion(poblacion, 0); // Semana 0
 
-    // Imprimir todos los animales en la población
-    for (const Animal& animal : poblacion) {
-        cout << "Tipo: " << animal.tipo << ", Energía: " << animal.energia << ", Edad: " << animal.edad << " semanas, Género: " << (animal.genero == MACHO ? "MACHO" : "HEMBRA") << endl;
+    // Avanzar dos semanas adicionales (ciclos semanales)
+    for (int semana = 0; semana < 2; semana++) {
+        reproduccion(poblacion, semana + 1); // Ajustar la semana actual
     }
 
-    // Esperar a que el usuario presione Enter
-    cout << "Presione Enter para ver el resumen...";
-    cin.get();  // Esperar a que el usuario presione Enter
+    // Actualizar la edad de los animales
+    for (Animal& animal : poblacion) {
+        animal.edad++;
+    }
 
-    // Limpiar la pantalla (puede variar según el sistema operativo)
-    system("cls"); // En Windows
-    //system("clear"); // En sistemas Unix/Linux
+    // Imprimir todos los animales en la población después de las 3 semanas
+    for (const Animal& animal : poblacion) {
+        cout << "Tipo: " << animal.tipo << ", Energía: " << animal.energia << ", Edad: " << animal.edad << " semanas, Genero: " << (animal.genero == MACHO ? "MACHO" : "HEMBRA") << endl;
+    }
 
     // Calcular el resumen
     int total_venados = 0;
