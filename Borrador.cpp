@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 
 using namespace std;
 
@@ -115,6 +116,73 @@ int main() {
     for (const Animal& animal : poblacion) {
         cout << "Tipo: " << animal.tipo << ", Energía: " << animal.energia << ", Edad: " << animal.edad << " semanas, Género: " << (animal.genero == MACHO ? "MACHO" : "HEMBRA") << endl;
     }
+
+    // Esperar a que el usuario presione Enter
+    cout << "Presione Enter para ver el resumen...";
+    cin.get();  // Esperar a que el usuario presione Enter
+
+    // Limpiar la pantalla (puede variar según el sistema operativo)
+    system("cls"); // En Windows
+    //system("clear"); // En sistemas Unix/Linux
+
+    // Calcular el resumen
+    int total_venados = 0;
+    int machos_venado = 0;
+    int hembras_venado = 0;
+    int total_cuervos = 0;
+    int machos_cuervo = 0;
+    int hembras_cuervo = 0;
+    int total_lobos = 0;
+    int machos_lobo = 0;
+    int hembras_lobo = 0;
+    int total_pumas = 0;
+    int machos_puma = 0;
+    int hembras_puma = 0;
+    double suma_energia = 0;
+
+    for (const Animal& animal : poblacion) {
+        if (animal.tipo == "Venado") {
+            total_venados++;
+            if (animal.genero == MACHO) {
+                machos_venado++;
+            } else {
+                hembras_venado++;
+            }
+        } else if (animal.tipo == "Cuervo") {
+            total_cuervos++;
+            if (animal.genero == MACHO) {
+                machos_cuervo++;
+            } else {
+                hembras_cuervo++;
+            }
+        } else if (animal.tipo == "Lobo") {
+            total_lobos++;
+            if (animal.genero == MACHO) {
+                machos_lobo++;
+            } else {
+                hembras_lobo++;
+            }
+        } else if (animal.tipo == "Puma") {
+            total_pumas++;
+            if (animal.genero == MACHO) {
+                machos_puma++;
+            } else {
+                hembras_puma++;
+            }
+        }
+
+        suma_energia += animal.energia;
+    }
+
+    double promedio_energia = suma_energia / poblacion.size();
+
+    // Imprimir el resumen
+    cout << "Resumen:" << endl;
+    cout << "Total de Venados: " << total_venados << " (Machos: " << machos_venado << ", Hembras: " << hembras_venado << ")" << endl;
+    cout << "Total de Cuervos: " << total_cuervos << " (Machos: " << machos_cuervo << ", Hembras: " << hembras_cuervo << ")" << endl;
+    cout << "Total de Lobos: " << total_lobos << " (Machos: " << machos_lobo << ", Hembras: " << hembras_lobo << ")" << endl;
+    cout << "Total de Pumas: " << total_pumas << " (Machos: " << machos_puma << ", Hembras: " << hembras_puma << ")" << endl;
+    cout << "Promedio de Energía: " << promedio_energia << endl;
 
     return 0;
 }
