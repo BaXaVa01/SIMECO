@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <locale.h>
 #include <cctype>
+#include <limits>
 #include "Excel.cpp"
 
 using namespace std;
@@ -14,13 +15,36 @@ struct Usuario
     char contrasena[100];
 };
 
+void reemplazarEspacios(char* str, char find, char replace) {
+    for (; *str != '\0'; ++str) {
+        if (*str == find) {
+            *str = replace;
+        }
+    }
+}
+
+void prepararCadenaParaGuardar(char* cadena) {
+    reemplazarEspacios(cadena, ' ', '-');
+}
+
+void restaurarCadenaLeida(char* cadena) {
+    reemplazarEspacios(cadena, '-', ' ');
+}
+
 void registrarUsuario(const char *archivo, const Usuario &usuario)
 {
     FILE *archivoUsuarios = fopen(archivo, "a");
-
     if (archivoUsuarios != NULL)
     {
-        fprintf(archivoUsuarios, "%s,%s\n", usuario.nombreUsuario, usuario.contrasena);
+        char nombreUsuarioModificado[100];
+        strcpy(nombreUsuarioModificado, usuario.nombreUsuario);
+        prepararCadenaParaGuardar(nombreUsuarioModificado);
+        
+        char contrasenaModificada[100];
+        strcpy(contrasenaModificada, usuario.contrasena);
+        prepararCadenaParaGuardar(contrasenaModificada);
+        
+        fprintf(archivoUsuarios, "%s,%s\n", nombreUsuarioModificado, contrasenaModificada);
         fclose(archivoUsuarios);
         cout << "Usuario registrado con éxito." << endl;
     }
@@ -33,21 +57,15 @@ void registrarUsuario(const char *archivo, const Usuario &usuario)
 bool verificarCredenciales(const char *archivo, const char *nombreUsuario, const char *contrasena)
 {
     FILE *archivoUsuarios = fopen(archivo, "rb");
-
+    char linea[256], usuario[100], pass[100];
     if (archivoUsuarios != NULL)
     {
-        char linea[256];
         while (fgets(linea, sizeof(linea), archivoUsuarios) != NULL)
         {
-            char usuario[100];
-            char pass[100];
             sscanf(linea, "%[^,],%s", usuario, pass);
-
-            for (int i = 0; usuario[i] != '\0'; i++)
-            {
-                usuario[i] = tolower(usuario[i]);
-            }
-
+            restaurarCadenaLeida(usuario);
+            restaurarCadenaLeida(pass);
+            
             if (strcmp(usuario, nombreUsuario) == 0 && strcmp(pass, contrasena) == 0)
             {
                 fclose(archivoUsuarios);
@@ -60,13 +78,15 @@ bool verificarCredenciales(const char *archivo, const char *nombreUsuario, const
     {
         cout << "No se pudo abrir el archivo de usuarios." << endl;
     }
-
     return false;
 }
 
-bool esNumero(const string& cadena) {
-    for (char c : cadena) {
-        if (!isdigit(c)) {
+bool esNumero(const string &cadena)
+{
+    for (char c : cadena)
+    {
+        if (!isdigit(c))
+        {
             return false;
         }
     }
@@ -76,29 +96,25 @@ bool esNumero(const string& cadena) {
 bool nombreUsuarioExistente(const char *archivo, const char *nombreUsuario)
 {
     FILE *archivoUsuarios = fopen(archivo, "rb");
-
+    char linea[256], usuario[100], *token;
     if (archivoUsuarios != NULL)
     {
-        char linea[256];
         while (fgets(linea, sizeof(linea), archivoUsuarios) != NULL)
         {
-            char usuario[100];
-            sscanf(linea, "%[^,]", usuario);
-
-            for (int i = 0; usuario[i] != '\0'; i++)
+            token = strtok(linea, ",");
+            if (token != NULL)
             {
-                usuario[i] = tolower(usuario[i]);
-            }
-
-            if (strcmp(usuario, nombreUsuario) == 0)
-            {
-                fclose(archivoUsuarios);
-                return true;
+                strcpy(usuario, token);
+                restaurarCadenaLeida(usuario);
+                if (strcmp(usuario, nombreUsuario) == 0)
+                {
+                    fclose(archivoUsuarios);
+                    return true;
+                }
             }
         }
         fclose(archivoUsuarios);
     }
-
     return false;
 }
 
@@ -111,25 +127,23 @@ void limpiarPantalla()
 #endif
 }
 
-void MenuLogin(string &usuariO)
+void aMinusculas(char *cadena) {
+    if (cadena) { 
+        while (*cadena) {
+            *cadena = tolower(static_cast<unsigned char>(*cadena));
+            ++cadena;
+        }
+    }
+}
+
+void MenuLogin(string &usuario)
 {
-
-
     const char *archivoUsuarios = "usuarios.bin";
+    Usuario nuevoUsuario;
+    string nombreUsuario, contrasena, UsuarioConGuiones;
+    directorios directorio;
     int opcion;
 
-    FILE *archivoExistencia = fopen(archivoUsuarios, "rb");
-    if (archivoExistencia == NULL)
-    {
-        FILE *archivoNuevo = fopen(archivoUsuarios, "wb");
-        fclose(archivoNuevo);
-    }
-    else
-    {
-        fclose(archivoExistencia);
-    }
-    
-    bool continuar = true;
     do
     {
         limpiarPantalla();
@@ -138,119 +152,57 @@ void MenuLogin(string &usuariO)
         cout << "2. Iniciar sesión" << endl;
         cout << "3. Salir" << endl;
         cout << "Elija una opción: ";
-        string opcionc;
-        cin >> opcionc;
-        if(esNumero(opcionc))
-        {
-            opcion=stoi(opcionc);
+        cin >> opcion;
+        cin.ignore();
+
         switch (opcion)
         {
         case 1:
         {
             limpiarPantalla();
-            Usuario nuevoUsuario;
             cout << "Crear una nueva cuenta:" << endl;
-            bool nombreUsuarioDuplicado;
-            do
+            cout << "Nombre de usuario: ";
+            cin.getline(nuevoUsuario.nombreUsuario, 100);
+            aMinusculas(nuevoUsuario.nombreUsuario);
+            if (nombreUsuarioExistente(archivoUsuarios, nuevoUsuario.nombreUsuario))
             {
-                nombreUsuarioDuplicado = false;
-                cout << "Nombre de usuario: ";
-                cin >> nuevoUsuario.nombreUsuario;
-                for (int i = 0; nuevoUsuario.nombreUsuario[i] != '\0'; i++)
-                {
-                    nuevoUsuario.nombreUsuario[i] = tolower(nuevoUsuario.nombreUsuario[i]);
-                }
-                if (nombreUsuarioExistente(archivoUsuarios, nuevoUsuario.nombreUsuario))
-                {
-                    nombreUsuarioDuplicado = true;
-                    cout << "El nombre de usuario ya existe. Por favor, elija otro." << endl;
-                }
-            } while (nombreUsuarioDuplicado);
-
-            cout << "Contraseña: ";
-            char c;
-            int i = 0;
-            while (1)
-            {
-                c = _getch();
-                if (c == 13)
-                {
-                    nuevoUsuario.contrasena[i] = '\0';
-                    cout << endl;
-                    break;
-                }
-                else if (c == 8)
-                {
-                    if (i > 0)
-                    {
-                        i--;
-                        cout << "\b \b";
-                    }
-                }
-                else
-                {
-                    nuevoUsuario.contrasena[i] = c;
-                    cout << '*';
-                    i++;
-                }
+                cout << "El nombre de usuario ya existe. Por favor, elija otro." << endl;
             }
-
-            registrarUsuario(archivoUsuarios, nuevoUsuario);
-            createFolder(nuevoUsuario.nombreUsuario);
-            usuariO=nuevoUsuario.nombreUsuario;
-            directorios directorio;
-            
-            searchDir(usuariO,directorio);
-            
-            GuardardatosSIMECO(usuariO,directorio);
-            cout << "Presione Enter para continuar...";
+            else
+            {
+                cout << "Contraseña: ";
+                cin.getline(nuevoUsuario.contrasena, 100);
+                registrarUsuario(archivoUsuarios, nuevoUsuario);
+                UsuarioConGuiones=nuevoUsuario.nombreUsuario;
+                prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
+                createFolder(UsuarioConGuiones);
+                searchDir(UsuarioConGuiones,directorio);
+                GuardardatosSIMECO(UsuarioConGuiones,directorio);
+                cout << "Presione Enter para continuar...";
+                cin.get();
+            }
             break;
         }
-
         case 2:
         {
             limpiarPantalla();
-            char nombreUsuario[100];
-            char contrasena[100];
             cout << "Iniciar sesión:" << endl;
             cout << "Nombre de usuario: ";
-            cin >> nombreUsuario;
-            for (int i = 0; nombreUsuario[i] != '\0'; i++)
-            {
-                nombreUsuario[i] = tolower(nombreUsuario[i]);
-            }
+            getline(cin, nombreUsuario);
             cout << "Contraseña: ";
-            char c;
-            int i = 0;
-            while (1)
+            getline(cin, contrasena);
+
+            // Convierte el nombre de usuario a su versión con guiones para la búsqueda
+            UsuarioConGuiones = nombreUsuario;
+            prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
+
+            if (verificarCredenciales(archivoUsuarios, nombreUsuario.c_str(), contrasena.c_str()))
             {
-                c = _getch();
-                if (c == 13)
-                    break;
-                else if (c == 8)
-                {
-                    if (i > 0)
-                    {
-                        i--;
-                        cout << "\b \b";
-                    }
-                }
-                else
-                {
-                    contrasena[i] = c;
-                    cout << '*';
-                    i++;
-                }
-            }
-            contrasena[i] = '\0';
-            cout << endl;
-            if (verificarCredenciales(archivoUsuarios, nombreUsuario, contrasena))
-            {
-                directorios directorio;
                 cout << "Inicio de sesión exitoso." << endl;
-                usuariO = nombreUsuario;
-                searchDir(usuariO,directorio);
-                ExcelGenerador(usuariO,directorio);
+                usuario = nombreUsuario;
+                // Llama a searchDir con la versión del nombre de usuario con guiones
+                searchDir(UsuarioConGuiones, directorio);
+                ExcelGenerador(UsuarioConGuiones, directorio);
                 opcion = 3;
             }
             else
@@ -258,27 +210,16 @@ void MenuLogin(string &usuariO)
                 cout << "Inicio de sesión fallido. Verifique sus credenciales." << endl;
             }
             cout << "Presione Enter para continuar...";
-            _getch();
+            cin.get();
             break;
         }
-
         case 3:
-        {
             cout << "Saliendo del programa." << endl;
-            continuar = false;
-        }
-
+            break;
         default:
-        {
             cout << "Opción no válida. Inténtelo de nuevo." << endl;
-            cout << "Presione Enter para continuar...";
-            _getch();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
         }
-        }
-        }
-        cout<<"ingrese un numero porfavor."<<endl;
-        system("pause");
-    } while (opcion!=3);
-    return;
+    } while (opcion != 3);
 }
