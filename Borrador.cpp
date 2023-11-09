@@ -6,188 +6,123 @@
 
 using namespace std;
 
-// Enum para el género
 enum Genero {
     MACHO,
     HEMBRA
 };
 
-// Struct para representar los animales
 struct Animal {
     string tipo;
     double energia;
     int edad;
+    int edadMinimaReproduccion;
     Genero genero;
 };
 
-// Función para que los animales se reproduzcan
-void reproduccion(vector<Animal>& poblacion, int semana_actual) {
-    int num_nacimientos = 0;
+Animal reproducirse(const Animal& padre, const Animal& madre) {
+    Animal hijo;
+    hijo.tipo = "Nuevo Animal";
+    hijo.energia = (padre.energia + madre.energia) / 2;
+    hijo.edad = 0;
+    hijo.edadMinimaReproduccion = min(padre.edadMinimaReproduccion, madre.edadMinimaReproduccion);
+    hijo.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
 
-    for (int i = 0; i < poblacion.size(); i++) {
-        Animal& animal = poblacion[i];
-        
-        // Actualizar la edad del animal
-        animal.edad++;
-
-        if (animal.edad >= 104) {  // Edad mínima de reproducción para venados y cuervos
-            if (animal.tipo == "Venado") {
-                // Venado: puede tener de 2 a 3 crías
-                int probabilidad_de_nacimiento = rand() % 13;  // 1/13 de probabilidad
-                if (probabilidad_de_nacimiento == 0) {
-                    int numero_de_crias = 2 + rand() % 2;  // Número aleatorio entre 2 y 3
-                    for (int j = 0; j < numero_de_crias; j++) {
-                        Genero genero = static_cast<Genero>(rand() % 2);
-                        poblacion.push_back({"Venado", 50.0, 1, genero});
-                        num_nacimientos++;
-                    }
-                }
-            } else if (animal.tipo == "Cuervo") {
-                // Cuervo: puede tener de 3 a 8 crías
-                int probabilidad_de_nacimiento = rand() % 13;  // 1/13 de probabilidad
-                if (probabilidad_de_nacimiento == 0) {
-                    int numero_de_crias = 3 + rand() % 6;  // Número aleatorio entre 3 y 8
-                    for (int j = 0; j < numero_de_crias; j++) {
-                        Genero genero = static_cast<Genero>(rand() % 2);
-                        poblacion.push_back({"Cuervo", 50.0, 1, genero});
-                        num_nacimientos++;
-                    }
-                }
-            }
-        } else if (animal.edad >= 78) {  // Edad mínima de reproducción para lobos y pumas
-            if (animal.tipo == "Lobo") {
-                // Lobo: puede tener de 4 a 6 crías
-                int probabilidad_de_nacimiento = rand() % 13;  // 1/13 de probabilidad
-                if (probabilidad_de_nacimiento == 0) {
-                    int numero_de_crias = 4 + rand() % 3;  // Número aleatorio entre 4 y 6
-                    for (int j = 0; j < numero_de_crias; j++) {
-                        Genero genero = static_cast<Genero>(rand() % 2);
-                        poblacion.push_back({"Lobo", 50.0, 1, genero});
-                        num_nacimientos++;
-                    }
-                }
-            } else if (animal.tipo == "Puma") {
-                // Puma: puede tener de 1 a 4 crías
-                int probabilidad_de_nacimiento = rand() % 13;  // 1/13 de probabilidad
-                if (probabilidad_de_nacimiento == 0) {
-                    int numero_de_crias = 1 + rand() % 4;  // Número aleatorio entre 1 y 4
-                    for (int j = 0; j < numero_de_crias; j++) {
-                        Genero genero = static_cast<Genero>(rand() % 2);
-                        poblacion.push_back({"Puma", 50.0, 1, genero});
-                        num_nacimientos++;
-                    }
-                }
-            }
-        }
+    // Verificar edad mínima para reproducción
+    if (padre.edad >= padre.edadMinimaReproduccion && madre.edad >= madre.edadMinimaReproduccion) {
+        return hijo;
+    } else {
+        // Si no cumplen con la edad mínima, retorna un animal "nulo" o vacío
+        Animal nulo;
+        nulo.tipo = "Nulo";
+        return nulo;
     }
-
-    cout << "Se han producido " << num_nacimientos << " nacimientos." << endl;
 }
 
 int main() {
-    // Inicializar la semilla para la generación aleatoria
-    srand(static_cast<unsigned int>(time(nullptr)));
+    // Inicializar tu población inicial de animales
+    vector<Animal> animales;
+    int numSemanas = 100;
 
-    // Inicializar una población de animales
-    vector<Animal> poblacion;
+    // Contadores para el resumen
+    int nacimientosSemanal = 0;
+    vector<int> conteoPorEdad(10, 0); // Asumiendo que la edad máxima es 10 semanas
 
-    // Agregar 2000 venados, 50 pumas, 50 lobos y 25 cuervos
-    for (int i = 0; i < 2000; i++) {
-        Genero genero = static_cast<Genero>(rand() % 2); // 0 para MACHO, 1 para HEMBRA
-        poblacion.push_back({"Venado", 50.0, 104, genero});
+    // Inicializar venados
+    for (int i = 0; i < 2000; ++i) {
+        Animal venado;
+        venado.tipo = "Venado";
+        venado.energia = 100;
+        venado.edad = rand() % 5 + 1;
+        venado.edadMinimaReproduccion = 2; // Edad mínima de reproducción para venados
+        venado.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        animales.push_back(venado);
     }
 
-    for (int i = 0; i < 50; i++) {
-        Genero genero = static_cast<Genero>(rand() % 2); // 0 para MACHO, 1 para HEMBRA
-        poblacion.push_back({"Puma", 50.0, 78, genero});
+    // Inicializar cuervos
+    for (int i = 0; i < 10; ++i) {
+        Animal cuervo;
+        cuervo.tipo = "Cuervo";
+        cuervo.energia = 80;
+        cuervo.edad = rand() % 5 + 1;
+        cuervo.edadMinimaReproduccion = 1; // Edad mínima de reproducción para cuervos
+        cuervo.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        animales.push_back(cuervo);
     }
 
-    for (int i = 0; i < 50; i++) {
-        Genero genero = static_cast<Genero>(rand() % 2); // 0 para MACHO, 1 para HEMBRA
-        poblacion.push_back({"Lobo", 50.0, 78, genero});
+    // Inicializar pumas
+    for (int i = 0; i < 20; ++i) {
+        Animal puma;
+        puma.tipo = "Puma";
+        puma.energia = 150;
+        puma.edad = rand() % 5 + 1;
+        puma.edadMinimaReproduccion = 3; // Edad mínima de reproducción para pumas
+        puma.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        animales.push_back(puma);
     }
 
-    for (int i = 0; i < 25; i++) {
-        Genero genero = static_cast<Genero>(rand() % 2); // 0 para MACHO, 1 para HEMBRA
-        poblacion.push_back({"Cuervo", 50.0, 104, genero});
+    // Inicializar jaguares
+    for (int i = 0; i < 20; ++i) {
+        Animal jaguar;
+        jaguar.tipo = "Jaguar";
+        jaguar.energia = 200;
+        jaguar.edad = rand() % 5 + 1;
+        jaguar.edadMinimaReproduccion = 4; // Edad mínima de reproducción para jaguares
+        jaguar.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        animales.push_back(jaguar);
     }
 
-    // Realizar la reproducción
-    reproduccion(poblacion, 0); // Semana 0
+    // Simulación semanal
+    for (int semana = 1; semana <= numSemanas; ++semana) {
+        int nacimientosEnEstaSemana = 0;
 
-    // Avanzar dos semanas adicionales (ciclos semanales)
-    for (int semana = 0; semana < 2; semana++) {
-        reproduccion(poblacion, semana + 1); // Ajustar la semana actual
-    }
-
-    // Actualizar la edad de los animales
-    for (Animal& animal : poblacion) {
-        animal.edad++;
-    }
-
-    // Imprimir todos los animales en la población después de las 3 semanas
-    for (const Animal& animal : poblacion) {
-        cout << "Tipo: " << animal.tipo << ", Energía: " << animal.energia << ", Edad: " << animal.edad << " semanas, Genero: " << (animal.genero == MACHO ? "MACHO" : "HEMBRA") << endl;
-    }
-
-    // Calcular el resumen
-    int total_venados = 0;
-    int machos_venado = 0;
-    int hembras_venado = 0;
-    int total_cuervos = 0;
-    int machos_cuervo = 0;
-    int hembras_cuervo = 0;
-    int total_lobos = 0;
-    int machos_lobo = 0;
-    int hembras_lobo = 0;
-    int total_pumas = 0;
-    int machos_puma = 0;
-    int hembras_puma = 0;
-    double suma_energia = 0;
-
-    for (const Animal& animal : poblacion) {
-        if (animal.tipo == "Venado") {
-            total_venados++;
-            if (animal.genero == MACHO) {
-                machos_venado++;
-            } else {
-                hembras_venado++;
-            }
-        } else if (animal.tipo == "Cuervo") {
-            total_cuervos++;
-            if (animal.genero == MACHO) {
-                machos_cuervo++;
-            } else {
-                hembras_cuervo++;
-            }
-        } else if (animal.tipo == "Lobo") {
-            total_lobos++;
-            if (animal.genero == MACHO) {
-                machos_lobo++;
-            } else {
-                hembras_lobo++;
-            }
-        } else if (animal.tipo == "Puma") {
-            total_pumas++;
-            if (animal.genero == MACHO) {
-                machos_puma++;
-            } else {
-                hembras_puma++;
+        // Lógica de reproducción
+        for (size_t i = 0; i < animales.size(); ++i) {
+            for (size_t j = i + 1; j < animales.size(); ++j) {
+                Animal hijo = reproducirse(animales[i], animales[j]);
+                if (hijo.tipo != "Nulo") {
+                    animales.push_back(hijo);
+                    nacimientosEnEstaSemana++;
+                }
             }
         }
 
-        suma_energia += animal.energia;
+        // Actualizar el contador semanal
+        nacimientosSemanal += nacimientosEnEstaSemana;
+
+        // Actualizar conteo por edad
+        for (const auto& animal : animales) {
+            conteoPorEdad[animal.edad]++;
+        }
+
+        // Otras acciones semanales...
     }
 
-    double promedio_energia = suma_energia / poblacion.size();
-
-    // Imprimir el resumen
-    cout << "Resumen:" << endl;
-    cout << "Total de Venados: " << total_venados << " (Machos: " << machos_venado << ", Hembras: " << hembras_venado << ")" << endl;
-    cout << "Total de Cuervos: " << total_cuervos << " (Machos: " << machos_cuervo << ", Hembras: " << hembras_cuervo << ")" << endl;
-    cout << "Total de Lobos: " << total_lobos << " (Machos: " << machos_lobo << ", Hembras: " << hembras_lobo << ")" << endl;
-    cout << "Total de Pumas: " << total_pumas << " (Machos: " << machos_puma << ", Hembras: " << hembras_puma << ")" << endl;
-    cout << "Promedio de Energía: " << promedio_energia << endl;
+    // Imprimir resumen
+    cout << "Resumen de nacimientos semanal: " << nacimientosSemanal << " animales" << endl;
+    cout << "Conteo de animales por edad:" << endl;
+    for (size_t i = 0; i < conteoPorEdad.size(); ++i) {
+        cout << "Edad " << i << " semanas: " << conteoPorEdad[i] << " animales" << endl;
+    }
 
     return 0;
 }
