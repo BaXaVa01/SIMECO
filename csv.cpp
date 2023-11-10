@@ -244,7 +244,4 @@ void GuardardatosSIMECO(string &usuario, directorios &directorio)
     cargarDatosBinario(datosCargados, nombreBin, directorio.folderD);
 
     // Mostrar datos
-
-    cout << datosCargados.poblacionTotalEspecie1 << endl;
-    cout << datosCargados.huracanes << endl;
 }

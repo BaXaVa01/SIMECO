@@ -164,5 +164,19 @@ void createFolder(string usuario) {
     fclose(ecosistemaFileClonado);
 }
 
+bool verificarPartidas(string directorio, string usuario){
+    string dir = directorio + "\\"+ usuario +"\\animales\\ciclo0.bin";
+    FILE *archivo = fopen(dir.c_str(), "rb");
+    if (archivo != NULL)
+    {
+        fclose(archivo);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 
