@@ -8,7 +8,7 @@ using namespace std;
 
 enum class TipoDesastre {
     Incendio,
-    Terremoto,
+    inundacion,
     Sequia,
     Huracan
 };
@@ -146,8 +146,8 @@ void generarDesastre(Ecosistema& ecosistema, TipoDesastre tipoDesastre) {
         case TipoDesastre::Incendio:
             cout << "Incendio" << endl;
             break;
-        case TipoDesastre::Terremoto:
-            cout << "Terremoto" << endl;
+        case TipoDesastre::inundacion:
+            cout << "inundacion" << endl;
             break;
         case TipoDesastre::Sequia:
             cout << "Sequia" << endl;
@@ -220,7 +220,7 @@ int main() {
                 cout << "Generar desastre:\n" << endl;
                 cout << "Tipos de desastre:" << endl;
                 cout << "1. Incendio" << endl;
-                cout << "2. Terremoto" << endl;
+                cout << "2. inundacion" << endl;
                 cout << "3. Sequia" << endl;
                 cout << "4. Huracan" << endl;
                 cout << "\nIngrese el numero correspondiente al tipo de desastre: ";
@@ -231,7 +231,7 @@ int main() {
                         generarDesastre(ecosistema, TipoDesastre::Incendio);
                         break;
                     case 2:
-                        generarDesastre(ecosistema, TipoDesastre::Terremoto);
+                        generarDesastre(ecosistema, TipoDesastre::inundacion);
                         break;
                     case 3:
                         generarDesastre(ecosistema, TipoDesastre::Sequia);
