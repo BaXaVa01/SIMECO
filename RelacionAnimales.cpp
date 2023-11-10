@@ -1,254 +1,162 @@
 #include <iostream>
-#include <string>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
-#include <set>
-#include <map>
-#include <random>
+#include <string>
 
 using namespace std;
 
-struct NombreAnimal {
-    string tipo;
-    int generacion;
-
-    NombreAnimal(string _tipo, int _generacion) : tipo(_tipo), generacion(_generacion) {}
+enum Genero {
+    MACHO,
+    HEMBRA
 };
 
 struct Animal {
-    NombreAnimal nombre;
+    string tipo;
     double energia;
-    int semanasParaReproducir;
-    int semanasPasadas;
-    bool haComido;
-    int venadosCazados;
     int edad;
-    bool estaVivo;
-    int semanasSinCazar; 
-
-    Animal(NombreAnimal _nombre, double _energia, int _semanasParaReproducir)
-        : nombre(_nombre), energia(_energia), semanasParaReproducir(_semanasParaReproducir),
-          semanasPasadas(0), haComido(false), venadosCazados(0), edad(0), estaVivo(true) {}
+    int edadMinimaReproduccion;
+    Genero genero;
+    int semanasDesdeUltimaCria;
 };
 
-struct Recurso {
-    string tipo;
-    double energia;
+int numSemanas = 10;
+vector<Animal> animales;
 
-    Recurso(string _tipo, double _energia) : tipo(_tipo), energia(_energia) {}
-};
-
-struct Carroña {
-    string tipo;
-    double energia;
-
-    Carroña(string _tipo, double _energia) : tipo(_tipo), energia(_energia) {}
-};
-
-bool Probabilidad(double prob) {
-    return (rand() % 100) < prob;
-}
-
-int GenerarNacimientosAleatorios(mt19937& rng, uniform_int_distribution<int>& distribucion) {
-    return distribucion(rng);
-}
-
-void Simular(map<int, vector<Animal>>& animalesPorGeneracion, set<string>& generaciones, int& poblacionVenados, vector<Recurso>& recursos) {
-    for (int i = 0; i < 13; i++) {
-        cout << "Semana " << i + 1 << " - Resumen:" << endl;
-
-        int venadosMuertos = 0;
-
-        mt19937 rng(static_cast<unsigned>(time(0)));
-        uniform_int_distribution<int> distribucionNacimientosVenado(0, 60);
-        uniform_int_distribution<int> distribucionNacimientosLoboPuma(0, 10);
-        uniform_int_distribution<int> distribucionNacimientosCuervo(0, 20);
-
-        int nacimientosVenados = GenerarNacimientosAleatorios(rng, distribucionNacimientosVenado);
-        int nacimientosLobos = GenerarNacimientosAleatorios(rng, distribucionNacimientosLoboPuma);
-        int nacimientosPumas = GenerarNacimientosAleatorios(rng, distribucionNacimientosLoboPuma);
-        int nacimientosCuervos = GenerarNacimientosAleatorios(rng, distribucionNacimientosCuervo);
-
-        for (auto& [generacion, animales] : animalesPorGeneracion) {
-            for (int j = 0; j < nacimientosVenados; j++) {
-                animales.push_back(Animal(NombreAnimal("Venado", generacion), 50.0, 3));
-            }
-
-            for (int j = 0; j < nacimientosLobos; j++) {
-                animales.push_back(Animal(NombreAnimal("Lobo", generacion), 50.0, 4));
-            }
-
-            for (int j = 0; j < nacimientosPumas; j++) {
-                animales.push_back(Animal(NombreAnimal("Puma", generacion), 50.0, 5));
-            }
-
-            for (int j = 0; j < nacimientosCuervos; j++) {
-                animales.push_back(Animal(NombreAnimal("Cuervo", generacion), 50.0, 2));
-            }
-
-            for (size_t j = 0; j < animales.size(); j++) {
-                animales[j].edad++;
-                if (animales[j].edad >= 40) {
-                    animales[j].estaVivo = false;
-                }
-
-                if (animales[j].estaVivo) {
-                    animales[j].energia -= 1;
-                    if (animales[j].energia > 100) {
-                        animales[j].energia = 100;
-                    }
-                    animales[j].haComido = false;
-
-                    if (animales[j].energia == 100) {
-                        animales[j].semanasPasadas++;
-                    }
-
-                    if (animales[j].semanasPasadas == 3) {
-                        animales[j].semanasPasadas = 0;
-                        animales[j].energia = 0;
-                    }
-
-                    if (animales[j].nombre.tipo == "Venado") {
-                        for (auto& recurso : recursos) {
-                            if (animales[j].energia < 100 && Probabilidad(20)) {
-                                animales[j].energia += recurso.energia;
-                                recurso.energia = 0;
-                                animales[j].haComido = true;
-                            }
-                        }
-                    }
-
-                    if (animales[j].semanasPasadas >= animales[j].semanasParaReproducir) {
-                        int nuevaGeneracion = animales[j].nombre.generacion + 1;
-                        string nuevoNombre = animales[j].nombre.tipo + to_string(nuevaGeneracion);
-                        while (generaciones.count(nuevoNombre) > 0) {
-                            nuevaGeneracion++;
-                            nuevoNombre = animales[j].nombre.tipo + to_string(nuevaGeneracion);
-                        }
-                        generaciones.insert(nuevoNombre);
-                        NombreAnimal nuevoNombreAnimal(animales[j].nombre.tipo, nuevaGeneracion);
-                        Animal hijo(nuevoNombreAnimal, 50.0, animales[j].semanasParaReproducir);
-                        animales.push_back(hijo);
-
-                        if (animales[j].nombre.tipo == "Lobo") {
-                            nacimientosLobos++;
-                        }
-                        else if (animales[j].nombre.tipo == "Puma") {
-                            nacimientosPumas++;
-                        }
-                        else if (animales[j].nombre.tipo == "Cuervo") {
-                            nacimientosCuervos++;
-                        }
-
-                        animales[j].semanasPasadas = 0;
-                    } else {
-                        animales[j].semanasPasadas++;
-                    }
-                }
-            }
-        }
-
-        for (auto& [generacion, animales] : animalesPorGeneracion) {
-            for (size_t j = 0; j < animales.size(); j++) {
-                if (animales[j].estaVivo) {
-                    if (!animales[j].haComido && (animales[j].nombre.tipo == "Lobo" || animales[j].nombre.tipo == "Puma")) {
-                        for (size_t k = 0; k < animales.size(); k++) {
-                            if (j != k && animales[k].nombre.tipo == "Venado") {
-                                if (animales[k].estaVivo) {
-                                    if (!animales[j].haComido && Probabilidad(30)) {
-                                        double probExito = 50.0;
-                                        double probHerido = 20.0;
-                                        double probCazado = 50.0;
-
-                                        if (animales[j].energia < 25) {
-                                            probExito = 10.0;
-                                        }
-                                        else if (animales[j].energia < 50) {
-                                            probExito = 30.0;
-                                        }
-
-                                        if (Probabilidad(probExito)) {
-                                            if (Probabilidad(probHerido)) {
-                                                animales[k].energia -= 10;
-                                                animales[j].energia -= 10;
-                                            }
-                                            else if (Probabilidad(probCazado)) {
-                                                animales[j].energia = 0;
-                                                animales[j].haComido = true;
-                                                animales[k].venadosCazados++;
-                                                venadosMuertos++;
-                                                animales[k].estaVivo = false;
-                                                animales[j].semanasSinCazar = 0;
-                                            }
-                                            else {
-                                                animales[k].energia -= 5;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        cout << "Venados muertos: " << venadosMuertos << endl;
-        cout << "Nacimientos de Lobos: " << nacimientosLobos << endl;
-        cout << "Nacimientos de Pumas: " << nacimientosPumas << endl;
-        cout << "Nacimientos de Cuervos: " << nacimientosCuervos << endl;
-
-        // Calcular el promedio de energía por tipo de animal
-        map<string, double> promedioEnergiaPorTipo;
-        map<string, int> contadorPorTipo;
-        for (auto& [generacion, animales] : animalesPorGeneracion) {
-            for (size_t j = 0; j < animales.size(); j++) {
-                if (animales[j].estaVivo) {
-                    promedioEnergiaPorTipo[animales[j].nombre.tipo] += animales[j].energia;
-                    contadorPorTipo[animales[j].nombre.tipo]++;
-                }
-            }
-        }
-
-        cout << "Promedio de energia por tipo de animal:" << endl;
-        for (const auto& [tipo, sumaEnergia] : promedioEnergiaPorTipo) {
-            double promedio = sumaEnergia / contadorPorTipo[tipo];
-            cout << tipo << ": " << promedio << endl;
-        }
-
-        // Calcular el promedio de energía de todos los animales vivos
-        double promedioEnergiaTotal = 0;
-        int contadorTotal = 0;
-        for (auto& [generacion, animales] : animalesPorGeneracion) {
-            for (size_t j = 0; j < animales.size(); j++) {
-                if (animales[j].estaVivo) {
-                    promedioEnergiaTotal += animales[j].energia;
-                    contadorTotal++;
-                }
-            }
-        }
-
-        cout << "Promedio de energia de todos los animales vivos: " << promedioEnergiaTotal / contadorTotal << endl;
+Animal reproducirse(const Animal& padre, const Animal& madre) {
+    if (padre.tipo != madre.tipo || (madre.genero == HEMBRA && madre.semanasDesdeUltimaCria < 5)) {
+        Animal nulo;
+        nulo.tipo = "Nulo";
+        return nulo;
     }
+
+    Animal hijo;
+    hijo.tipo = padre.tipo;
+    hijo.energia = (padre.energia + madre.energia) / 2;
+    hijo.edad = 0;
+    hijo.edadMinimaReproduccion = madre.edadMinimaReproduccion;
+    hijo.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+
+    if (hijo.edadMinimaReproduccion <= 0 || (padre.edad >= padre.edadMinimaReproduccion && madre.edad >= madre.edadMinimaReproduccion)) {
+        hijo.semanasDesdeUltimaCria = (hijo.genero == HEMBRA) ? 0 : madre.semanasDesdeUltimaCria + 1;
+
+        Animal madreCopia = madre;
+
+        if (madreCopia.genero == HEMBRA && hijo.genero == HEMBRA && madreCopia.semanasDesdeUltimaCria == 0) {
+            madreCopia.energia -= 10;
+        }
+
+        return hijo;
+    } else {
+        Animal nulo;
+        nulo.tipo = "Nulo";
+        return nulo;
+    }
+}
+
+void imprimirResumen(const string& mensaje, int animalesMuertos) {
+    cout << mensaje << endl;
+    int numMachos = 0, numHembras = 0, numNacimientos = 0;
+
+    for (const auto& animal : animales) {
+        if (animal.genero == MACHO) {
+            numMachos++;
+        } else if (animal.genero == HEMBRA) {
+            numHembras++;
+        }
+    }
+
+    for (size_t i = 0; i < animales.size(); ++i) {
+        if (animales[i].semanasDesdeUltimaCria == 0 && animales[i].genero == HEMBRA) {
+            numNacimientos++;
+        }
+    }
+
+    cout << "Machos: " << numMachos << ", Hembras: " << numHembras << ", Nacimientos: " << numNacimientos << ", Animales Muertos: " << animalesMuertos << endl;
 }
 
 int main() {
-    srand(static_cast<unsigned>(time(0)));
-    map<int, vector<Animal>> animalesPorGeneracion;
-    set<string> generaciones;
-    int poblacionVenados = 200;
+    srand(time(0));
 
-    for (int i = 1; i <= poblacionVenados; i++) {
-        animalesPorGeneracion[poblacionVenados].push_back(Animal(NombreAnimal("Venado", poblacionVenados), 50.0, 3));
+    for (int i = 0; i < 20; ++i) {
+        Animal venado;
+        venado.tipo = "Venado";
+        venado.energia = 100;
+        venado.edad = rand() % 53 + 52;
+        venado.edadMinimaReproduccion = 52;
+        venado.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        venado.semanasDesdeUltimaCria = 0;
+        animales.push_back(venado);
     }
 
-    vector<Recurso> recursos;
-    recursos.push_back(Recurso("Recurso1", 20.0));
-    recursos.push_back(Recurso("Recurso2", 20.0));
-    recursos.push_back(Recurso("Recurso3", 20.0));
+    for (int i = 0; i < 5; ++i) {
+        Animal cuervo;
+        cuervo.tipo = "Cuervo";
+        cuervo.energia = 100;
+        cuervo.edad = rand() % 53 + 52;
+        cuervo.edadMinimaReproduccion = 52;
+        cuervo.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        cuervo.semanasDesdeUltimaCria = 0;
+        animales.push_back(cuervo);
+    }
 
-    Simular(animalesPorGeneracion, generaciones, poblacionVenados, recursos);
+    for (int i = 0; i < 10; ++i) {
+        Animal puma;
+        puma.tipo = "Puma";
+        puma.energia = 100;
+        puma.edad = rand() % 36 + 36;  
+        puma.edadMinimaReproduccion = 36;
+        puma.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        puma.semanasDesdeUltimaCria = 0;
+        animales.push_back(puma);
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        Animal jaguar;
+        jaguar.tipo = "Jaguar";
+        jaguar.energia = 100;
+        jaguar.edad = rand() % 36 + 36;  
+        jaguar.edadMinimaReproduccion = 36;
+        jaguar.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+        jaguar.semanasDesdeUltimaCria = 0;
+        animales.push_back(jaguar);
+    }
+
+    imprimirResumen("Poblacion inicial:", 0);
+
+    for (int semana = 1; semana <= numSemanas; ++semana) {
+        int nacimientosEnEstaSemana = 0;
+        int animalesMuertosEnEstaSemana = 0;
+
+        for (size_t i = 0; i < animales.size(); ++i) {
+            for (size_t j = i + 1; j < animales.size(); ++j) {
+                Animal hijo = reproducirse(animales[i], animales[j]);
+                if (hijo.tipo != "Nulo") {
+                    animales.push_back(hijo);
+                    nacimientosEnEstaSemana++;
+                }
+            }
+        }
+
+        for (size_t i = 0; i < animales.size(); ++i) {
+            animales[i].edad++;
+            animales[i].energia -= 5;
+
+            if (animales[i].genero == HEMBRA && animales[i].edad >= animales[i].edadMinimaReproduccion) {
+                animales[i].semanasDesdeUltimaCria++;
+            }
+
+            if (animales[i].genero == HEMBRA && animales[i].semanasDesdeUltimaCria == 0) {
+                animales[i].energia -= 10;
+            }
+
+            if (animales[i].energia <= 0 || animales[i].edad > 520) {
+                animalesMuertosEnEstaSemana++;
+            }
+        }
+
+        imprimirResumen("Resumen semana " + to_string(semana) + ":", animalesMuertosEnEstaSemana);
+    }
 
     return 0;
 }
