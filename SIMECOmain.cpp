@@ -7,17 +7,16 @@ directorios path;
 
 int main()
 {
-   setlocale(LC_ALL, "spanish");
-    
+    setlocale(LC_ALL, "spanish");
     string usuario;
-    MenuLogin(usuario);
-    cout<< usuario << endl;
+
+    MenuLogin(usuario); 
+    
 
     searchDir(usuario, path);
-    cout << endl << path.folder1 << endl;
-    cout << path.folder2 << endl;
-    cout << path.folder3 << endl;
-    cout << path.folderD << endl;
+
+    postLogin(usuario, path.folder1);
+
     
     return 0;
 }

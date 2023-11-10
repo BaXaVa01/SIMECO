@@ -136,6 +136,11 @@ void aMinusculas(char *cadena) {
     }
 }
 
+/**
+ * @brief Displays a menu for creating a new user account or logging in with an existing one.
+ * 
+ * @param usuario A reference to a string that will be updated with the name of the logged in user.
+ */
 void MenuLogin(string &usuario)
 {
     const char *archivoUsuarios = "usuarios.bin";
@@ -143,6 +148,7 @@ void MenuLogin(string &usuario)
     string nombreUsuario, contrasena, UsuarioConGuiones;
     directorios directorio;
     int opcion;
+   
 
     do
     {
@@ -167,20 +173,23 @@ void MenuLogin(string &usuario)
             if (nombreUsuarioExistente(archivoUsuarios, nuevoUsuario.nombreUsuario))
             {
                 cout << "El nombre de usuario ya existe. Por favor, elija otro." << endl;
-            }
-            else
-            {
-                cout << "Contraseña: ";
-                cin.getline(nuevoUsuario.contrasena, 100);
-                registrarUsuario(archivoUsuarios, nuevoUsuario);
-                UsuarioConGuiones=nuevoUsuario.nombreUsuario;
-                prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
-                createFolder(UsuarioConGuiones);
-                searchDir(UsuarioConGuiones,directorio);
-                GuardardatosSIMECO(UsuarioConGuiones,directorio);
-                cout << "Presione Enter para continuar...";
                 cin.get();
+                break;
             }
+            
+            cout << "Contraseña: ";
+            cin.getline(nuevoUsuario.contrasena, 100);
+            registrarUsuario(archivoUsuarios, nuevoUsuario);
+            UsuarioConGuiones=nuevoUsuario.nombreUsuario;
+            prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
+            createFolder(UsuarioConGuiones);
+            searchDir(UsuarioConGuiones,directorio);
+            GuardardatosSIMECO(UsuarioConGuiones,directorio);
+            
+            cin.get();
+                
+            
+            
             break;
         }
         case 2:
@@ -215,11 +224,54 @@ void MenuLogin(string &usuario)
         }
         case 3:
             cout << "Saliendo del programa." << endl;
+            opcion = 3;
             break;
         default:
             cout << "Opción no válida. Inténtelo de nuevo." << endl;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
         }
-    } while (opcion != 3);
+    } while(opcion != 3);
+}
+
+void postLogin(string usuario, string directorio){
+    system("cls");
+    cout << "Bienvenido, " << usuario << "!" << endl;
+    bool opcion = verificarPartidas(directorio, usuario);
+    if (opcion == true){
+        cout << "Tienes partidas guardadas, ¿deseas cargar alguna?" << endl;
+        cout << "1. Si" << endl;
+        cout << "2. No" << endl;
+        cout << "Elija una opción: ";
+        cin >> opcion;
+        cin.ignore();
+        if (opcion == 1){
+            //cargarPartida(directorio, usuario);
+        }
+        else{
+            cout << "No se cargó ninguna partida." << endl;
+        }
+    }
+    else{
+        int opcion;
+        cout << "Bienvenido a SIMECO, " << usuario << "!" << endl;
+        cout << "Que desea hacer?" << endl;
+        cout << "1. Seleccione los ciclos que desea simular" << endl;
+        cout << "2. Salir" << endl;
+        cout << "Elija una opción: ";
+        cin >> opcion;
+        cin.ignore();
+
+        switch (opcion)
+        {
+        case 1:
+            //simularCiclos(directorio, usuario);
+            break;
+        case 2:
+            cout << "Saliendo del programa." << endl;
+            break;
+        }
+
+    }
+
 }
