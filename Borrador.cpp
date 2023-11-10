@@ -11,6 +11,18 @@ enum Genero {
     HEMBRA
 };
 
+enum TipoDeConsumo {
+    HERBIVORO,
+    CARNIVORO,
+    CARRONERO
+};
+
+enum Tamano {
+    MEDIANO,
+    GRANDE,
+    PEQUENO
+};
+
 struct Animal {
     string tipo;
     double energia;
@@ -18,14 +30,44 @@ struct Animal {
     int edadMinimaReproduccion;
     Genero genero;
     int semanasDesdeUltimaCria;  // Nueva variable para controlar el tiempo de pausa
+    TipoDeConsumo tipoDeConsumo;  // Nuevo dato para el tipo de consumo
+    Tamano tamano;  // Nuevo dato para el tamaño
 };
 
-// Variables globales
-int numSemanas = 10;  // Ajusta según tus necesidades
-vector<Animal> animales;
+int numSemanas = 12; 
+
+void cazar(Animal& depredador, Animal& presa, vector<Animal>& animales, vector<Animal>& animalesMuertos) {
+    // Simular la caza y alimentación
+    if (depredador.tipoDeConsumo == CARNIVORO && presa.tipoDeConsumo == HERBIVORO) {
+        // Verificar la compatibilidad de tamaño para el consumo
+        if (depredador.tamano == GRANDE || (depredador.tamano == MEDIANO && presa.tamano != GRANDE) ||
+            (depredador.tamano == PEQUENO && presa.tamano == PEQUENO)) {
+            depredador.energia += 20;  // Incrementar la energía del carnívoro al cazar un herbívoro
+            presa.energia -= 20;  // Reducir la energía del herbívoro al ser cazado
+
+            // Transferir parte de la energía del venado a la carroña
+            int energiaTransferida = 5;
+            for (auto& animal : animales) {
+                if (animal.tipoDeConsumo == CARRONERO && animal.tipo == "Carrona") {
+                    animal.energia += energiaTransferida;
+                    break;  // Transferir la energía a un solo carroñero
+                }
+            }
+        } else {
+            // Carnívoro no puede cazar a este herbívoro debido al tamaño
+            cout << "El " << depredador.tipo << " no puede cazar al " << presa.tipo << " debido al tamaño." << endl;
+        }
+    } else if (depredador.tipoDeConsumo == CARRONERO && presa.tipoDeConsumo == CARRONERO) {
+        depredador.energia += 10;  // Incrementar la energía del carroñero al alimentarse de carroña
+        presa.energia -= 10;  // Reducir la energía de la carroña al ser consumida
+
+        // Registrar animal muerto por interacción
+        animalesMuertos.push_back(presa);
+    }
+}
 
 Animal reproducirse(const Animal& padre, const Animal& madre) {
-    // Verificar si los animales son del mismo tipo y si la hembra ha pasado suficiente tiempo desde la última cría
+    // Lógica de reproducción
     if (padre.tipo != madre.tipo || (madre.genero == HEMBRA && madre.semanasDesdeUltimaCria < 5)) {
         // Si no cumplen con las condiciones, retornar un animal "nulo" o vacío
         Animal nulo;
@@ -62,10 +104,13 @@ Animal reproducirse(const Animal& padre, const Animal& madre) {
     }
 }
 
-void imprimirPoblacion(const string& mensaje) {
+void imprimirPoblacion(const string& mensaje, const vector<Animal>& animales) {
     cout << mensaje << endl;
     for (const auto& animal : animales) {
-        cout << "Tipo: " << animal.tipo << ", Edad: " << animal.edad << " semanas, Genero: " << (animal.genero == MACHO ? "MACHO" : "HEMBRA") << ", Energia: " << animal.energia;
+        cout << "Tipo: " << animal.tipo << ", Edad: " << animal.edad << " semanas, Genero: " << (animal.genero == MACHO ? "MACHO" : "HEMBRA")
+             << ", Energia: " << animal.energia << ", Tipo de Consumo: " << (animal.tipoDeConsumo == HERBIVORO ? "HERBIVORO" : (animal.tipoDeConsumo == CARNIVORO ? "CARNIVORO" : "CARRONERO"))
+             << ", Tamano: " << (animal.tamano == MEDIANO ? "MEDIANO" : (animal.tamano == GRANDE ? "GRANDE" : "PEQUENO"));
+
         if (animal.genero == HEMBRA && animal.edad >= animal.edadMinimaReproduccion) {
             cout << ", Semanas desde la ultima cria: " << animal.semanasDesdeUltimaCria;
         }
@@ -75,6 +120,9 @@ void imprimirPoblacion(const string& mensaje) {
 
 int main() {
     // Inicializar la población de venados
+    vector<Animal> animales;
+    vector<Animal> animalesMuertos; 
+
     for (int i = 0; i < 20; ++i) {
         Animal venado;
         venado.tipo = "Venado";
@@ -83,6 +131,9 @@ int main() {
         venado.edadMinimaReproduccion = 52;  // Edad mínima de reproducción para venados
         venado.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
         venado.semanasDesdeUltimaCria = 0;
+        venado.tipoDeConsumo = HERBIVORO;
+        venado.tamano = MEDIANO;  // Asignar tamaño según tus necesidades
+
         animales.push_back(venado);
     }
 
@@ -95,6 +146,9 @@ int main() {
         cuervo.edadMinimaReproduccion = 52;  // Edad mínima de reproducción para cuervos
         cuervo.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
         cuervo.semanasDesdeUltimaCria = 0;
+        cuervo.tipoDeConsumo = CARRONERO;
+        cuervo.tamano = PEQUENO;  // Asignar tamaño según tus necesidades
+
         animales.push_back(cuervo);
     }
 
@@ -107,10 +161,12 @@ int main() {
         puma.edadMinimaReproduccion = 36;  // Edad mínima de reproducción para pumas
         puma.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
         puma.semanasDesdeUltimaCria = 0;
+        puma.tipoDeConsumo = CARNIVORO;
+        puma.tamano = GRANDE;  // Asignar tamaño según tus necesidades
+
         animales.push_back(puma);
     }
 
-    // Inicializar la población de jaguares
     for (int i = 0; i < 10; ++i) {
         Animal jaguar;
         jaguar.tipo = "Jaguar";
@@ -122,10 +178,8 @@ int main() {
         animales.push_back(jaguar);
     }
 
-    // Imprimir la población inicial
-    imprimirPoblacion("Poblacion inicial:");
 
-    // Simulación semanal
+    // Inicializar la población de jaguares
     for (int semana = 1; semana <= numSemanas; ++semana) {
         int nacimientosEnEstaSemana = 0;
 
@@ -164,7 +218,7 @@ int main() {
         }
 
         // Imprimir la población al final de cada semana
-        imprimirPoblacion("Poblacion al final de la semana " + to_string(semana) + ":");
+        imprimirPoblacion("Poblacion al final de la semana " + to_string(semana) + ":", animales);
     }
 
     return 0;
