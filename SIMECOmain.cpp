@@ -1,5 +1,6 @@
 #include "Login.cpp"
-
+#include "SIMECOFV.cpp"
+#include "barraDeCarga.cpp"
 
 using namespace std;
 
@@ -14,9 +15,10 @@ int main()
     
 
     searchDir(usuario, path);
+    system("cls");
+    barraCarga(5);
 
-    postLogin(usuario, path.folder1);
-
+    simecoFV();
     
     return 0;
 }

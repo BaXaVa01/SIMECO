@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main(){
+int barraCarga(int tiempo){
 
     SMALL_RECT rect; 
     COORD coord;
@@ -21,7 +21,8 @@ int main(){
     HANDLE hwnd = GetStdHandle(STD_OUTPUT_HANDLE); // Obtener el handle de la consola
     
 
-    int segundos = 5;
+    
+
     for(int i = 0; i < 21; i++){
         cout << "\n";
     }
@@ -35,7 +36,7 @@ int main(){
     cout << "\n";
     for(int i = 0; i<=79; i++){
         cout << char(219);
-        Sleep(segundos *1000/ 80);
+        Sleep(tiempo *1000/ 80);
     }
     cout <<"\n 100%";
     return 0;

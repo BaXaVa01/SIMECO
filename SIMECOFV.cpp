@@ -1,46 +1,41 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <random>
-#include <cstdlib>
-
+#include "Estructuras&Clases.cpp"
 using namespace std;
 
-enum class TipoDesastre {
-    Incendio,
-    inundacion,
-    Sequia,
-    Huracan
-};
+// enum class TipoDesastre {
+//     Incendio,
+//     inundacion,
+//     Sequia,
+//     Huracan
+// };
 
-class Especie {
-public:
-    string nombre;
-    int poblacionInicial;
-    int poblacion;
+// class Especie {
+// public:
+//     string nombre;
+//     int poblacionInicial;
+//     int poblacion;
 
-    Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
-};
+//     Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
+// };
 
-class Recursos {
-public:
-    int agua;
-    int carrona;
-    int carne;
-    int vegetacion;
+// class Recursos {
+// public:
+//     int agua;
+//     int carrona;
+//     int carne;
+//     int vegetacion;
 
-    Recursos(int agua, int carrona, int carne, int vegetacion) : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion) {}
-};
+//     Recursos(int agua, int carrona, int carne, int vegetacion) : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion) {}
+// };
 
-class Ecosistema {
-public:
-    vector<Especie> especies;
-    Recursos recursosIniciales;
-    Recursos recursosActuales;
+// class Ecosistema {
+// public:
+//     vector<Especie> especies;
+//     Recursos recursosIniciales;
+//     Recursos recursosActuales;
 
-    Ecosistema(const vector<Especie>& especies, const Recursos& recursos)
-        : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
-};
+//     Ecosistema(const vector<Especie>& especies, const Recursos& recursos)
+//         : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
+// };
 
 void clearScreen() {
 #ifdef _WIN32
@@ -181,7 +176,7 @@ void generarDesastre(Ecosistema& ecosistema, TipoDesastre tipoDesastre) {
     cin.get();
 }
 
-int main() {
+int simecoFV() {
     vector<Especie> especies;
     Recursos recursos(100, 200, 300, 400);
     Ecosistema ecosistema(especies, recursos);
@@ -190,11 +185,12 @@ int main() {
 
     do {
         clearScreen();
-        cout << "Menu:\n" << endl;
+        cout << "               Menu:\n" << endl;
         cout << "1. Ver estado inicial del ecosistema" << endl;
         cout << "2. Ver estado actual del ecosistema" << endl;
-        cout << "3. Registrar especies" << endl;
-        cout << "4. Registrar recursos" << endl;
+        cout << "3. Registrar especies" << endl; // Eliminar opcion registrar especie
+        cout << "4. Registrar recursos" << endl; // Eliminar opcion registrar recursos
+        // agregar opcion establecer ciclo
         cout << "5. Generar desastre" << endl;
         cout << "6. Salir" << endl;
         cout << "\nIngrese una opcion: ";
