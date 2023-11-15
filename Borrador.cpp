@@ -34,7 +34,7 @@ struct Animal {
     Tamano tamano;  // Nuevo dato para el tamaño
 };
 
-int numSemanas = 12; 
+int numSemanas = 13; 
 
 void cazar(Animal& depredador, Animal& presa, vector<Animal>& animales, vector<Animal>& animalesMuertos) {
     // Simular la caza y alimentación
@@ -81,6 +81,7 @@ Animal reproducirse(const Animal& padre, const Animal& madre) {
     hijo.edad = 0;
     hijo.edadMinimaReproduccion = madre.edadMinimaReproduccion;
     hijo.genero = (rand() % 2 == 0) ? MACHO : HEMBRA;
+    hijo.tipoDeConsumo = padre.tipoDeConsumo;
 
     // Verificar edad mínima para reproducción
     if (hijo.edadMinimaReproduccion <= 0 || (padre.edad >= padre.edadMinimaReproduccion && madre.edad >= madre.edadMinimaReproduccion)) {
