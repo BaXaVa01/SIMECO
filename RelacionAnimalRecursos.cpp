@@ -46,9 +46,10 @@ public:
 
 class Especies{
     public:
-        int peso[3]; // [1]Peso minimo [2] Pedo medio [3] Peso maximo
-        float consumo[3]; // [1] Consumo minimo [2] Consumo medio [3] Consumo maximo
-        int edadRep[2]; // [1] Edad minima de reproduccion [2] Edad maxima de reproduccion Trabajaremos este apartado en semanas
+    //Atributos peso = kg, consumo = kg/semana, edad = semanas
+        int peso; // [1]Peso minimo [2] Pedo medio [3] Peso maximo
+        float consumo; // [1] Consumo minimo [2] Consumo medio [3] Consumo maximo
+        int edadRep; // [1] Edad minima de reproduccion [2] Edad maxima de reproduccion Trabajaremos este apartado en semanas
         int edadMax; //Edad maxima de vida
 
 };
@@ -56,38 +57,75 @@ class Especies{
 
 class Venado : public Especies {
     public:
+        Venado(bool genero, int edadInicial) : genero(genero), edad(edadInicial){
+            if(genero){
+                iniciarMacho();
+            }
+            else{
+                iniciarHembra();
+            }
+        }
+        void envejecer(){
+            edad++;
+            if(edad > edadMax){
+                vivo = false;
+            }
+
+        }
+    private:
+        int edadMax = 234;
         int edad;
         int hambre;
         int sed;
         bool genero;
-    private:
-        Venado(bool genero){
-            if(genero) { //macho
-                peso[1] = 68;
-                peso[2] = 102;
-                peso[3] = 136;
-                consumo[1] = 28.56;
-                consumo[2] = 42.84;
-                consumo[3] = 57.12;
-                edadRep[1] = 104;
-                edadRep[2] = 234;
-                edadMax = 234;
-            } else{ //hembra
-                peso[1] = 50;
-                peso[2] = 70;
-                peso[3] = 90;
-                consumo[1] = 10;
-                consumo[2] = 15;
-                consumo[3] = 20;
-                edadRep[1] = 2;
-                edadRep[2] = 10;
-                edadMax = 10;
-            }
+        bool vivo = true;
 
+        void iniciarMacho(){
+
+           //Cervatillo
+           if(edad >= 0 && edad < 30){
+                peso = 68;
+                consumo = 28.56;
+                return;
+           }
+           //Adolescente
+           if(edad > 30 && edad < 78){
+                peso = 102;
+                consumo = 42.84;
+                return;
+           }
+           //Adulto
+           if(edad > 78){
+                peso = 136;
+                consumo = 57.12;
+
+                return;
+           }
+// edadRep= 104;
+// edadRep[1] = 234;
+// 
+            
+        }
+        void iniciarHembra(){
+           //Cervatillo
+           if(edad >= 0 && edad < 30){
+                peso = 45;
+                consumo = 18.9;
+                return;
+           }
+           //Adolescente
+           if(edad > 30 && edad < 78){
+                peso = 72;
+                consumo = 30.45;
+                return;
+           }
+           //Adulto
+           if(edad > 78){
+                peso = 100;
+                consumo = 42.00;
+
+                return;
+           }
         }
 
 };
-
-int main(){
-
-}
