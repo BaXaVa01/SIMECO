@@ -25,7 +25,7 @@ int barraCarga(int tiempo){
         cout << "\n";
     }
     
-    cout << "\t\t\t\t\t   Cargando... \n";
+    cout << "\t\t\t\t    Cargando... \n";
 
     for(int i = 0; i <= 79; i++){
         cout <<"_";
@@ -36,6 +36,6 @@ int barraCarga(int tiempo){
         cout << char(223);
         Sleep(tiempo *1000/ 80);
     }
-    cout <<"\n 100%";
+    cout <<"\n\t\t\t\t      100%";
     return 0;
 }
