@@ -19,9 +19,7 @@ int barraCarga(int tiempo){
     rect.Right = coord.X-1; // Definir coordenadas X
 
     HANDLE hwnd = GetStdHandle(STD_OUTPUT_HANDLE); // Obtener el handle de la consola
-    
 
-    
 
     for(int i = 0; i < 21; i++){
         cout << "\n";
@@ -35,7 +33,7 @@ int barraCarga(int tiempo){
     }
     cout << "\n";
     for(int i = 0; i<=79; i++){
-        cout << char(219);
+        cout << char(223);
         Sleep(tiempo *1000/ 80);
     }
     cout <<"\n 100%";
