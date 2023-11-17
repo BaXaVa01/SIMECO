@@ -8,6 +8,7 @@ directorios path;
 
 int main()
 {
+    int ciclo = 0;
     setlocale(LC_ALL, "spanish");
     string usuario;
 
@@ -18,7 +19,7 @@ int main()
     system("cls");
     barraCarga(5);
 
-    simecoFV();
+    Fvmain(ciclo, path);
     
     return 0;
 }

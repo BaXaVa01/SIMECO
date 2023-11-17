@@ -207,7 +207,7 @@ footer .container {
 @media (min-width:850px) {
     header {
         position: fixed;
-        width: 100px;
+        width: 100%;
     }
 }
 
