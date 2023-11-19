@@ -3,11 +3,45 @@
 #include <string>
 #include <random>
 #include <cstdlib>
-#include "Guardado.cpp"
-#include "RelacionAnimalRecursos.cpp"
+
 
 using namespace std;
 
+enum class TipoDesastre {
+    Incendio,
+    Inundacion,
+    Sequia,
+    Huracan
+};
+
+class Especie {
+public:
+    string nombre;
+    int poblacionInicial;
+    int poblacion;
+
+    Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
+};
+
+class Recursos {
+public:
+    int agua;
+    int carrona;
+    int carne;
+    int vegetacion;
+
+    Recursos(int agua, int carrona, int carne, int vegetacion) : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion) {}
+};
+
+class Ecosistema {
+public:
+    vector<Especie> especies;
+    Recursos recursosIniciales;
+    Recursos recursosActuales;
+
+    Ecosistema(const vector<Especie>& especies, const Recursos& recursos)
+        : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
+};
 
 void clearScreen() {
 #ifdef _WIN32
@@ -40,7 +74,7 @@ void mostrarEstadoInicialEcosistema(const Ecosistema& ecosistema) {
 void iniciarVirtualizacion(vector<Especie>& especies, Ecosistema& recursos) {
     clearScreen();
     cout << "Iniciando virtualizacion...\n" << endl;
-
+    
 }
 
 void registrarRecursos(Recursos& recursos) {
@@ -144,8 +178,8 @@ void generarDesastre(Ecosistema& ecosistema, TipoDesastre tipoDesastre) {
     cin.ignore();
     cin.get();
 }
-
-int Fvmain(int& ciclo, directorios& path) {
+//int Fvmain(int& ciclo, directorios& path)
+int Fvmain() {
     vector<Especie> especies;
     Recursos recursos(100, 200, 300, 400);
     Ecosistema ecosistema(especies, recursos);
@@ -181,13 +215,13 @@ int Fvmain(int& ciclo, directorios& path) {
                 int tipoDesastre;
                 clearScreen();
 
-                if(ciclo == 0){
-                    cout << "Usted se encuentra en el ciclo <<0>>, se le recomienda no generar ningun desastrer\n" << endl;
-                    cin.get();
-                    clearScreen();
-                }
+                // if(ciclo == 0){
+                //     cout << "Usted se encuentra en el ciclo <<0>>, se le recomienda no generar ningun desastrer\n" << endl;
+                //     cin.get();
+                //     clearScreen();
+                // }
 
-                cout << "El ciclo en el que se encuentra es:" << ciclo << endl; 
+                cout << "El ciclo en el que se encuentra es:" << endl; 
                 cout << "Generar desastre:\n" << endl;
                 cout << "Tipos de desastre:" << endl;
                 cout << "1. Incendio" << endl;

@@ -19,7 +19,9 @@ int main()
     system("cls");
     barraCarga(5);
 
-    Fvmain(ciclo, path);
+    // Fvmain(ciclo, path);
+    Fvmain();
+
     
     return 0;
 }

@@ -47,9 +47,9 @@ public:
 class Especies{
     public:
     //Atributos peso = kg, consumo = kg/semana, edad = semanas
-        int peso; // [1]Peso minimo [2] Pedo medio [3] Peso maximo
-        float consumo; // [1] Consumo minimo [2] Consumo medio [3] Consumo maximo
-        int edadRep; // [1] Edad minima de reproduccion [2] Edad maxima de reproduccion Trabajaremos este apartado en semanas
+        int peso; 
+        float consumo; 
+        bool edadRep; 
         int edadMax; //Edad maxima de vida
 
 };
@@ -67,11 +67,12 @@ class Venado : public Especies {
         }
         void envejecer(){
             edad++;
-            if(edad > edadMax){
+            if(edad >= edadMax){
                 vivo = false;
             }
 
         }
+        
     private:
         int edadMax = 234;
         int edad;
@@ -85,26 +86,26 @@ class Venado : public Especies {
            //Cervatillo
            if(edad >= 0 && edad < 30){
                 peso = 68;
-                consumo = 28.56;
+                consumo = 28.56; //kg/semana
+                edadRep = false;
                 return;
            }
            //Adolescente
            if(edad > 30 && edad < 78){
                 peso = 102;
-                consumo = 42.84;
+                consumo = 42.84; //kg/semana
+                edadRep = false;
                 return;
            }
            //Adulto
            if(edad > 78){
                 peso = 136;
-                consumo = 57.12;
-
+                consumo = 57.12;//kg/semana
+                edadRep = true;
                 return;
            }
 // edadRep= 104;
 // edadRep[1] = 234;
-// 
-            
         }
         void iniciarHembra(){
            //Cervatillo
