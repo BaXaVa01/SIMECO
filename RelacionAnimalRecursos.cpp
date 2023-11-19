@@ -55,6 +55,7 @@ class Especies{
 };
 //Empecemos con los venados
 
+
 class Venado : public Especies {
     public:
         Venado(bool genero, int edadInicial) : genero(genero), edad(edadInicial){
@@ -70,13 +71,16 @@ class Venado : public Especies {
             if(edad >= edadMax){
                 vivo = false;
             }
+            cout << edad << endl;
+            cout << peso << endl;
+            actualizarValores();
 
         }
         
     private:
-        int edadMax = 234;
+        const int edadMax = 234; //Semanas
         int edad;
-        int hambre;
+        int hambre; //nivel de hambre del animal
         int sed;
         bool genero;
         bool vivo = true;
@@ -128,5 +132,25 @@ class Venado : public Especies {
                 return;
            }
         }
+        void actualizarValores(){
+            switch(genero){
+                case true:
+                {
+                    //FormulaDeDavide
+
+                }
+                case false:
+                {
+                    //FormulaDeDavideParaHembras
+
+                }
+            }
+                
+        }
 
 };
+
+int main(){
+    Venado venadoMacho(true, 15);
+    venadoMacho.envejecer();
+}
