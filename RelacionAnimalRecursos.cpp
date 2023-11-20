@@ -25,19 +25,33 @@ public:
     Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
 };
 
-class Recursos
-{
+class Recursos {
 public:
     int agua;
     int carrona;
     int carne;
     int vegetacion;
+    int vegetacionConsumida; // Necesitas llevar un registro de la vegetación consumida
 
-    Recursos(int agua, int carrona, int carne, int vegetacion) : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion) {}
+    Recursos(int agua, int carrona, int carne, int vegetacion) 
+        : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion), vegetacionConsumida(0) {}
 
-private:
-    
 
+    void actualizarRecursos() {
+        // Regeneración automática de agua
+        const int REGENERACION_AGUA = 10000; // Cantidad fija de agua que se regenera
+        agua += REGENERACION_AGUA;
+
+        // Regeneración de vegetación en función del agua disponible
+        const float FACTOR_REGENERACION_VEGETACION = 0.2f; // Factor que define cuánta vegetación se regenera
+        int regeneracionVegetacion = static_cast<int>(FACTOR_REGENERACION_VEGETACION * agua);
+
+        // Asegurarse de no regenerar más vegetación de la que se ha consumido
+        regeneracionVegetacion = min(regeneracionVegetacion, vegetacionConsumida);
+
+        vegetacion += regeneracionVegetacion;
+        
+    }
 };
 
 class Ecosistema
@@ -373,13 +387,31 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
         }
     }
 }
+void alimentarPumas(vector<Puma>& pumas, vector<Venado>& venados, Recursos& recursos) {
+    int consumoTotalPumas = 0;
+    for (const auto& puma : pumas) {
+        consumoTotalPumas += puma.consumo; // Asumiendo que 'consumo' es un atributo de Puma
+    }
+
+    sort(venados.begin(), venados.end(), [](const Venado& a, const Venado& b) {
+        return a.peso > b.peso; // Ordenar venados por peso, de mayor a menor
+    });
+
+    int pesoConsumido = 0;
+    auto it = venados.begin();
+    while (pesoConsumido < consumoTotalPumas && it != venados.end()) {
+        pesoConsumido += it->peso;
+        recursos.carne += it->peso; // Asumiendo que cada venado aporta su peso en carne
+        it = venados.erase(it); // Eliminar venado y avanzar al siguiente
+    }
+}
 
 void iniciarEspecies(vector<Venado>& venados, vector<Puma>& pumas){
-    for(int i = 0; i < 9; i++){
+    for(int i = 0; i < 100; i++){
         venados.push_back(Venado(true, 78));
         venados.push_back(Venado(false, 79));
     }
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < 1; i++){
         pumas.push_back(Puma(true, 26));
         pumas.push_back(Puma(false, 26));
     }
@@ -388,7 +420,7 @@ void iniciarEspecies(vector<Venado>& venados, vector<Puma>& pumas){
 int main()
 {
     vector<Venado> venados; // 10 machos y 10 hembras
-    vector<Puma> pumas;     // 5 machos y 5 hembras
+    vector<Puma> pumas;     // 1 macho y 1 hembra
 
     //Hay que incializar y agregar los venados y pumas
     iniciarEspecies(venados, pumas);
@@ -401,7 +433,7 @@ int main()
 
     Recursos recursos(100000, 10000, carneTotal, 100000);
     cout << "Cuantos ciclos queres generar?"<< endl; 
-    int cantidadCiclos;
+    int cantidadCiclos, vegetacionConsumida;
     cin >> cantidadCiclos;
     int semanas = cantidadCiclos;
     semanas *= 13;
@@ -417,9 +449,11 @@ int main()
         cout << "Presione cualquier tecla para continuar...";
         cin.ignore();
         cin.get();
+        vegetacionConsumida = recursos.vegetacion;
 
         for(int i = 0; i < semanas; i++){
             alimentarVenados(venados, recursos);
+            alimentarPumas(pumas, venados, recursos);
 
             for(auto &venado : venados)
             {
@@ -430,6 +464,9 @@ int main()
                 puma.envejecer();
             }
         }
+        vegetacionConsumida -= recursos.vegetacion;
+        recursos.vegetacionConsumida = vegetacionConsumida;
+        recursos.actualizarRecursos();
     }
     return 0;
 }
