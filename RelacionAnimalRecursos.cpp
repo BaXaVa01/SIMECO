@@ -77,6 +77,10 @@ public:
     }
     void envejecer()
     {
+        nivelHambre -= 1;
+        if(nivelHambre < 0 || nivelSed < 0){
+            vivo = false;
+        }
         edad++;
         if (edad > edadMax)
         {
@@ -89,20 +93,21 @@ public:
     void consumirRecursos(Recursos &recursos)
     {
         recursos.vegetacion -= consumo;
+        nivelHambre += 1;
+        recursos.agua -= consumo/2;
     }
 
 
 private:
-    int edadMax = 234;
+    const int edadMax = 234;
     int edad;
-    int hambre;
-    int sed;
+    int nivelHambre = 0; //Se medira en 0 o 1, cada vez que come se le suma 1, cada semana que pasa se le resta 1. Si llega a numeros negativos muere
+    int nivelSed = 1;
     bool genero;
     bool vivo = true;
 
     void iniciarMacho()
     {
-
         // Cervatillo
         if (edad >= 0 && edad <= 30)
         {
