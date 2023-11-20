@@ -8,7 +8,7 @@ directorios path;
 
 int main()
 {
-    int ciclo = 0;
+    
     setlocale(LC_ALL, "spanish");
     string usuario;
 

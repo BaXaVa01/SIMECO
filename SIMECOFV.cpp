@@ -181,6 +181,7 @@ void generarDesastre(Ecosistema& ecosistema, TipoDesastre tipoDesastre) {
 //int Fvmain(int& ciclo, directorios& path)
 int Fvmain() {
     vector<Especie> especies;
+    
     Recursos recursos(100, 200, 300, 400);
     Ecosistema ecosistema(especies, recursos);
 

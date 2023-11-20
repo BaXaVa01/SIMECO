@@ -34,6 +34,10 @@ public:
     int vegetacion;
 
     Recursos(int agua, int carrona, int carne, int vegetacion) : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion) {}
+
+private:
+    
+
 };
 
 class Ecosistema
@@ -75,9 +79,38 @@ public:
             iniciarHembra();
         }
     }
+//SACADO TOTALMENTE DE CHAT GPT 
+//NI LA PUTA MENOR IDEA DE QUE ES ESTO
+    // Constructor de Movimiento
+    Venado(Venado&& other) noexcept
+        : Especies(std::move(other)), // Asume que Especies tiene un constructor de movimiento
+          edad(other.edad),
+          nivelHambre(other.nivelHambre),
+          nivelSed(other.nivelSed),
+          genero(other.genero),
+          vivo(other.vivo) {
+        // Puedes dejar a `other` en un estado válido pero "vacío" si es necesario
+    }
+//TAMPOCO SE QUE ES ESTO
+//PERO AHORA FUNCIONA EL CODIGO :D
+    // Operador de Asignación de Movimiento
+    Venado& operator=(Venado&& other) noexcept {
+        if (this != &other) {
+            Especies::operator=(std::move(other)); // Asume que Especies tiene un operador de asignación de movimiento
+            edad = other.edad;
+            nivelHambre = other.nivelHambre;
+            nivelSed = other.nivelSed;
+            genero = other.genero;
+            vivo = other.vivo;
+            // Puedes dejar a `other` en un estado válido pero "vacío" si es necesario
+        }
+        return *this;
+    }
+
     void envejecer()
     {
         nivelHambre -= 1;
+        nivelSed -= 1;
         if(nivelHambre < 0 || nivelSed < 0){
             vivo = false;
         }
@@ -86,9 +119,9 @@ public:
         {
             vivo = false;
         }
-        cout << peso << endl;
+  
         actualizarValores();
-        cout << peso << endl;
+
     }
     void consumirRecursos(Recursos &recursos)
     {
@@ -202,8 +235,7 @@ public:
 
     void envejecer()
     {
-        cout << edad << endl;
-        cout << peso << endl;
+
         edad++;
         if (edad >= edadMax)
         {
@@ -211,8 +243,7 @@ public:
         }
 
         actualizarValores();
-        cout << edad << endl;
-        cout << peso << endl;
+
     }
 
 private:
@@ -302,6 +333,14 @@ private:
     }
 };
 
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
 void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
 {
     random_device rd;
@@ -335,9 +374,62 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
     }
 }
 
+void iniciarEspecies(vector<Venado>& venados, vector<Puma>& pumas){
+    for(int i = 0; i < 9; i++){
+        venados.push_back(Venado(true, 78));
+        venados.push_back(Venado(false, 79));
+    }
+    for(int i = 0; i < 5; i++){
+        pumas.push_back(Puma(true, 26));
+        pumas.push_back(Puma(false, 26));
+    }
+}
+
 int main()
 {
-    vector<Venado> venados;
-    vector<Puma> pumas;
+    vector<Venado> venados; // 10 machos y 10 hembras
+    vector<Puma> pumas;     // 5 machos y 5 hembras
+
+    //Hay que incializar y agregar los venados y pumas
+    iniciarEspecies(venados, pumas);
+    int carneTotal = 0;
+
+    for(const auto &venado : venados)
+    {
+        carneTotal += venado.peso;
+    }
+
+    Recursos recursos(100000, 10000, carneTotal, 100000);
+    cout << "Cuantos ciclos queres generar?"<< endl; 
+    int cantidadCiclos;
+    cin >> cantidadCiclos;
+    int semanas = cantidadCiclos;
+    semanas *= 13;
+
+    for(int i = 0; i<cantidadCiclos;i++){
+        clearScreen();
+        cout << "Ciclo: " << i+1 << endl;
+        cout << "Recursos vegetacion: " << recursos.vegetacion << endl;
+        cout << "Recursos agua: " << recursos.agua << endl;
+        cout << "Carne: " << recursos.carne << endl;
+        cout << "Venados: " << venados.size() << endl;
+        cout << "Pumas: " << pumas.size() << endl;
+        cout << "Presione cualquier tecla para continuar...";
+        cin.ignore();
+        cin.get();
+
+        for(int i = 0; i < semanas; i++){
+            alimentarVenados(venados, recursos);
+
+            for(auto &venado : venados)
+            {
+                venado.envejecer();
+            }
+            for(auto &puma : pumas)
+            {
+                puma.envejecer();
+            }
+        }
+    }
     return 0;
 }
