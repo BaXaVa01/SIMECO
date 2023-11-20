@@ -32,10 +32,10 @@ header {
     /* fallback for old browsers */
     background: -webkit-linear-gradient(to right,
             hsla(75, 95%, 50%, 0.459),
-            hsla(83, 45%, 52%, 0.664)), url(/media/jungla.jpg);
+            hsla(83, 45%, 52%, 0.664)), url(/web-simeco/media/jungla.jpg);
     background: linear-gradient(to right,
             hsla(127, 91%, 18%, 0.459),
-            hsla(164, 70%, 17%, 0.664)), url(/media/jungla.jpg);
+            hsla(164, 70%, 17%, 0.664)), url(/web-simeco/media/jungla.jpg);
     background-size: cover;
     background-attachment: fixed;
     position: relative;
