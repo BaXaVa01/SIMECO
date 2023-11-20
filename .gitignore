@@ -30,3 +30,5 @@
 *.exe
 *.out
 *.app
+/InterfazGaficaJava/loggin/nbproject/private/
+/InterfazGaficaJava/loggin/build/

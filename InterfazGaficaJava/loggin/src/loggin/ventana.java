@@ -205,15 +205,12 @@ int intentos;
             dispose();
             JOptionPane.showMessageDialog(null,"bienvenido");
 
-            try{
-
-                String desktopPath = System.getProperty("user.home") + "/desktop/";
-                String exePath= desktopPath + "SIMECOFV.exe";
-                File file = new File (exePath);
-                Desktop.getDesktop().open(file);
-
-            }    catch (IOException ex) {
-                Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                ProcessBuilder pb = new ProcessBuilder("C:\\Users\\david\\OneDrive\\Escritorio\\SIMECOmain.exe");
+                pb.start();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error al ejecutar el archivo: " + ex.getMessage());
             }
 
         }  else if(intentos==3) {

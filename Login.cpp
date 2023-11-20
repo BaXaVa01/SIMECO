@@ -6,7 +6,7 @@
 #include <cctype>
 #include <limits>
 #include "Excel.cpp"
-
+#include "SIMECOFV.cpp"
 using namespace std;
 
 struct Usuario
@@ -15,19 +15,24 @@ struct Usuario
     char contrasena[100];
 };
 
-void reemplazarEspacios(char* str, char find, char replace) {
-    for (; *str != '\0'; ++str) {
-        if (*str == find) {
+void reemplazarEspacios(char *str, char find, char replace)
+{
+    for (; *str != '\0'; ++str)
+    {
+        if (*str == find)
+        {
             *str = replace;
         }
     }
 }
 
-void prepararCadenaParaGuardar(char* cadena) {
+void prepararCadenaParaGuardar(char *cadena)
+{
     reemplazarEspacios(cadena, ' ', '-');
 }
 
-void restaurarCadenaLeida(char* cadena) {
+void restaurarCadenaLeida(char *cadena)
+{
     reemplazarEspacios(cadena, '-', ' ');
 }
 
@@ -39,11 +44,11 @@ void registrarUsuario(const char *archivo, const Usuario &usuario)
         char nombreUsuarioModificado[100];
         strcpy(nombreUsuarioModificado, usuario.nombreUsuario);
         prepararCadenaParaGuardar(nombreUsuarioModificado);
-        
+
         char contrasenaModificada[100];
         strcpy(contrasenaModificada, usuario.contrasena);
         prepararCadenaParaGuardar(contrasenaModificada);
-        
+
         fprintf(archivoUsuarios, "%s,%s\n", nombreUsuarioModificado, contrasenaModificada);
         fclose(archivoUsuarios);
         cout << "Usuario registrado con éxito." << endl;
@@ -65,7 +70,7 @@ bool verificarCredenciales(const char *archivo, const char *nombreUsuario, const
             sscanf(linea, "%[^,],%s", usuario, pass);
             restaurarCadenaLeida(usuario);
             restaurarCadenaLeida(pass);
-            
+
             if (strcmp(usuario, nombreUsuario) == 0 && strcmp(pass, contrasena) == 0)
             {
                 fclose(archivoUsuarios);
@@ -127,20 +132,19 @@ void limpiarPantalla()
 #endif
 }
 
-void aMinusculas(char *cadena) {
-    if (cadena) { 
-        while (*cadena) {
+void aMinusculas(char *cadena)
+{
+    if (cadena)
+    {
+        while (*cadena)
+        {
             *cadena = tolower(static_cast<unsigned char>(*cadena));
             ++cadena;
         }
     }
 }
 
-/**
- * @brief Displays a menu for creating a new user account or logging in with an existing one.
- * 
- * @param usuario A reference to a string that will be updated with the name of the logged in user.
- */
+string opcionS;
 void MenuLogin(string &usuario)
 {
     const char *archivoUsuarios = "usuarios.bin";
@@ -148,7 +152,6 @@ void MenuLogin(string &usuario)
     string nombreUsuario, contrasena, UsuarioConGuiones;
     directorios directorio;
     int opcion;
-   
 
     do
     {
@@ -158,120 +161,141 @@ void MenuLogin(string &usuario)
         cout << "2. Iniciar sesión" << endl;
         cout << "3. Salir" << endl;
         cout << "Elija una opción: ";
-        cin >> opcion;
+        cin >> opcionS;
         cin.ignore();
-
-        switch (opcion)
+        if (esNumero(opcionS))
         {
-        case 1:
-        {
-            limpiarPantalla();
-            cout << "Crear una nueva cuenta:" << endl;
-            cout << "Nombre de usuario: ";
-            cin.getline(nuevoUsuario.nombreUsuario, 100);
-            aMinusculas(nuevoUsuario.nombreUsuario);
-            if (nombreUsuarioExistente(archivoUsuarios, nuevoUsuario.nombreUsuario))
+            switch (opcion)
             {
-                cout << "El nombre de usuario ya existe. Por favor, elija otro." << endl;
+            case 1:
+            {
+                limpiarPantalla();
+                cout << "Crear una nueva cuenta:" << endl;
+                cout << "Nombre de usuario: ";
+                cin.getline(nuevoUsuario.nombreUsuario, 100);
+                aMinusculas(nuevoUsuario.nombreUsuario);
+                if (nombreUsuarioExistente(archivoUsuarios, nuevoUsuario.nombreUsuario))
+                {
+                    cout << "El nombre de usuario ya existe. Por favor, elija otro." << endl;
+                    cin.get();
+                    break;
+                }
+
+                cout << "Contraseña: ";
+                cin.getline(nuevoUsuario.contrasena, 100);
+                registrarUsuario(archivoUsuarios, nuevoUsuario);
+                UsuarioConGuiones = nuevoUsuario.nombreUsuario;
+                prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
+                createFolder(UsuarioConGuiones);
+                searchDir(UsuarioConGuiones, directorio);
+                GuardardatosSIMECO(UsuarioConGuiones, directorio);
+
+                cin.get();
+
+                break;
+            }
+            case 2:
+            {
+                limpiarPantalla();
+                cout << "Iniciar sesión:" << endl;
+                cout << "Nombre de usuario: ";
+                getline(cin, nombreUsuario);
+                cout << "Contraseña: ";
+                getline(cin, contrasena);
+
+                // Convierte el nombre de usuario a su versión con guiones para la búsqueda
+                UsuarioConGuiones = nombreUsuario;
+                prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
+
+                if (verificarCredenciales(archivoUsuarios, nombreUsuario.c_str(), contrasena.c_str()))
+                {
+                    cout << "Inicio de sesión exitoso." << endl;
+                    usuario = nombreUsuario;
+                    // Llama a searchDir con la versión del nombre de usuario con guiones
+                    searchDir(UsuarioConGuiones, directorio);
+                    Fvmain(UsuarioConGuiones, directorio);
+                    opcion = 3;
+                }
+                else
+                {
+                    cout << "Inicio de sesión fallido. Verifique sus credenciales." << endl;
+                }
+                cout << "Presione Enter para continuar...";
                 cin.get();
                 break;
             }
-            
-            cout << "Contraseña: ";
-            cin.getline(nuevoUsuario.contrasena, 100);
-            registrarUsuario(archivoUsuarios, nuevoUsuario);
-            UsuarioConGuiones=nuevoUsuario.nombreUsuario;
-            prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
-            createFolder(UsuarioConGuiones);
-            searchDir(UsuarioConGuiones,directorio);
-            GuardardatosSIMECO(UsuarioConGuiones,directorio);
-            
-            cin.get();
-                
-            
-            
-            break;
-        }
-        case 2:
-        {
-            limpiarPantalla();
-            cout << "Iniciar sesión:" << endl;
-            cout << "Nombre de usuario: ";
-            getline(cin, nombreUsuario);
-            cout << "Contraseña: ";
-            getline(cin, contrasena);
-
-            // Convierte el nombre de usuario a su versión con guiones para la búsqueda
-            UsuarioConGuiones = nombreUsuario;
-            prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
-
-            if (verificarCredenciales(archivoUsuarios, nombreUsuario.c_str(), contrasena.c_str()))
-            {
-                cout << "Inicio de sesión exitoso." << endl;
-                usuario = nombreUsuario;
-                // Llama a searchDir con la versión del nombre de usuario con guiones
-                searchDir(UsuarioConGuiones, directorio);
-                ExcelGenerador(UsuarioConGuiones, directorio);
+            case 3:
+                cout << "Saliendo del programa." << endl;
                 opcion = 3;
+                break;
+            default:
+                cout << "Opción no válida. Inténtelo de nuevo." << endl;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                break;
             }
-            else
-            {
-                cout << "Inicio de sesión fallido. Verifique sus credenciales." << endl;
-            }
-            cout << "Presione Enter para continuar...";
-            cin.get();
-            break;
         }
-        case 3:
-            cout << "Saliendo del programa." << endl;
-            opcion = 3;
-            break;
-        default:
-            cout << "Opción no válida. Inténtelo de nuevo." << endl;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            break;
+        else
+        {
+            cout << "Error: Debe ser un valor numerico" << endl;
+            system("pause");
         }
-    } while(opcion != 3);
+    } while (opcion != 3);
 }
 
-void postLogin(string usuario, string directorio){
+void postLogin(string usuario, string directorio)
+{
     system("cls");
     cout << "Bienvenido, " << usuario << "!" << endl;
     bool opcion = verificarPartidas(directorio, usuario);
-    if (opcion == true){
+    if (opcion == true)
+    {
         cout << "Tienes partidas guardadas, ¿deseas cargar alguna?" << endl;
         cout << "1. Si" << endl;
         cout << "2. No" << endl;
         cout << "Elija una opción: ";
-        cin >> opcion;
+        cin >> opcionS;
         cin.ignore();
-        if (opcion == 1){
-            //cargarPartida(directorio, usuario);
+        if (esNumero(opcionS))
+        {
+            if (opcion == 1)
+            {
+                // cargarPartida(directorio, usuario);
+            }
+            else
+            {
+                cout << "No se cargó ninguna partida." << endl;
+            }
         }
-        else{
-            cout << "No se cargó ninguna partida." << endl;
+        else
+        {
+            cout<<"Error: Debe ser un valor numerico";
         }
     }
-    else{
+    else
+    {
         int opcion;
         cout << "Bienvenido a SIMECO, " << usuario << "!" << endl;
         cout << "Que desea hacer?" << endl;
         cout << "1. Seleccione los ciclos que desea simular" << endl;
         cout << "2. Salir" << endl;
         cout << "Elija una opción: ";
-        cin >> opcion;
+        cin >> opcionS;
         cin.ignore();
-
-        switch (opcion)
+        if (esNumero(opcionS))
         {
-        case 1:
-            //simularCiclos(directorio, usuario);
-            break;
-        case 2:
-            cout << "Saliendo del programa." << endl;
-            break;
+            switch (opcion)
+            {
+            case 1:
+                // simularCiclos(directorio, usuario);
+                break;
+            case 2:
+                cout << "Saliendo del programa." << endl;
+                break;
+            }
         }
-
+        else
+        {
+            cout << "Error: Debe ser un valor numerico" << endl;
+        }
     }
-
 }

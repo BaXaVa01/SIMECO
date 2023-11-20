@@ -4,7 +4,6 @@
 #include <random>
 #include <cstdlib>
 
-
 using namespace std;
 
 enum class TipoDesastre {
@@ -179,7 +178,7 @@ void generarDesastre(Ecosistema& ecosistema, TipoDesastre tipoDesastre) {
     cin.get();
 }
 //int Fvmain(int& ciclo, directorios& path)
-int Fvmain() {
+int Fvmain(string &usuario, directorios &directorio) {
     vector<Especie> especies;
     
     Recursos recursos(100, 200, 300, 400);
@@ -193,6 +192,7 @@ int Fvmain() {
         cout << "1. Ver estado inicial del ecosistema" << endl;
         cout << "2. Ver estado actual del ecosistema" << endl;
         cout << "3. Iniciar ciclos" << endl;
+        cout << "4." <<endl;
         cout << "4. Generar desastre" << endl;
         cout << "5. Salir" << endl;
         cout << "\nIngrese una opcion: ";
@@ -208,10 +208,10 @@ int Fvmain() {
             case 3:
                 iniciarVirtualizacion(ecosistema.especies, ecosistema);
                 break;
-            case 0:
-                registrarRecursos(ecosistema.recursosIniciales);
-                ecosistema.recursosActuales = ecosistema.recursosIniciales;
-                break;
+            // case 0:
+            //     registrarRecursos(ecosistema.recursosIniciales);
+            //     ecosistema.recursosActuales = ecosistema.recursosIniciales;
+            //     break;
             case 4:
                 int tipoDesastre;
                 clearScreen();
@@ -252,7 +252,14 @@ int Fvmain() {
             case 5:
                 clearScreen();
                 cout << "Saliendo del programa...\n" << endl;
+                system("pause");
                 break;
+
+            case 6:
+            {
+                ExcelGenerador(usuario,directorio);
+                break;
+            }
             default:
                 clearScreen();
                 cout << "Opcion invalida. Por favor, ingrese una opcion valida.\n" << endl;

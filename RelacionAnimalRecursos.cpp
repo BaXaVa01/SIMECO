@@ -408,8 +408,8 @@ void alimentarPumas(vector<Puma>& pumas, vector<Venado>& venados, Recursos& recu
 
 void iniciarEspecies(vector<Venado>& venados, vector<Puma>& pumas){
     for(int i = 0; i < 100; i++){
-        venados.push_back(Venado(true, 78));
-        venados.push_back(Venado(false, 79));
+        venados.push_back(Venado(true, 120));
+        venados.push_back(Venado(false, 120));
     }
     for(int i = 0; i < 1; i++){
         pumas.push_back(Puma(true, 26));
