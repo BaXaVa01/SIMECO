@@ -99,6 +99,7 @@ public:
 
 
 private:
+    const int cicloRep = 3; // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
     const int edadMax = 234;
     int edad;
     int nivelHambre = 0; //Se medira en 0 o 1, cada vez que come se le suma 1, cada semana que pasa se le resta 1. Si llega a numeros negativos muere
@@ -215,6 +216,7 @@ public:
     }
 
 private:
+    const int cicloRep = 2; // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
     const int edadMax = 156; // Semanas
     int edad;
     bool genero;
@@ -335,11 +337,7 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
 
 int main()
 {
-    Venado VenadoMacho(true, 30);
-    Venado VenadoHembra(false,1);
-    VenadoMacho.envejecer();
-    VenadoHembra.envejecer();
     vector<Venado> venados;
-    venados.push_back(VenadoMacho);
+    vector<Puma> pumas;
     return 0;
 }
