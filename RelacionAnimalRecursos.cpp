@@ -180,15 +180,15 @@ public:
         for (auto& hembra : venados) {
             if (genero == Genero::Hembra && edadRep) {
                 // Crear un nuevo venado con género aleatorio
-                if(contadorEmbarazos == 0){
+                // if(contadorEmbarazos == 0){
                     
-                    hembra.contadorEmbarazos++;
-                    Genero nuevoGenero = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-                    Venado nuevaCria(nuevoGenero, 0);  // Se crea un venado con edad inicial 0
+                //     hembra.contadorEmbarazos++;
+                //     Genero nuevoGenero = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
+                //     Venado nuevaCria(nuevoGenero, 0);  // Se crea un venado con edad inicial 0
 
-                    venados.push_back(move(nuevaCria)); // Se agrega el venado a la lista
-                    return;
-                }
+                //     venados.push_back(move(nuevaCria)); // Se agrega el venado a la lista
+                //     return;
+                // }
 
                 for(int crias = 0; crias < (rand()%3)+1; crias++){
                     Genero nuevoGenero = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
@@ -202,8 +202,9 @@ public:
         }
     }
 
-    int contadorEmbarazos = 0;
+    
 private:
+    int contadorEmbarazos = 0;
     estaciones cicloRep = Otonio; 
     const int edadMax = 234;
     int edad;

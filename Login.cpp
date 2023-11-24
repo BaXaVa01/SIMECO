@@ -162,9 +162,11 @@ void MenuLogin(string &usuario)
         cout << "3. Salir" << endl;
         cout << "Elija una opción: ";
         cin >> opcionS;
+
         cin.ignore();
         if (esNumero(opcionS))
         {
+            opcion = stoi(opcionS);
             switch (opcion)
             {
             case 1:
@@ -189,9 +191,6 @@ void MenuLogin(string &usuario)
                 createFolder(UsuarioConGuiones);
                 searchDir(UsuarioConGuiones, directorio);
                 GuardardatosSIMECO(UsuarioConGuiones, directorio);
-
-                cin.get();
-
                 break;
             }
             case 2:
@@ -237,7 +236,6 @@ void MenuLogin(string &usuario)
         else
         {
             cout << "Error: Debe ser un valor numerico" << endl;
-            system("pause");
         }
     } while (opcion != 3);
 }
@@ -257,6 +255,7 @@ void postLogin(string usuario, string directorio)
         cin.ignore();
         if (esNumero(opcionS))
         {
+            opcion = stoi(opcionS);
             if (opcion == 1)
             {
                 // cargarPartida(directorio, usuario);
@@ -268,7 +267,7 @@ void postLogin(string usuario, string directorio)
         }
         else
         {
-            cout<<"Error: Debe ser un valor numerico";
+            cout << "Error: Debe ser un valor numerico";
         }
     }
     else
@@ -283,6 +282,7 @@ void postLogin(string usuario, string directorio)
         cin.ignore();
         if (esNumero(opcionS))
         {
+            opcion = stoi(opcionS);
             switch (opcion)
             {
             case 1:
