@@ -204,7 +204,7 @@ int Fvmain(string &usuario, directorios &directorio)
 
     Recursos recursos(100, 200, 300, 400);
     Ecosistema ecosistema(especies, recursos);
-
+    bool Guardado=false;
     int opcion;
 
     do
@@ -216,7 +216,7 @@ int Fvmain(string &usuario, directorios &directorio)
         cout << "2. Ver estado actual del ecosistema" << endl;
         cout << "3. Iniciar ciclos" << endl;
         cout << "4. Generar desastre" << endl;
-        cout << "5. Generar Excel" << endl;
+        cout << "5. Gestor de Datos de partida" << endl;
         cout << "6. Salir" << endl;
         cout << "\nIngrese una opcion: ";
         cin >> opcion;
@@ -277,8 +277,36 @@ int Fvmain(string &usuario, directorios &directorio)
             break;
         case 5:
     	{
-            ExcelGenerador(usuario,directorio);
-            break;
+            cout<<"1. Generar Excel"<<endl;
+            cout<<"2. Guardar Partida"<<endl;
+            cin>>opcionS;
+            esNumero(opcionS);
+            opcion=stoi(opcionS);
+            switch (opcion)
+            {
+            case 1:
+            {
+                if (Guardado)
+                {
+                    ExcelGenerador(usuario,directorio);
+                }
+                else{
+                    cout<<"Debes guardar la partida antes de mostrar los datos";
+                }
+                
+                break;
+            }
+            case 2:
+            {
+                GuardarAnimales(ciclonum,vector1,vector2,vector3,vector4);
+                GuardarRecursos(recursos);
+                GuardarDesastres(listadesastres);
+                barraCarga(5);
+                Guardado=true;
+            }
+            default:
+                break;
+            }
         }
         case 6:
         {

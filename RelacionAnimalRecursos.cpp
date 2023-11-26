@@ -293,6 +293,10 @@ public:
 
         actualizarValores();
     }
+    bool EdadRepT()
+    {
+        return edadRep;
+    }
 
 private:
     const int cicloRep = 2;  // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
@@ -388,8 +392,23 @@ void clearScreen()
     system("clear");
 #endif
 }
-
-void reproducirse(vector<Venado> &venados)
+void reproducirseP(vector<Puma> &pumas)
+{
+    for (auto &Hembra : pumas)
+    {
+        if (Hembra.EdadRepT())
+        {
+            for (int criasp = 0; criasp < (rand() % 3) + 1; criasp++)
+            {
+                Genero nuevoGeneroP = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
+                Puma nuevaCriap(nuevoGeneroP, 0);
+                pumas.push_back(move(nuevaCriap));
+            }
+            return;
+        }
+    }
+}
+void reproducirseV(vector<Venado> &venados)
 {
     // Encontrar una hembra disponible para la reproducción
     for (auto &Hembra : venados)
@@ -407,12 +426,12 @@ void reproducirse(vector<Venado> &venados)
             //     return;
             // }
 
-            for (int crias = 0; crias < (rand() % 3) + 1; crias++)
+            for (int criasv = 0; criasv < (rand() % 3) + 1; criasv++)
             {
-                Genero nuevoGenero = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-                Venado nuevaCria(nuevoGenero, 0); // Se crea un venado con edad inicial 0
+                Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
+                Venado nuevaCriav(nuevoGeneroV, 0); // Se crea un venado con edad inicial 0
 
-                venados.push_back(move(nuevaCria)); // Se agrega el venado a la lista
+                venados.push_back(move(nuevaCriav)); // Se agrega el venado a la lista
             }
             cout << "Todos" << endl;
 
@@ -569,7 +588,8 @@ int main()
             }
             if (i % 13 == 0)
             {
-                reproducirse(venados);
+                reproducirseV(venados);
+                reproducirseP(pumas);
             }
             // for(auto &puma : pumas)
             // {
