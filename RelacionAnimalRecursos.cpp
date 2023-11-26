@@ -270,9 +270,9 @@ private:
 class Puma : public Especies
 {
 public:
-    Puma(bool genero, int edadInicial) : genero(genero), edad(edadInicial)
+    Puma(Genero genero, int edadInicial) : genero(genero), edad(edadInicial)
     {
-        if (genero)
+        if (genero == Genero::Macho)
         {
             iniciarMacho();
         }
@@ -302,7 +302,7 @@ private:
     const int cicloRep = 2;  // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
     const int edadMax = 156; // Semanas
     int edad;
-    bool genero;
+    Genero genero;
     bool vivo = true;
 
     void iniciarMacho()
@@ -374,7 +374,7 @@ private:
 
     void actualizarValores()
     {
-        if (genero)
+        if (genero == Genero::Macho)
         {
             iniciarMacho();
         }
@@ -401,8 +401,8 @@ void reproducirseP(vector<Puma> &pumas)
             for (int criasp = 0; criasp < (rand() % 3) + 1; criasp++)
             {
                 Genero nuevoGeneroP = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-                Puma nuevaCriap(nuevoGeneroP, 0);
-                pumas.push_back(move(nuevaCriap));
+                pumas.push_back(move(Puma(nuevoGeneroP, 0)));
+                // venados.push_back(Venado(Genero::Hembra, 120));
             }
             return;
         }
@@ -506,11 +506,11 @@ void iniciarEspecies(vector<Venado> &venados, vector<Puma> &pumas)
 
         venados.push_back(Venado(Genero::Hembra, 120));
     }
-    for (int i = 0; i < 1; i++)
-    {
-        pumas.push_back(Puma(true, 26));
-        pumas.push_back(Puma(false, 26));
-    }
+    // for (int i = 0; i < 1; i++)
+    // {
+    //     pumas.push_back(Puma(true, 26));
+    //     pumas.push_back(Puma(false, 26));
+    // }
 }
 estaciones estacionNum(int ciclo)
 {
@@ -529,7 +529,19 @@ estaciones estacionNum(int ciclo)
         return Otonio;
     }
 }
-
+string estacionString(estaciones estacion)
+{
+    switch(estacion){
+        case 0:
+            return "INVIERNO";
+        case 1:
+            return "PRIMAVERA";
+        case 2:
+            return "VERANO";
+        case 3:
+            return "OTONIO";
+    }
+}
 int main()
 {
     vector<Venado> venados; // 10 machos y 10 hembras
@@ -560,7 +572,7 @@ int main()
     {
         clearScreen();
         estacion = estacionNum(i);
-        cout << "Ciclo: " << i << "        Estacion Actual: " << estacion << endl;
+        cout << "Ciclo: " << i << "        Estacion Actual: " << estacionString(estacion) << endl;
         cout << "Recursos vegetacion: " << recursos.vegetacion << endl;
         cout << "Recursos agua: " << recursos.agua << endl;
         cout << "Carne: " << recursos.carne << endl;
@@ -591,13 +603,9 @@ int main()
                 reproducirseV(venados);
                 reproducirseP(pumas);
             }
-            // for(auto &puma : pumas)
-            // {
-            //     puma.envejecer();
-            // }
+
         }
-        vegetacionConsumida -= recursos.vegetacion;
-        recursos.vegetacionConsumida = vegetacionConsumida;
+
     }
     return 0;
 }
