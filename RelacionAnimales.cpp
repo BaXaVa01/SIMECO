@@ -142,7 +142,8 @@ int main() {
             animales[i].edad++;
             animales[i].energia -= 5;
 
-            if (animales[i].genero == HEMBRA && animales[i].edad >= animales[i].edadMinimaReproduccion) {
+            if (animales[i].genero == HEMBRA && animales[i].edad >= animales[i].edadMinimaReproduccion)
+            {
                 animales[i].semanasDesdeUltimaCria++;
             }
 

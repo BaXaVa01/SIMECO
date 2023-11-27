@@ -69,6 +69,7 @@ public:
         //     case Invierno:
         // }
     }
+
 };
 // como me gusta mi novia
 class Ecosistema
@@ -147,12 +148,6 @@ public:
 
     void envejecer(estaciones estacion, vector<Venado> &venados)
     {
-        // nivelHambre -= 1;
-        // nivelSed -= 1;
-        // if(nivelHambre < 0 || nivelSed < 0){
-        //     vivo = false;
-        // }
-
         edad++;
         if (edad > edadMax)
         {
@@ -392,6 +387,17 @@ void clearScreen()
     system("clear");
 #endif
 }
+
+// APARTADO DE ACTUALIZACION DE RECURSOS
+
+void actualizarCarne(vector<Venado>& venados, Recursos& recursos){
+    int contadorCarneVenados = 0;
+    for(auto& venado:venados){
+        contadorCarneVenados += venado.peso;
+    }
+    recursos.carne = contadorCarneVenados;
+}
+
 void reproducirseP(vector<Puma> &pumas)
 {
     for (auto &Hembra : pumas)
@@ -408,35 +414,28 @@ void reproducirseP(vector<Puma> &pumas)
         }
     }
 }
-void reproducirseV(vector<Venado> &venados)
+void reproducirseV(vector<Venado> &venados, estaciones estacion)
 {
     // Encontrar una hembra disponible para la reproducción
+
+    if(estacion != estaciones::Otonio ){
+        return;
+    }
+
     for (auto &Hembra : venados)
     {
-        if (Hembra.EdadrepT())
+        if (Hembra.determinarGenero() != Genero::Hembra && !Hembra.EdadrepT())
         {
-            // Crear un nuevo venado con género aleatorio
-            // if(contadorEmbarazos == 0){
-
-            //     hembra.contadorEmbarazos++;
-            //     Genero nuevoGenero = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-            //     Venado nuevaCria(nuevoGenero, 0);  // Se crea un venado con edad inicial 0
-
-            //     venados.push_back(move(nuevaCria)); // Se agrega el venado a la lista
-            //     return;
-            // }
-
-            for (int criasv = 0; criasv < (rand() % 3) + 1; criasv++)
-            {
-                Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-                Venado nuevaCriav(nuevoGeneroV, 0); // Se crea un venado con edad inicial 0
-
-                venados.push_back(move(nuevaCriav)); // Se agrega el venado a la lista
-            }
-            cout << "Todos" << endl;
-
-            return;
+            continue;
         }
+        mt19937 gen(random_device{}());
+        uniform_int_distribution<> dis(1, 3);
+        
+        for (int criasv = 0; criasv < dis(gen); criasv++)
+        {
+            Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
+            venados.push_back(move(Venado(nuevoGeneroV, 1))); // Se agrega el venado a la lista
+        } 
     }
 }
 
@@ -501,12 +500,12 @@ void alimentarPumas(vector<Puma> &pumas, vector<Venado> &venados, Recursos &recu
 
 void iniciarEspecies(vector<Venado> &venados, vector<Puma> &pumas)
 {
-    for (int i = 0; i < 4; i++)
+    for (int CicloActual = 0; CicloActual < 4; CicloActual++)
     {
 
         venados.push_back(Venado(Genero::Hembra, 120));
     }
-    // for (int i = 0; i < 1; i++)
+    // for (int CicloActual = 0; CicloActual < 1; CicloActual++)
     // {
     //     pumas.push_back(Puma(true, 26));
     //     pumas.push_back(Puma(false, 26));
@@ -533,13 +532,13 @@ string estacionString(estaciones estacion)
 {
     switch(estacion){
         case 0:
-            return "INVIERNO";
-        case 1:
             return "PRIMAVERA";
-        case 2:
+        case 1:
             return "VERANO";
-        case 3:
+        case 2:
             return "OTONIO";
+        case 3:
+            return "INVIERNO";
     }
 }
 int main()
@@ -549,6 +548,7 @@ int main()
 
     // Hay que incializar y agregar los venados y pumas
     iniciarEspecies(venados, pumas);
+    
     int carneTotal = 0;
 
     for (const auto &venado : venados)
@@ -568,11 +568,21 @@ int main()
 
     estaciones estacion;
 
-    for (int i = 1; i <= cantidadCiclos; i++)
+    for (int CicloActual = 1; CicloActual <= cantidadCiclos; CicloActual++)
     {
         clearScreen();
-        estacion = estacionNum(i);
-        cout << "Ciclo: " << i << "        Estacion Actual: " << estacionString(estacion) << endl;
+        for (auto &venado : venados)
+        {
+            if (venado.determinarGenero() == Genero::Macho)
+            {
+                cout << "macho" << venado.peso << endl;
+            }
+            else
+                cout << "Hembra" << venado.peso << endl;
+        }
+
+        estacion = estacionNum(CicloActual+4);
+        cout << "Ciclo: " << CicloActual << "        Estacion Actual: " << estacionString(estacion) <<  endl;
         cout << "Recursos vegetacion: " << recursos.vegetacion << endl;
         cout << "Recursos agua: " << recursos.agua << endl;
         cout << "Carne: " << recursos.carne << endl;
@@ -582,7 +592,7 @@ int main()
         cin.ignore();
         cin.get();
 
-        for (int i = 0; i < semanas; i++)
+        for (int semanaActual = 0; semanaActual < semanas; semanaActual++)
         {
 
             alimentarVenados(venados, recursos);
@@ -593,19 +603,19 @@ int main()
                 venado.envejecer(estacion, venados);
 
                 // Si el venado muere, se elimina de la lista
-                //  if(venado.estadoVivo()){
+                //  if(!venado.estadoVivo()){
                 //      venados.erase(venados.begin());
                 //  }
                 // Si el venado es hembra y esta en edad de reproducirse, se reproduce
             }
-            if (i % 13 == 0)
-            {
-                reproducirseV(venados);
-                reproducirseP(pumas);
-            }
-
+ 
         }
+        reproducirseP(pumas);
+        reproducirseV(venados, estacion);
+        actualizarCarne(venados, recursos);
+
 
     }
+
     return 0;
 }
