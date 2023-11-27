@@ -11,18 +11,10 @@
 #include <limits>
 #include "Excel.cpp"
 #include "barraDeCarga.cpp"
-// #include "RelacionAnimalRecursos.cpp"
+#include "RelacionAnimalRecursos.cpp"
 
 //HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
 
-void clearScreen()
-{
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
 
 using namespace std;
 
@@ -32,45 +24,64 @@ struct Usuario
     char contrasena[100];
 };
 
-enum class TipoDesastre
-{
-    Incendio,
-    Inundacion,
-    Sequia,
-    Huracan
-};
+// enum class TipoDesastre
+// {
+//     Incendio,
+//     Inundacion,
+//     Sequia,
+//     Huracan
+// };
 
-class Especie
-{
-public:
-    string nombre;
-    int poblacionInicial;
-    int poblacion;
+// class Especie
+// {
+// public:
+//     string nombre;
+//     int poblacionInicial;
+//     int poblacion;
 
-    Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
-};
+//     Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
+// };
 
-class Recursos
-{
-public:
-    int agua;
-    int carrona;
-    int carne;
-    int vegetacion;
+// class Recursos
+// {
+// public:
+//     int agua;
+//     int carrona;
+//     int carne;
+//     int vegetacion;
+//     int vegetacionConsumida; // Necesitas llevar un registro de la vegetación consumida
 
-    Recursos(int agua, int carrona, int carne, int vegetacion) : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion) {}
-};
+//     Recursos(int agua, int carrona, int carne, int vegetacion)
+//         : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion), vegetacionConsumida(0) {}
 
-class Ecosistema
-{
-public:
-    vector<Especie> especies;
-    Recursos recursosIniciales;
-    Recursos recursosActuales;
+//     void actualizarRecursos(estaciones estacion)
+//     {
+//         // Tengo que poner un nivel maximo de vegetacion
+//         const int nivelMaxVegetacion = 100000;
+//         const int nivelMaxAgua = 10000;
 
-    Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
-        : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
-};
+//         // switch(estacion) {
+//         //     case Primavera:
+
+//         //     case Verano:
+
+//         //     case Otonio:
+
+//         //     case Invierno:
+//         // }
+//     }
+// };
+
+// class Ecosistema
+// {
+// public:
+//     vector<Especie> especies;
+//     Recursos recursosIniciales;
+//     Recursos recursosActuales;
+
+//     Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
+//         : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
+// };
 
 void mostrarEstadoInicialEcosistema(const Ecosistema &ecosistema)
 {
@@ -95,12 +106,6 @@ void mostrarEstadoInicialEcosistema(const Ecosistema &ecosistema)
     cin.get();
 }
 
-void iniciarVirtualizacion(vector<Especie> &especies, Ecosistema &recursos)
-{
-    clearScreen();
-    cout << "Iniciando virtualizacion...\n"
-         << endl;
-}
 
 void registrarRecursos(Recursos &recursos)
 {
@@ -351,7 +356,7 @@ int Fvmain(string &usuario, directorios &directorio)
 {
     vector<Especie> especies;
 
-    Recursos recursos(100, 200, 300, 400);
+    Recursos recursos(0, 0, 0, 0);
     Ecosistema ecosistema(especies, recursos);
     bool Guardado=false;
     int opcion, opcionMenuExcel;
@@ -380,7 +385,7 @@ int Fvmain(string &usuario, directorios &directorio)
             mostrarEstadoEcosistema(ecosistema);
             break;
         case 3:
-            iniciarVirtualizacion(ecosistema.especies, ecosistema);
+            mainRelacionAnimalRecurso(recursos, usuario);
             break;
         // case 0:
         //     registrarRecursos(ecosistema.recursosIniciales);
