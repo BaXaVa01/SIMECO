@@ -9,21 +9,21 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void pantallacarga1() {
-    SetConsoleOutputCP(65001);
+int main(){
+    SetConsoleOutputCP(65001); 
 
     int x = 10, y = 10;
 
     while (true) {
         // Limpiar la pantalla
         system("cls");
-        std::cout << "     ::::::::  ::::::::::: ::::    ::::  ::::::::::  ::::::::   ::::::::"<<std::endl;
-        std::cout << "    :+:    :+:     :+:     +:+:+: :+:+:+ :+:        :+:    :+: :+:    :+:"<<std::endl;
-        std::cout << "    +:+            +:+     +:+ +:+:+ +:+ +:+        +:+        +:+    +:+"<<std::endl;
-        std::cout << "    +#++:++#++     +#+     +#+  +:+  +#+ +#++:++#   +#+        +#+    +:+"<<std::endl;
-        std::cout << "           +#+     +#+     +#+       +#+ +#+        +#+        +#+    +#+"<<std::endl;
-        std::cout << "    #+#    #+#     #+#     #+#       #+# #+#        #+#    #+# #+#    #+#"<<std::endl;
-        std::cout << "     ########  ########### ###       ### ##########  ########   ########"<<std::endl;
+        std::cout << "     ::::::::  ::::::::::: ::::    ::::  ::::::::::  ::::::::   ::::::::"<<std::endl;         
+        std::cout << "    :+:    :+:     :+:     +:+:+: :+:+:+ :+:        :+:    :+: :+:    :+:"<<std::endl;                
+        std::cout << "    +:+            +:+     +:+ +:+:+ +:+ +:+        +:+        +:+    +:+"<<std::endl;                
+        std::cout << "    +#++:++#++     +#+     +#+  +:+  +#+ +#++:++#   +#+        +#+    +:+"<<std::endl;                
+        std::cout << "           +#+     +#+     +#+       +#+ +#+        +#+        +#+    +#+"<<std::endl;                
+        std::cout << "    #+#    #+#     #+#     #+#       #+# #+#        #+#    #+# #+#    #+#"<<std::endl;              
+        std::cout << "     ########  ########### ###       ### ##########  ########   ########"<<std::endl;     
         // Dibujar el patito en la nueva posición
         gotoxy(x, y);
         std::cout << "                      ;                       ";
@@ -71,8 +71,8 @@ void pantallacarga1() {
         // Restringir la posición del patito dentro de la pantalla
         if (x > 10) {
             x = 10;
-        }
+        }    
     }
 
-    return 0;
+  return 0;
 }
