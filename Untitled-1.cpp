@@ -6,8 +6,16 @@
 #include <random>
 #include <cstdlib>
 #include <algorithm>
+#include <fstream> // Para std::ifstream y std::ofstream
+#include <sstream> // Para std::istringstream
+#include "Guardado.cpp"
 
 using namespace std;
+
+string filename="C:\\Users\\david\\OneDrive\\Escritorio\\SIMECOGPT\\output\\usuarios\\davide-patino\\animales\\ciclo0.bin";
+
+
+
 
 enum estaciones
 {
@@ -56,8 +64,8 @@ public:
     void actualizarRecursos(estaciones estacion)
     {
         // Tengo que poner un nivel maximo de vegetacion
-        const int nivelMaxVegetacion = 100000;
-        const int nivelMaxAgua = 10000;
+         int nivelMaxVegetacion = 100000;
+         int nivelMaxAgua = 10000;
 
         // switch(estacion) {
         //     case Primavera:
@@ -78,18 +86,8 @@ public:
     Recursos recursosIniciales;
     Recursos recursosActuales;
 
-    Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
+    Ecosistema( vector<Especie> &especies,  Recursos &recursos)
         : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
-    
-    void actualizarRecursos(Recursos& recursos)
-    {
-        recursosActuales = recursos;
-    }
-
-    void actualizarRecursosInicial(Recursos& recursos)
-    {
-        recursosActuales = recursos;
-    }
 };
 
 // Mejor empiezo con los animales en general
@@ -108,6 +106,7 @@ public:
 class Venado : public Especies
 {
 public:
+    Venado() {}
     Venado(Genero genero, int edadInicial) : genero(genero), edad(edadInicial)
     {
         if (genero == Genero::Macho)
@@ -119,11 +118,28 @@ public:
             iniciarHembra();
         }
     }
+
+    friend std::ostream &operator<<(std::ostream &os,  Venado &venado)
+    {
+        os << venado.edad << " " << venado.nivelHambre << " "
+           << venado.nivelSed << " " << static_cast<int>(venado.genero) << " "
+           << venado.vivo;
+        return os;
+    }
+
+    friend std::istream &operator>>(std::istream &is, Venado &venado)
+    {
+        int genero;
+        is >> venado.edad >> venado.nivelHambre >> venado.nivelSed >> genero >> venado.vivo;
+        venado.genero = static_cast<Genero>(genero);
+        return is;
+    }
+
     // SACADO TOTALMENTE DE CHAT GPT
     // NI LA PUTA MENOR IDEA DE QUE ES ESTO
-    //  Constructor de Movimiento
+    //  ructor de Movimiento
     Venado(Venado &&other) noexcept
-        : Especies(std::move(other)), // Asume que Especies tiene un constructor de movimiento
+        : Especies(std::move(other)), // Asume que Especies tiene un ructor de movimiento
           edad(other.edad),
           nivelHambre(other.nivelHambre),
           nivelSed(other.nivelSed),
@@ -135,19 +151,34 @@ public:
     // TAMPOCO SE QUE ES ESTO
     // PERO AHORA FUNCIONA EL CODIGO :D
     //  Operador de Asignación de Movimiento
-    Venado &operator=(Venado &&other) noexcept
+    
+    // Venado &operator=(Venado &&other) noexcept
+    // {
+    //     if (this != &other)
+    //     {
+    //         Especies::operator=(std::move(other)); // Asume que Especies tiene un operador de asignación de movimiento
+    //         edad = other.edad;
+    //         nivelHambre = other.nivelHambre;
+    //         nivelSed = other.nivelSed;
+    //         genero = other.genero;
+    //         vivo = other.vivo;
+    //         // Puedes dejar a `other` en un estadoVivo válido pero "vacío" si es necesario
+    //     }
+    //     return *this;
+    // }
+    Venado(const Venado& other) 
+        : Especies(other), // Llamada al constructor de copia de la clase base, si existe
+          edad(other.edad),
+          nivelHambre(other.nivelHambre),
+          nivelSed(other.nivelSed),
+          genero(other.genero),
+          vivo(other.vivo),
+          contadorEmbarazos(other.contadorEmbarazos),
+          cicloRep(other.cicloRep),
+          edadMax(other.edadMax),
+          embarazada(other.embarazada)
     {
-        if (this != &other)
-        {
-            Especies::operator=(std::move(other)); // Asume que Especies tiene un operador de asignación de movimiento
-            edad = other.edad;
-            nivelHambre = other.nivelHambre;
-            nivelSed = other.nivelSed;
-            genero = other.genero;
-            vivo = other.vivo;
-            // Puedes dejar a `other` en un estadoVivo válido pero "vacío" si es necesario
-        }
-        return *this;
+        // Aquí puedes añadir cualquier lógica adicional necesaria para la copia
     }
 
     Genero determinarGenero()
@@ -158,53 +189,36 @@ public:
     void envejecer(estaciones estacion, vector<Venado> &venados)
     {
         edad++;
-        if (edad > edadMax || nivelHambre < 0 || nivelSed < 0)
+        if (edad > edadMax)
         {
             vivo = false;
             return;
         }
-        if (genero == Genero::Macho)
-        {
-            iniciarMacho();
-        }
-        else
-        {
-            iniciarHembra();
-        }
+
+        actualizarValores();
     }
     bool estadoVivo()
     {
         return vivo;
     }
-    int mostrarEdad()
-    {
-        return edad;
-    }
-
     void consumirRecursos(Recursos &recursos)
     {
         recursos.vegetacion -= consumo;
         nivelHambre += 1;
         recursos.agua -= consumo / 2;
-        nivelSed += 1;
     }
 
     bool EdadrepT()
     {
         return edadRep;
     }
-    void nuevoEstado(bool estado)
-    {
-        vivo = estado;
-    }
-
 
 private:
     int contadorEmbarazos = 0;
     estaciones cicloRep = Otonio;
-    const int edadMax = 234;
+     int edadMax = 234;
     int edad;
-    int nivelHambre = 1; // Se medira en 0 o 1, cada vez que come se le suma 1, cada semana que pasa se le resta 1. Si llega a numeros negativos muere
+    int nivelHambre = 0; // Se medira en 0 o 1, cada vez que come se le suma 1, cada semana que pasa se le resta 1. Si llega a numeros negativos muere
     int nivelSed = 1;
     Genero genero;
     bool vivo = true;
@@ -275,11 +289,23 @@ private:
             return;
         }
     }
+    void actualizarValores()
+    {
+        if (genero == Genero::Macho)
+        {
+            iniciarMacho();
+        }
+        else
+        {
+            iniciarHembra();
+        }
+    }
 };
 
 class Puma : public Especies
 {
 public:
+    Puma() {}
     Puma(Genero genero, int edadInicial) : genero(genero), edad(edadInicial)
     {
         if (genero == Genero::Macho)
@@ -292,16 +318,28 @@ public:
         }
     }
 
+    friend std::ostream &operator<<(std::ostream &os,  Puma &puma)
+    {
+        os << puma.edad << " " << static_cast<int>(puma.genero) << " "
+           << puma.vivo; // Asegúrate de agregar aquí todos los campos relevantes
+        return os;
+    }
+
+    friend std::istream &operator>>(std::istream &is, Puma &puma)
+    {
+        int genero;
+        is >> puma.edad >> genero >> puma.vivo; // Asegúrate de leer aquí todos los campos relevantes
+        puma.genero = static_cast<Genero>(genero);
+        return is;
+    }
     void envejecer()
     {
 
         edad++;
-        if (edad >= edadMax || nivelHambre < 0 || nivelSed < 0)
+        if (edad >= edadMax)
         {
             vivo = false;
         }
-        nivelHambre -= 1;
-        nivelSed -= 1;
 
         actualizarValores();
     }
@@ -309,40 +347,11 @@ public:
     {
         return edadRep;
     }
-    Genero determinarGenero(){
-        return genero;
-    }
-    bool estadoVivo()
-    {
-        return vivo;
-    }
-    void nuevoEstado(bool estado)
-    {
-        vivo = estado;
-    }
-    void consumirRecursos(int& venado, Recursos& recursos)
-    {
-        venado -= consumo;
-        nivelHambre += 1;
-        recursos.agua -= consumo / 2;
-        nivelSed += 1;
-    }
-    float determinarConsumo(){
-        return consumo;
-    }
-    int determinarHambre(){
-        return nivelHambre;
-    }
-    int mostrarEdad(){
-        return edad;
-    }
 
 private:
-    estaciones cicloRep = Invierno;  // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
-    int edadMax = 156; // Semanas
+     int cicloRep = 2;  // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
+     int edadMax = 156; // Semanas
     int edad;
-    int nivelHambre = 2; // Se medira en 0 o 1, cada vez que come se le suma 1, cada semana que pasa se le resta 1. Si llega a numeros negativos muere
-    int nivelSed = 2;
     Genero genero;
     bool vivo = true;
 
@@ -353,7 +362,6 @@ private:
         {
             peso = 5.0f + 1.4f * edad;
             consumo = (25.0f / 100) * peso;
-            edadRep = false;
             return;
         }
         // Adolescente
@@ -365,7 +373,6 @@ private:
                 peso = 75;
             }
             consumo = (23.0f / 100) * peso;
-            edadRep = false;
             return;
         }
         // Adulto
@@ -377,7 +384,6 @@ private:
                 peso = 110;
             }
             consumo = (21.0f / 100) * peso;
-            edadRep = true;
             return;
         }
     }
@@ -390,7 +396,6 @@ private:
             peso = 4.0f + 1.7f * edad;
             consumo = (24.0f / 100) * peso;
             return;
-            edadRep = false;
         }
         // Adolescente
         if (edad > 26 && edad <= 58)
@@ -402,7 +407,6 @@ private:
                 peso = 35;
             }
             consumo = (22.0f / 100) * peso;
-            edadRep = false;
             return;
         }
         // Adulto
@@ -414,7 +418,6 @@ private:
                 peso = 60;
             }
             consumo = (20.0f / 100) * peso;
-            edadRep = true;
             return;
         }
     }
@@ -452,28 +455,20 @@ void actualizarCarne(vector<Venado> &venados, Recursos &recursos)
     recursos.carne = contadorCarneVenados;
 }
 
-void reproducirseP(vector<Puma> &pumas, estaciones estacion)
+void reproducirseP(vector<Puma> &pumas)
 {
-    if (estacion != estaciones::Invierno)
-    {
-        return;
-    }
     for (auto &Hembra : pumas)
     {
-        if (!Hembra.EdadRepT() || Hembra.determinarGenero() != Genero::Hembra)
+        if (Hembra.EdadRepT())
         {
-            continue;
+            for (int criasp = 0; criasp < (rand() % 3) + 1; criasp++)
+            {
+                Genero nuevoGeneroP = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
+                pumas.push_back(move(Puma(nuevoGeneroP, 0)));
+                // venados.push_back(Venado(Genero::Hembra, 120));
+            }
+            return;
         }
-
-        mt19937 gen(random_device{}());
-        uniform_int_distribution<> dis(2, 4);
-
-        for (int criasp = 0; criasp < dis(gen); criasp++)
-        {
-            Genero nuevoGeneroP = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-            pumas.push_back(move(Puma(nuevoGeneroP, 1))); 
-        }
-        
     }
 }
 void reproducirseV(vector<Venado> &venados, estaciones estacion)
@@ -491,7 +486,6 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
         {
             continue;
         }
-
         mt19937 gen(random_device{}());
         uniform_int_distribution<> dis(1, 3);
 
@@ -509,7 +503,7 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
     mt19937 gen(rd());
 
     int demandaTotal = 0;
-    for (const auto &venado : venados)
+    for ( auto &venado : venados)
     {
         demandaTotal += venado.consumo;
     }
@@ -539,58 +533,40 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
         }
     }
 }
-void alimentarPumas(vector<Puma> &pumas, vector<Venado> &venados, Recursos &recursos) {
-    // Ordenar los venados por peso, de mayor a menor
-    sort(venados.begin(), venados.end(), [](const Venado &a, const Venado &b) {
-        return a.peso > b.peso;
-    });
+void alimentarPumas(vector<Puma> &pumas, vector<Venado> &venados, Recursos &recursos)
+{
+    int consumoTotalPumas = 0;
+    for ( auto &puma : pumas)
+    {
+        consumoTotalPumas += puma.consumo; // Asumiendo que 'consumo' es un atributo de Puma
+    }
 
-    auto venado = venados.begin();
+    sort(venados.begin(), venados.end(), []( Venado &a,  Venado &b)
+         {
+             return a.peso > b.peso; // Ordenar venados por peso, de mayor a menor
+         });
 
-    for (auto &puma : pumas) {
-        if (venado == venados.end()) break; // No hay más venados
-
-        int consumoNecesario = puma.determinarConsumo();
-
-        while (consumoNecesario > 0 && venado != venados.end()) {
-            // Marcar venado como consumido
-            venado->nuevoEstado(false);
-
-            // Calcular la carne disponible del venado
-            int pesoDisponible = venado->peso;
-            recursos.carrona += pesoDisponible * 0.25f; // 25% se convierte en carrona
-            pesoDisponible *= 0.75f; // 75% disponible para los pumas
-
-            if (pesoDisponible >= consumoNecesario) {
-                // Si hay suficiente carne, el puma consume lo necesario
-                puma.consumirRecursos(consumoNecesario, recursos);
-                pesoDisponible -= consumoNecesario;
-                consumoNecesario = 0;
-
-                // Pasar el exceso al siguiente puma
-                if (pesoDisponible > 0 && &puma != &pumas.back()) {
-                    pumas[&puma - &pumas[0] + 1].consumirRecursos(pesoDisponible, recursos);
-                }
-            } else {
-                // Si no hay suficiente carne, el puma consume lo que hay
-                puma.consumirRecursos(pesoDisponible, recursos);
-                consumoNecesario -= pesoDisponible;
-                pesoDisponible = 0;
-            }
-
-            if (pesoDisponible == 0) {
-                // Pasar al siguiente venado si este ya fue totalmente consumido
-                venado++;
-            }
-        }
+    int pesoConsumido = 0;
+    auto it = venados.begin();
+    while (pesoConsumido < consumoTotalPumas && it != venados.end())
+    {
+        pesoConsumido += it->peso;
+        recursos.carne += it->peso; // Asumiendo que cada venado aporta su peso en carne
+        it = venados.erase(it);     // Eliminar venado y avanzar al siguiente
     }
 }
+
 void iniciarEspecies(vector<Venado> &venados, vector<Puma> &pumas)
 {
-    for (int CicloActual = 0; CicloActual < 150; CicloActual++)
+    for (int CicloActual = 0; CicloActual < 4; CicloActual++)
     {
-        venados.push_back(Venado(Genero::Hembra, 120));
         venados.push_back(Venado(Genero::Macho, 120));
+        venados.push_back(Venado(Genero::Hembra, 120));
+        venados.push_back(Venado(Genero::Hembra, 120));
+        venados.push_back(Venado(Genero::Hembra, 120));
+        venados.push_back(Venado(Genero::Hembra, 120));
+        venados.push_back(Venado(Genero::Hembra, 120));
+        venados.push_back(Venado(Genero::Hembra, 120));
     }
     for (int CicloActual = 0; CicloActual < 1; CicloActual++)
     {
@@ -630,59 +606,70 @@ string estacionString(estaciones estacion)
     }
 }
 
-vector<Venado> venados; // 10 machos y 10 hembras
-vector<Puma> pumas;     // 1 macho y 1 hembra
+void cargarVectores(std::vector<Venado> &venados, std::vector<Puma> &pumas,  std::string &filename);
+void guardarVectores( std::vector<Venado> &venados,  std::vector<Puma> &pumas,  std::string &filename);
 
-extern Recursos recursosGlobales(100000,10000, 0,100000);
-int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
+int main()
 {
+    vector<Venado> venados; // 10 machos y 10 hembras
+    vector<Puma> pumas;     // 1 macho y 1 hembra
+    int opcion;
+    cout << "1. Cargar datos desde archivo\n";
+    cout << "2. Iniciar nueva simulación\n";
+    cout << "Seleccione una opción: ";
+    cin >> opcion;
 
-
+    if (opcion == 1)
+    {
+        // Cargar los datos de los venados y pumas desde un archivo
+        cargarVectores(venados, pumas, filename);
+    }
     // Hay que incializar y agregar los venados y pumas
-    iniciarEspecies(venados, pumas);
+    else
+    {
+        iniciarEspecies(venados, pumas);
+    }
 
     int carneTotal = 0;
 
-    for (const auto &venado : venados)
+    for (auto &venado : venados)
     {
         carneTotal += venado.peso;
     }
 
     // Se definen los recursos iniciales del ecosistema
-     Recursos recursos(100000, 1000, carneTotal, 100000);
-    
-    
+    Recursos recursos(100000, 1000, carneTotal, 100000);
 
     cout << "Cuantos ciclos queres simular?" << endl;
     cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
     int cantidadCiclos, vegetacionConsumida;
     cin >> cantidadCiclos;
+    int semanas = cantidadCiclos;
+    semanas *= 13;
 
     estaciones estacion;
 
     for (int CicloActual = 1; CicloActual <= cantidadCiclos; CicloActual++)
     {
         clearScreen();
+        for (auto &venado : venados)
+        {
+            if (venado.determinarGenero() == Genero::Macho)
+            {
+                cout << "macho" << venado.peso << endl;
+            }
+            else
+                cout << "Hembra" << venado.peso << endl;
+        }
+
         estacion = estacionNum(CicloActual + 4);
-
-        // for (auto &puma : pumas)
-        // {
-        //     if (puma.determinarGenero() == Genero::Macho)
-        //     {
-        //         cout << "macho:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
-        //     }
-        //     else
-        //         cout << "Hembra:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
-        // }
-
         cout << "Ciclo: " << CicloActual << "        Estacion Actual: " << estacionString(estacion) << endl;
-
         cout << "Recursos vegetacion: " << recursos.vegetacion << endl;
         cout << "Recursos agua: " << recursos.agua << endl;
         cout << "Carne: " << recursos.carne << endl;
-        cout << "Carrona: " << recursos.carrona << endl;
         cout << "Venados: " << venados.size() << endl;
         cout << "Pumas: " << pumas.size() << endl;
+        // cout << "Pumas: " << pumas.size() << endl;
         cout << "Presione cualquier tecla para continuar...";
         cin.ignore();
         cin.get();
@@ -691,39 +678,86 @@ int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
         {
 
             alimentarVenados(venados, recursos);
-            alimentarPumas(pumas, venados, recursos);
-            auto it = venados.begin();
-            while (it != venados.end())
+
+            for (auto &venado : venados)
             {
                 // Se actualiza la edad del venado en semanas
-                it->envejecer(estacion, venados);
+                venado.envejecer(estacion, venados);
 
-                if (!it->estadoVivo())
+                // Si el venado muere, se elimina de la lista
+                if (!venado.estadoVivo())
                 {
-                    
-                    it = venados.erase(it);
+                    venados.erase(venados.begin());
                 }
-                else
-                {
-                    ++it;
-                }
+                // Si el venado es hembra y esta en edad de reproducirse, se reproduce
             }
-            auto eso = pumas.begin();
-            while(eso != pumas.end()){
-                eso->envejecer();
-
-                if(eso->estadoVivo() == false){
-                    pumas.erase(eso);
-                }
-                else{
-                    ++eso;
-                }
+            if (semanaActual % 3 == 0)
+            {
+                alimentarPumas(pumas, venados, recursos);
             }
         }
-        reproducirseP(pumas, estacion);
+        reproducirseP(pumas);
         reproducirseV(venados, estacion);
+        reproducirseP(pumas);
         actualizarCarne(venados, recursos);
     }
+    cout << "¿Desea guardar los datos? (1: Sí, otro: No): ";
+    cin >> opcion;
 
+    if (opcion == 1)
+    {
+        // Guardar los datos de los venados y pumas en un archivo
+        guardarVectores(venados, pumas, filename);
+        cout << "Datos guardados exitosamente.\n";
+    }
     return 0;
+}
+
+void guardarVectores( std::vector<Venado> &venados,  std::vector<Puma> &pumas, std::string &filename)
+{
+    
+    std::ofstream archivo(filename, std::ios::binary);
+    for (auto &venado : venados)
+    {
+        archivo << venado << "\n";
+    }
+    // Insertar un salto de línea para separar los vectores
+    archivo << "\n";
+    for (auto &puma : pumas)
+    {
+        archivo << puma << "\n";
+    }
+}
+
+void cargarVectores( std::vector<Venado> &venados, std::vector<Puma> &pumas,  std::string &filename)
+{
+    std::ifstream archivo(filename, std::ios::binary);
+    std::string linea;
+
+    // Leer el vector de venados
+    while (std::getline(archivo, linea))
+    {
+        if (linea.empty())
+        {
+            // Salto de línea encontrado, romper el bucle
+            break;
+        }
+        std::istringstream iss(linea);
+        Venado Venado;
+        if (iss >> Venado)
+        {
+            venados.push_back(Venado);
+        }
+    }
+
+    // Leer el vector de pumas
+    while (std::getline(archivo, linea))
+    {
+        std::istringstream iss(linea);
+        Puma Puma;
+        if (iss >> Puma)
+        {
+            pumas.push_back(Puma);
+        }
+    }
 }

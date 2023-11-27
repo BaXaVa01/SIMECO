@@ -11,18 +11,10 @@
 #include <limits>
 #include "Excel.cpp"
 #include "barraDeCarga.cpp"
-// #include "RelacionAnimalRecursos.cpp"
+#include "RelacionAnimalRecursos.cpp"
 
-//HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
+// HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
 
-void clearScreen()
-{
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
 
 using namespace std;
 
@@ -32,45 +24,64 @@ struct Usuario
     char contrasena[100];
 };
 
-enum class TipoDesastre
-{
-    Incendio,
-    Inundacion,
-    Sequia,
-    Huracan
-};
+// enum class TipoDesastre
+// {
+//     Incendio,
+//     Inundacion,
+//     Sequia,
+//     Huracan
+// };
 
-class Especie
-{
-public:
-    string nombre;
-    int poblacionInicial;
-    int poblacion;
+// class Especie
+// {
+// public:
+//     string nombre;
+//     int poblacionInicial;
+//     int poblacion;
 
-    Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
-};
+//     Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
+// };
 
-class Recursos
-{
-public:
-    int agua;
-    int carrona;
-    int carne;
-    int vegetacion;
+// class Recursos
+// {
+// public:
+//     int agua;
+//     int carrona;
+//     int carne;
+//     int vegetacion;
+//     int vegetacionConsumida; // Necesitas llevar un registro de la vegetación consumida
 
-    Recursos(int agua, int carrona, int carne, int vegetacion) : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion) {}
-};
+//     Recursos(int agua, int carrona, int carne, int vegetacion)
+//         : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion), vegetacionConsumida(0) {}
 
-class Ecosistema
-{
-public:
-    vector<Especie> especies;
-    Recursos recursosIniciales;
-    Recursos recursosActuales;
+//     void actualizarRecursos(estaciones estacion)
+//     {
+//         // Tengo que poner un nivel maximo de vegetacion
+//         const int nivelMaxVegetacion = 100000;
+//         const int nivelMaxAgua = 10000;
 
-    Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
-        : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
-};
+//         // switch(estacion) {
+//         //     case Primavera:
+
+//         //     case Verano:
+
+//         //     case Otonio:
+
+//         //     case Invierno:
+//         // }
+//     }
+// };
+
+// class Ecosistema
+// {
+// public:
+//     vector<Especie> especies;
+//     Recursos recursosIniciales;
+//     Recursos recursosActuales;
+
+//     Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
+//         : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
+// };
 
 void mostrarEstadoInicialEcosistema(const Ecosistema &ecosistema)
 {
@@ -78,10 +89,11 @@ void mostrarEstadoInicialEcosistema(const Ecosistema &ecosistema)
     cout << "Estado inicial del ecosistema:\n"
          << endl;
     cout << "Recursos iniciales:\n";
-    cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
-    cout << "- Carrona: " << ecosistema.recursosIniciales.carrona << endl;
-    cout << "- Carne: " << ecosistema.recursosIniciales.carne << endl;
-    cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion << endl;
+    // cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
+    cout << "- Agua: " << 100000 << endl;
+    cout << "- Carrona: " << 1000 << endl;
+    cout << "- Carne: " << 2876 << endl;
+    cout << "- Vegetacion: " << 100000 << endl;
 
     cout << "\nEspecies registradas:\n";
     for (const auto &especie : ecosistema.especies)
@@ -95,12 +107,6 @@ void mostrarEstadoInicialEcosistema(const Ecosistema &ecosistema)
     cin.get();
 }
 
-void iniciarVirtualizacion(vector<Especie> &especies, Ecosistema &recursos)
-{
-    clearScreen();
-    cout << "Iniciando virtualizacion...\n"
-         << endl;
-}
 
 void registrarRecursos(Recursos &recursos)
 {
@@ -351,14 +357,15 @@ int Fvmain(string &usuario, directorios &directorio)
 {
     vector<Especie> especies;
 
-    Recursos recursos(100, 200, 300, 400);
-    Ecosistema ecosistema(especies, recursos);
-    bool Guardado=false;
-    int opcion, opcionMenuExcel;
-    string opcionString;
+    Recursos recursos(0, 0, 0, 0);
+    Ecosistema ecosistema(especies, recursosGlobales);
+    bool Guardado = false;
+    bool Excel = true;
+    int opcion, opcionMenuPartida, OpcionMenuExcel;
 
     do
     {
+        
         clearScreen();
         cout << "Menu:\n"
              << endl;
@@ -369,108 +376,117 @@ int Fvmain(string &usuario, directorios &directorio)
         cout << "5. Gestor de Datos de partida" << endl;
         cout << "6. Salir" << endl;
         cout << "\nIngrese una opcion: ";
-        cin >> opcion;
-
-        switch (opcion)
+        cin >> opcionS;
+        if (esNumero(opcionS))
         {
-        case 1:
-            mostrarEstadoInicialEcosistema(ecosistema);
-            break;
-        case 2:
-            mostrarEstadoEcosistema(ecosistema);
-            break;
-        case 3:
-            iniciarVirtualizacion(ecosistema.especies, ecosistema);
-            break;
-        // case 0:
-        //     registrarRecursos(ecosistema.recursosIniciales);
-        //     ecosistema.recursosActuales = ecosistema.recursosIniciales;
-        //     break;
-        case 4:
-            int tipoDesastre;
-            clearScreen();
-
-            // if(ciclo == 0){
-            //     cout << "Usted se encuentra en el ciclo <<0>>, se le recomienda no generar ningun desastrer\n" << endl;
-            //     cin.get();
-            //     clearScreen();
-            // }
-
-            cout << "El ciclo en el que se encuentra es:" << endl;
-            cout << "Generar desastre:\n"
-                 << endl;
-            cout << "Tipos de desastre:" << endl;
-            cout << "1. Incendio" << endl;
-            cout << "2. Inundacion" << endl;
-            cout << "3. Sequia" << endl;
-            cout << "4. Huracan" << endl;
-            cout << "\nIngrese el numero correspondiente al tipo de desastre: ";
-            cin >> tipoDesastre;
-
-            switch (tipoDesastre)
+            opcion = stoi(opcionS);
+            switch (opcion)
             {
             case 1:
-                generarDesastre(ecosistema, TipoDesastre::Incendio);
+                mostrarEstadoInicialEcosistema(ecosistema);
                 break;
             case 2:
-                generarDesastre(ecosistema, TipoDesastre::Inundacion);
+                mostrarEstadoEcosistema(ecosistema);
                 break;
             case 3:
-                generarDesastre(ecosistema, TipoDesastre::Sequia);
+                mainRelacionAnimalRecurso(recursos, usuario);
                 break;
+            // case 0:
+            //     registrarRecursos(ecosistema.recursosIniciales);
+            //     ecosistema.recursosActuales = ecosistema.recursosIniciales;
+            //     break;
             case 4:
-                generarDesastre(ecosistema, TipoDesastre::Huracan);
-                break;
-            default:
-                break;
-            }
-            break;
-        case 5:
-    	{
-            cout<<"1. Generar Excel"<<endl;
-            cout<<"2. Guardar Partida"<<endl;
-            cin>>opcionString;
-            esNumero(opcionString);
-            opcionMenuExcel=stoi(opcionString);
-            switch (opcionMenuExcel)
-            {
-            case 1:
-            {
-                if (Guardado)
+                int tipoDesastre;
+                clearScreen();
+
+                // if(ciclo == 0){
+                //     cout << "Usted se encuentra en el ciclo <<0>>, se le recomienda no generar ningun desastrer\n" << endl;
+                //     cin.get();
+                //     clearScreen();
+                // }
+
+                cout << "El ciclo en el que se encuentra es:" << endl;
+                cout << "Generar desastre:\n"
+                     << endl;
+                cout << "Tipos de desastre:" << endl;
+                cout << "1. Incendio" << endl;
+                cout << "2. Inundacion" << endl;
+                cout << "3. Sequia" << endl;
+                cout << "4. Huracan" << endl;
+                cout << "\nIngrese el numero correspondiente al tipo de desastre: ";
+                cin >> tipoDesastre;
+
+                switch (tipoDesastre)
                 {
-                    ExcelGenerador(usuario,directorio);
+                case 1:
+                    generarDesastre(ecosistema, TipoDesastre::Incendio);
+                    break;
+                case 2:
+                    generarDesastre(ecosistema, TipoDesastre::Inundacion);
+                    break;
+                case 3:
+                    generarDesastre(ecosistema, TipoDesastre::Sequia);
+                    break;
+                case 4:
+                    generarDesastre(ecosistema, TipoDesastre::Huracan);
+                    break;
+                default:
+                    break;
                 }
-                else{
-                    cout<<"Debes guardar la partida antes de mostrar los datos";
-                }
-                
                 break;
-            }
-            case 2:
+            case 5:
             {
-                // GuardarAnimales(ciclonum,vector1,vector2,vector3,vector4);
-                // GuardarRecursos(recursos);
-                // GuardarDesastres(listadesastres);
-                barraCarga(5);
-                Guardado=true;
+                cout << "1. Generar Excel" << endl;
+                cout << "2. Guardar Partida" << endl;
+                cin >> opcionS;
+                esNumero(opcionS);
+                opcionMenuPartida = stoi(opcionS);
+                switch (opcionMenuPartida)
+                {
+                case 1:
+                {
+                    if (Guardado)
+                    {
+                        clearScreen();
+                        ExcelGenerador(usuario, directorio, Excel);
+                    }
+                    else
+                    {
+                        cout << "Debes guardar la partida antes de mostrar los datos";
+                    }
+
+                    break;
+                }
+                case 2:
+                {
+                    // GuardarAnimales(ciclonum,vector1,vector2,vector3,vector4);
+                    // GuardarRecursos(recursos);
+                    // GuardarDesastres(listadesastres);
+                    barraCarga(5);
+                    Guardado = true;
+                }
+                default:
+                    break;
+                }
+            }
+            case 6:
+            {
+                clearScreen();
+                cout << "Saliendo del programa...\n"
+                     << endl;
+                system("pause");
+                break;
             }
             default:
+                clearScreen();
+                cout << "Opcion invalida. Por favor, ingrese una opcion valida.\n"
+                     << endl;
                 break;
             }
         }
-        case 6:
+        else
         {
-            clearScreen();
-            cout << "Saliendo del programa...\n"
-                 << endl;
-            system("pause");
-            break;
-        }
-        default:
-            clearScreen();
-            cout << "Opcion invalida. Por favor, ingrese una opcion valida.\n"
-                 << endl;
-            break;
+            cerr << "Error: Debe de ser un numero entero" << endl;
         }
     } while (opcion != 6);
 

@@ -7,7 +7,7 @@ using namespace std;
 int IndiceArchivoExcel(const string &nombrebase, const string &ruta);
 string existeArchivoExcel(const string &nombrebase, const string &ruta);
 
-void ExcelGenerador(string &usuario, directorios &directorio)
+void ExcelGenerador(string &usuario, directorios &directorio, bool Auto)
 {
     FILE *archivoOriginal, *archivoClonado;
     // Declaracion de variables a usar.
@@ -15,6 +15,7 @@ void ExcelGenerador(string &usuario, directorios &directorio)
     string nombreNuevo = directorio.folderD + "\\" + "macroreg.csv";
     char buffer[4096];
     size_t bytesRead;
+    int op;
 
     // Abrir archivo original
     archivoOriginal = fopen("SalidasDeSIMECO.xlsm", "rb");
@@ -56,11 +57,31 @@ void ExcelGenerador(string &usuario, directorios &directorio)
     // Cerrar ambos archivos después de la operación
     fclose(archivoOriginal);
     fclose(archivoClonado);
-
+    
+    cout<<"1. Generar Excel del ultimo ciclo"<<endl;
+    cout<<"2. Elegir ciclo a mostrar en Excel"<<endl;
+    cin>>op;
     int Indice;
-    Indice = IndiceArchivoExcel("registro", directorio.folderD);
+    if (op==1)
+    {
+        Auto=true;
+    }
+    if (op==2)
+    {
+        Auto=false;
+    }
+    if (Auto)
+    {
+        Indice = IndiceArchivoExcel("registro", directorio.folderD);
+    }
+    else
+    {
+        system("cls");
+        cout<<"Numero de ciclo a cargar: ";
+        cin>>Indice;
+    }
     nombreOriginal = buscarNombreIndice("datos", Indice, directorio.folderD);
-    cout<<nombreOriginal;
+    cout << nombreOriginal;
     system("pause");
     if (actualizarNombre(nombreOriginal, nombreNuevo))
     {
@@ -71,8 +92,9 @@ void ExcelGenerador(string &usuario, directorios &directorio)
 
         regresarNombre(nombreOriginal, nombreNuevo);
     }
-    else{
-        cout<<"vamos mal";
+    else
+    {
+        cout << "vamos mal";
     }
 }
 
