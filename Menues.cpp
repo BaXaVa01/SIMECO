@@ -89,10 +89,11 @@ void mostrarEstadoInicialEcosistema(const Ecosistema &ecosistema)
     cout << "Estado inicial del ecosistema:\n"
          << endl;
     cout << "Recursos iniciales:\n";
-    cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
-    cout << "- Carrona: " << ecosistema.recursosIniciales.carrona << endl;
-    cout << "- Carne: " << ecosistema.recursosIniciales.carne << endl;
-    cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion << endl;
+    // cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
+    cout << "- Agua: " << 100000 << endl;
+    cout << "- Carrona: " << 1000 << endl;
+    cout << "- Carne: " << 2876 << endl;
+    cout << "- Vegetacion: " << 100000 << endl;
 
     cout << "\nEspecies registradas:\n";
     for (const auto &especie : ecosistema.especies)
@@ -357,13 +358,14 @@ int Fvmain(string &usuario, directorios &directorio)
     vector<Especie> especies;
 
     Recursos recursos(0, 0, 0, 0);
-    Ecosistema ecosistema(especies, recursos);
+    Ecosistema ecosistema(especies, recursosGlobales);
     bool Guardado = false;
     bool Excel = true;
     int opcion, opcionMenuPartida, OpcionMenuExcel;
 
     do
     {
+        
         clearScreen();
         cout << "Menu:\n"
              << endl;

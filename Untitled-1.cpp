@@ -12,10 +12,9 @@
 
 using namespace std;
 
-string filename;
-// filename = getCurrentPath();
-// filename="C:\\Users\\david\\OneDrive\\Escritorio\\SIMECOGPT\\output\\usuarios\\davide-patino\\animales\\ciclo0.bin";
-directorios directorio;
+string filename="C:\\Users\\david\\OneDrive\\Escritorio\\SIMECOGPT\\output\\usuarios\\davide-patino\\animales\\ciclo0.bin";
+
+
 
 
 enum estaciones
@@ -152,19 +151,34 @@ public:
     // TAMPOCO SE QUE ES ESTO
     // PERO AHORA FUNCIONA EL CODIGO :D
     //  Operador de Asignación de Movimiento
-    Venado &operator=(Venado &&other) noexcept
+    
+    // Venado &operator=(Venado &&other) noexcept
+    // {
+    //     if (this != &other)
+    //     {
+    //         Especies::operator=(std::move(other)); // Asume que Especies tiene un operador de asignación de movimiento
+    //         edad = other.edad;
+    //         nivelHambre = other.nivelHambre;
+    //         nivelSed = other.nivelSed;
+    //         genero = other.genero;
+    //         vivo = other.vivo;
+    //         // Puedes dejar a `other` en un estadoVivo válido pero "vacío" si es necesario
+    //     }
+    //     return *this;
+    // }
+    Venado(const Venado& other) 
+        : Especies(other), // Llamada al constructor de copia de la clase base, si existe
+          edad(other.edad),
+          nivelHambre(other.nivelHambre),
+          nivelSed(other.nivelSed),
+          genero(other.genero),
+          vivo(other.vivo),
+          contadorEmbarazos(other.contadorEmbarazos),
+          cicloRep(other.cicloRep),
+          edadMax(other.edadMax),
+          embarazada(other.embarazada)
     {
-        if (this != &other)
-        {
-            Especies::operator=(std::move(other)); // Asume que Especies tiene un operador de asignación de movimiento
-            edad = other.edad;
-            nivelHambre = other.nivelHambre;
-            nivelSed = other.nivelSed;
-            genero = other.genero;
-            vivo = other.vivo;
-            // Puedes dejar a `other` en un estadoVivo válido pero "vacío" si es necesario
-        }
-        return *this;
+        // Aquí puedes añadir cualquier lógica adicional necesaria para la copia
     }
 
     Genero determinarGenero()

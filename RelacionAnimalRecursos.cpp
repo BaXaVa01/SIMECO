@@ -80,6 +80,16 @@ public:
 
     Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
         : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
+    
+    void actualizarRecursos(Recursos& recursos)
+    {
+        recursosActuales = recursos;
+    }
+
+    void actualizarRecursosInicial(Recursos& recursos)
+    {
+        recursosActuales = recursos;
+    }
 };
 
 // Mejor empiezo con los animales en general
@@ -620,10 +630,13 @@ string estacionString(estaciones estacion)
     }
 }
 
-int mainRelacionAnimalRecurso(Recursos& recursos, string filename)
+vector<Venado> venados; // 10 machos y 10 hembras
+vector<Puma> pumas;     // 1 macho y 1 hembra
+
+extern Recursos recursosGlobales(100000,10000, 0,100000);
+int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
 {
-    vector<Venado> venados; // 10 machos y 10 hembras
-    vector<Puma> pumas;     // 1 macho y 1 hembra
+
 
     // Hay que incializar y agregar los venados y pumas
     iniciarEspecies(venados, pumas);
@@ -636,8 +649,9 @@ int mainRelacionAnimalRecurso(Recursos& recursos, string filename)
     }
 
     // Se definen los recursos iniciales del ecosistema
-    Recursos recursosAR(100000, 1000, carneTotal, 100000);
-    recursos = recursosAR;
+     Recursos recursos(100000, 1000, carneTotal, 100000);
+    
+    
 
     cout << "Cuantos ciclos queres simular?" << endl;
     cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
@@ -651,15 +665,15 @@ int mainRelacionAnimalRecurso(Recursos& recursos, string filename)
         clearScreen();
         estacion = estacionNum(CicloActual + 4);
 
-        for (auto &puma : pumas)
-        {
-            if (puma.determinarGenero() == Genero::Macho)
-            {
-                cout << "macho:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
-            }
-            else
-                cout << "Hembra:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
-        }
+        // for (auto &puma : pumas)
+        // {
+        //     if (puma.determinarGenero() == Genero::Macho)
+        //     {
+        //         cout << "macho:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
+        //     }
+        //     else
+        //         cout << "Hembra:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
+        // }
 
         cout << "Ciclo: " << CicloActual << "        Estacion Actual: " << estacionString(estacion) << endl;
 
