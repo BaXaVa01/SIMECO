@@ -231,6 +231,13 @@ main .sobre-nosotros {
     align-items: center;
 }
 
+.videos-cont{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .servicio-ind {
     width: 28%;
     text-align: center;
@@ -248,6 +255,9 @@ main .sobre-nosotros {
     font-weight: 300;
     text-align: justify;
 }
+
+
+
 
 /* footer */
 
@@ -448,3 +458,4 @@ footer {
     font-size: 20px;
     border-radius: 10px;
 }
+
