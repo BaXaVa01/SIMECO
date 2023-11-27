@@ -80,13 +80,13 @@ public:
 
     Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
         : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
-    
-    void actualizarRecursos(Recursos& recursos)
+
+    void actualizarRecursos(Recursos &recursos)
     {
         recursosActuales = recursos;
     }
 
-    void actualizarRecursosInicial(Recursos& recursos)
+    void actualizarRecursosInicial(Recursos &recursos)
     {
         recursosActuales = recursos;
     }
@@ -198,7 +198,6 @@ public:
         vivo = estado;
     }
 
-
 private:
     int contadorEmbarazos = 0;
     estaciones cicloRep = Otonio;
@@ -309,7 +308,8 @@ public:
     {
         return edadRep;
     }
-    Genero determinarGenero(){
+    Genero determinarGenero()
+    {
         return genero;
     }
     bool estadoVivo()
@@ -320,26 +320,29 @@ public:
     {
         vivo = estado;
     }
-    void consumirRecursos(int& venado, Recursos& recursos)
+    void consumirRecursos(int &venado, Recursos &recursos)
     {
         venado -= consumo;
         nivelHambre += 1;
         recursos.agua -= consumo / 2;
         nivelSed += 1;
     }
-    float determinarConsumo(){
+    float determinarConsumo()
+    {
         return consumo;
     }
-    int determinarHambre(){
+    int determinarHambre()
+    {
         return nivelHambre;
     }
-    int mostrarEdad(){
+    int mostrarEdad()
+    {
         return edad;
     }
 
 private:
-    estaciones cicloRep = Invierno;  // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
-    int edadMax = 156; // Semanas
+    estaciones cicloRep = Invierno; // 1= Primavera, 2= Verano, 3= Otoño, 4= Invierno
+    int edadMax = 156;              // Semanas
     int edad;
     int nivelHambre = 2; // Se medira en 0 o 1, cada vez que come se le suma 1, cada semana que pasa se le resta 1. Si llega a numeros negativos muere
     int nivelSed = 2;
@@ -471,9 +474,8 @@ void reproducirseP(vector<Puma> &pumas, estaciones estacion)
         for (int criasp = 0; criasp < dis(gen); criasp++)
         {
             Genero nuevoGeneroP = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-            pumas.push_back(move(Puma(nuevoGeneroP, 1))); 
+            pumas.push_back(move(Puma(nuevoGeneroP, 1)));
         }
-        
     }
 }
 void reproducirseV(vector<Venado> &venados, estaciones estacion)
@@ -539,46 +541,54 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
         }
     }
 }
-void alimentarPumas(vector<Puma> &pumas, vector<Venado> &venados, Recursos &recursos) {
+void alimentarPumas(vector<Puma> &pumas, vector<Venado> &venados, Recursos &recursos)
+{
     // Ordenar los venados por peso, de mayor a menor
-    sort(venados.begin(), venados.end(), [](const Venado &a, const Venado &b) {
-        return a.peso > b.peso;
-    });
+    sort(venados.begin(), venados.end(), [](const Venado &a, const Venado &b)
+         { return a.peso > b.peso; });
 
     auto venado = venados.begin();
 
-    for (auto &puma : pumas) {
-        if (venado == venados.end()) break; // No hay más venados
+    for (auto &puma : pumas)
+    {
+        if (venado == venados.end())
+            break; // No hay más venados
 
         int consumoNecesario = puma.determinarConsumo();
 
-        while (consumoNecesario > 0 && venado != venados.end()) {
+        while (consumoNecesario > 0 && venado != venados.end())
+        {
             // Marcar venado como consumido
             venado->nuevoEstado(false);
 
             // Calcular la carne disponible del venado
             int pesoDisponible = venado->peso;
             recursos.carrona += pesoDisponible * 0.25f; // 25% se convierte en carrona
-            pesoDisponible *= 0.75f; // 75% disponible para los pumas
+            pesoDisponible *= 0.75f;                    // 75% disponible para los pumas
 
-            if (pesoDisponible >= consumoNecesario) {
+            if (pesoDisponible >= consumoNecesario)
+            {
                 // Si hay suficiente carne, el puma consume lo necesario
                 puma.consumirRecursos(consumoNecesario, recursos);
                 pesoDisponible -= consumoNecesario;
                 consumoNecesario = 0;
 
                 // Pasar el exceso al siguiente puma
-                if (pesoDisponible > 0 && &puma != &pumas.back()) {
+                if (pesoDisponible > 0 && &puma != &pumas.back())
+                {
                     pumas[&puma - &pumas[0] + 1].consumirRecursos(pesoDisponible, recursos);
                 }
-            } else {
+            }
+            else
+            {
                 // Si no hay suficiente carne, el puma consume lo que hay
                 puma.consumirRecursos(pesoDisponible, recursos);
                 consumoNecesario -= pesoDisponible;
                 pesoDisponible = 0;
             }
 
-            if (pesoDisponible == 0) {
+            if (pesoDisponible == 0)
+            {
                 // Pasar al siguiente venado si este ya fue totalmente consumido
                 venado++;
             }
@@ -633,10 +643,10 @@ string estacionString(estaciones estacion)
 vector<Venado> venados; // 10 machos y 10 hembras
 vector<Puma> pumas;     // 1 macho y 1 hembra
 
-extern Recursos recursosGlobales(100000,10000, 0,100000);
-int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
-{
+extern Recursos recursosGlobales(100000, 10000, 0, 100000);
 
+int mainRelacionAnimalRecurso(Recursos &recursosFV, string filename)
+{
 
     // Hay que incializar y agregar los venados y pumas
     iniciarEspecies(venados, pumas);
@@ -649,9 +659,7 @@ int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
     }
 
     // Se definen los recursos iniciales del ecosistema
-     Recursos recursos(100000, 1000, carneTotal, 100000);
-    
-    
+    Recursos recursos(100000, 1000, carneTotal, 100000);
 
     cout << "Cuantos ciclos queres simular?" << endl;
     cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
@@ -677,10 +685,10 @@ int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
 
         cout << "Ciclo: " << CicloActual << "        Estacion Actual: " << estacionString(estacion) << endl;
 
-        cout << "Recursos vegetacion: " << recursos.vegetacion << endl;
-        cout << "Recursos agua: " << recursos.agua << endl;
-        cout << "Carne: " << recursos.carne << endl;
-        cout << "Carrona: " << recursos.carrona << endl;
+        cout << "Recursos vegetacion: " << recursos.vegetacion << "m2" << endl;
+        cout << "Recursos agua: " << recursos.agua << "m3" << endl;
+        cout << "Carne: " << recursos.carne << "Kg" << endl;
+        cout << "Carrona: " << recursos.carrona << "Kg" << endl;
         cout << "Venados: " << venados.size() << endl;
         cout << "Pumas: " << pumas.size() << endl;
         cout << "Presione cualquier tecla para continuar...";
@@ -700,7 +708,7 @@ int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
 
                 if (!it->estadoVivo())
                 {
-                    
+
                     it = venados.erase(it);
                 }
                 else
@@ -709,13 +717,16 @@ int mainRelacionAnimalRecurso(Recursos& recursosFV, string filename)
                 }
             }
             auto eso = pumas.begin();
-            while(eso != pumas.end()){
+            while (eso != pumas.end())
+            {
                 eso->envejecer();
 
-                if(eso->estadoVivo() == false){
+                if (eso->estadoVivo() == false)
+                {
                     pumas.erase(eso);
                 }
-                else{
+                else
+                {
                     ++eso;
                 }
             }

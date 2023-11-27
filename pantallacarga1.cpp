@@ -74,5 +74,5 @@ void pantallacarga1() {
         }
     }
 
-    return 0;
+    return ;
 }

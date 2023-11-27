@@ -90,10 +90,10 @@ void mostrarEstadoInicialEcosistema(const Ecosistema &ecosistema)
          << endl;
     cout << "Recursos iniciales:\n";
     // cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
-    cout << "- Agua: " << 100000 << endl;
-    cout << "- Carrona: " << 1000 << endl;
-    cout << "- Carne: " << 2876 << endl;
-    cout << "- Vegetacion: " << 100000 << endl;
+    cout << "- Agua: " << 100000 <<"m3"<< endl;
+    cout << "- Carrona: " << 1000 <<"Kg" <<endl;
+    cout << "- Carne: " << 2876 <<"Kg"<< endl;
+    cout << "- Vegetacion: " << 100000 <<"m2"<< endl;
 
     cout << "\nEspecies registradas:\n";
     for (const auto &especie : ecosistema.especies)
@@ -137,10 +137,10 @@ void mostrarEstadoEcosistema(const Ecosistema &ecosistema)
     cout << "Estado actual del ecosistema:\n"
          << endl;
     cout << "Recursos:\n";
-    cout << "- Agua: " << ecosistema.recursosActuales.agua << endl;
-    cout << "- Carrona: " << ecosistema.recursosActuales.carrona << endl;
-    cout << "- Carne: " << ecosistema.recursosActuales.carne << endl;
-    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion << endl;
+    cout << "- Agua: " << ecosistema.recursosActuales.agua <<"m3"<< endl;
+    cout << "- Carrona: " << ecosistema.recursosActuales.carrona <<"Kg"<< endl;
+    cout << "- Carne: " << ecosistema.recursosActuales.carne << "Kg"<<endl;
+    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion <<"m2"<< endl;
 
     cout << "\nEspecies:\n";
     for (const auto &especie : ecosistema.especies)
