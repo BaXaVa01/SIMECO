@@ -241,7 +241,7 @@ void GuardardatosSIMECO(string &usuario, directorios &directorio)
 
     DatosSimulacion datosCargados;
 
-    cargarDatosBinario(datosCargados, nombreBin, directorio.folderD);
+    // cargarDatosBinario(datosCargados, nombreBin, directorio.folderD);
 
     // Mostrar datos
 }
