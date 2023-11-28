@@ -31,16 +31,6 @@ enum class TipoDesastre
     Huracan
 };
 
-class Especie
-{
-public:
-    string nombre;
-    int poblacionInicial;
-    int poblacion;
-
-    Especie(string nombre, int poblacionInicial) : nombre(nombre), poblacionInicial(poblacionInicial), poblacion(poblacionInicial) {}
-};
-
 class Recursos
 {
 public:
@@ -71,27 +61,6 @@ public:
     }
 };
 // como me gusta mi novia
-class Ecosistema
-{
-public:
-    vector<Especie> especies;
-    Recursos recursosIniciales;
-    Recursos recursosActuales;
-
-    Ecosistema(const vector<Especie> &especies, const Recursos &recursos)
-        : especies(especies), recursosIniciales(recursos), recursosActuales(recursos) {}
-
-    void actualizarRecursos(Recursos &recursos)
-    {
-        recursosActuales = recursos;
-    }
-
-    void actualizarRecursosInicial(Recursos &recursos)
-    {
-        recursosActuales = recursos;
-    }
-};
-
 // Mejor empiezo con los animales en general
 
 class Especies
@@ -640,14 +609,73 @@ string estacionString(estaciones estacion)
     }
 }
 
+// class Especie
+// {
+// public:
+//     vector<Venado> venados;
+//     vector<Puma> pumas;
+    
+//     Especie(vector<Venado> &venados, vector<Puma> &pumas)
+//         : venados(venados), pumas(pumas) {}
+// };
+
+class Ecosistema {
+private:
+    int pVenados;
+    int pPumas;
+    Recursos recursosIniciales;
+    Recursos recursosActuales;
+
+    // Constructor privado
+    Ecosistema(int venados, int pumas, Recursos &recursos)
+        :pPumas(pumas), pVenados(venados), recursosIniciales(recursos), recursosActuales(recursos) {}
+
+    // Copia y asignación privados para prevenir múltiples instancias
+    Ecosistema( Ecosistema&);
+    Ecosistema& operator=(Ecosistema&);
+
+public:
+    // Método para acceder a la instancia del Singleton
+    static Ecosistema& getInstance(int venados, int pumas, Recursos &recursos) {
+        static Ecosistema instancia(venados, pumas, recursos);
+        return instancia;
+    }
+    const Recursos& getRecursosActuales() const {
+        return recursosActuales;
+    }
+    const Recursos& getRecursosIniciales() const{
+        return recursosIniciales;
+    }
+    int poblacionVenados(){
+        return pVenados;
+    }
+    int poblacionPumas(){
+        return pPumas;
+    }
+    void actualizarRecursos(Recursos &recursos) {
+        recursosActuales = recursos;
+    }
+
+    void actualizarRecursosInicial(Recursos &recursos) {
+        recursosIniciales = recursos;
+    }
+
+    // ... Otros métodos de Ecosistema...
+};
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 vector<Venado> venados; // 10 machos y 10 hembras
 vector<Puma> pumas;     // 1 macho y 1 hembra
 
-extern Recursos recursosGlobales(100000, 10000, 0, 100000);
+Recursos recursosIniciales(100000, 1000, 0, 100000);
 
-int mainRelacionAnimalRecurso(Recursos &recursosFV, string filename)
+int poblacionVenados = venados.size();
+int poblacionPumas = pumas.size();
+  
+Ecosistema& ecosistemaGlobal =  Ecosistema::getInstance(poblacionVenados, poblacionPumas, recursosIniciales);
+
+void mainRelacionAnimalRecurso(string filename)
 {
-
     // Hay que incializar y agregar los venados y pumas
     iniciarEspecies(venados, pumas);
 
@@ -660,6 +688,7 @@ int mainRelacionAnimalRecurso(Recursos &recursosFV, string filename)
 
     // Se definen los recursos iniciales del ecosistema
     Recursos recursos(100000, 1000, carneTotal, 100000);
+    ecosistemaGlobal.actualizarRecursosInicial(recursos);
 
     cout << "Cuantos ciclos queres simular?" << endl;
     cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
@@ -667,21 +696,11 @@ int mainRelacionAnimalRecurso(Recursos &recursosFV, string filename)
     cin >> cantidadCiclos;
 
     estaciones estacion;
-
-    for (int CicloActual = 1; CicloActual <= cantidadCiclos; CicloActual++)
+    int CicloActual = 1;
+    for (CicloActual; CicloActual <= cantidadCiclos; CicloActual++)
     {
         clearScreen();
         estacion = estacionNum(CicloActual + 4);
-
-        // for (auto &puma : pumas)
-        // {
-        //     if (puma.determinarGenero() == Genero::Macho)
-        //     {
-        //         cout << "macho:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
-        //     }
-        //     else
-        //         cout << "Hembra:  " << puma.peso <<  "   Edad: " << puma.mostrarEdad() << endl;
-        // }
 
         cout << "Ciclo: " << CicloActual << "        Estacion Actual: " << estacionString(estacion) << endl;
 
@@ -735,6 +754,6 @@ int mainRelacionAnimalRecurso(Recursos &recursosFV, string filename)
         reproducirseV(venados, estacion);
         actualizarCarne(venados, recursos);
     }
+    ecosistemaGlobal.actualizarRecursos(recursos);
 
-    return 0;
-}
+    }
