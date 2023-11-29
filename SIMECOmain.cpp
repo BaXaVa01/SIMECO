@@ -8,12 +8,12 @@ directorios path;
 int main()
 {
     string usuario;
-
+    FullScreen();
+    mainBarra1();
     MenuLogin(usuario); 
 
     searchDir(usuario, path);
     system("cls");
-    barraCarga(5);
     
     return 0;
 }

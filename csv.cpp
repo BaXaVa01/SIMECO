@@ -18,27 +18,106 @@ struct DatosSimulacion
     string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
     string incendios, sequias, inundaciones, huracanes;
 };
-
-string existeArchivo(const string &nombrebase, const string &ruta)
+struct DatosAnimal
 {
-    for (int i = 1; i <= 10; i++)
+    int edad;
+    int genero;
+};
+DatosAnimal datos;
+
+void GuardarAnimal(const DatosAnimal datos, bool terminar, const string &fileName)
+{
+    ifstream file(fileName);
+    string content;
+    int commaCount = 0;
+    size_t lastCommaPosition = string::npos;
+    if (!file.is_open())
     {
-        string nombrePrueba = nombrebase + to_string(i) + ".csv";
+        cerr << "Error al abrir el archivo." << endl;
+        return;
+    }
 
-        ifstream prueba(ruta + "\\" + nombrePrueba);
-
-        if (!prueba)
+    // Lee todo el contenido del archivo
+    string line;
+    while (getline(file, line))
+    {
+        for (size_t i = 0; i < line.size(); ++i)
         {
-            return nombrePrueba;
+            if (line[i] == ',')
+            {
+                lastCommaPosition = content.size() + i;
+                commaCount++;
+            }
+        }
+        content += line + "\n";
+    }
+
+    file.close();
+
+    // Si terminar es true, simplemente añade "-", de lo contrario, añade los datos
+    if (terminar)
+    {
+        content += "-";
+    }
+    else
+    {
+        if (lastCommaPosition != string::npos)
+        {
+            content.insert(lastCommaPosition + 1, to_string(datos.edad) + "," + to_string(datos.genero) + ",");
+        }
+    }
+
+    // Sobrescribe el archivo con el contenido modificado
+    ofstream outFile(fileName);
+    if (outFile.is_open())
+    {
+        outFile << content;
+        outFile.close();
+    }
+    else
+    {
+        cerr << "Error al abrir el archivo para escribir." << endl;
+    }
+}
+
+string existeArchivo(const string &nombrebase, const string &ruta, string ext)
+{
+    if (nombrebase == "ciclo")
+    {
+        for (int i = 1; i <= 10; i++)
+        {
+            string nombrePrueba = nombrebase + to_string(i) + ext;
+
+            ifstream prueba(ruta + "\\" + nombrePrueba);
+
+            if (prueba)
+            {
+                nombrePrueba = ruta + "\\" + nombrePrueba;
+                return nombrePrueba;
+            }
+        }
+    }
+    else
+    {
+        for (int i = 1; i <= 10; i++)
+        {
+            string nombrePrueba = nombrebase + to_string(i) + ext;
+
+            ifstream prueba(ruta + "\\" + nombrePrueba);
+
+            if (!prueba)
+            {
+                return nombrePrueba;
+            }
         }
     }
 
     return "";
 }
 
-string buscarNombreIndice(const string &nombreBase, int indice, const string &ruta)
+string buscarNombreIndice(const string &nombreBase, int indice, const string &ruta, string ext)
 {
-    string nombre = nombreBase + to_string(indice) + ".csv";
+    string nombre = nombreBase + to_string(indice) + ext;
 
     string nombrePrueba = ruta + "\\" + nombre;
 
@@ -53,7 +132,7 @@ string buscarNombreIndice(const string &nombreBase, int indice, const string &ru
 }
 
 // Función que cambia el nombre temporalmente
-bool actualizarNombre(const string& nombreOriginal, const string& nombreNuevo)
+bool actualizarNombre(const string &nombreOriginal, const string &nombreNuevo)
 {
     if (rename(nombreOriginal.c_str(), nombreNuevo.c_str()) == 0)
     {
@@ -61,7 +140,7 @@ bool actualizarNombre(const string& nombreOriginal, const string& nombreNuevo)
     }
     else
     {
-        return false; 
+        return false;
     }
 }
 void regresarNombre(string &nombreOriginal, string &nombreNuevo)
@@ -176,66 +255,66 @@ void cargarDatosBinario(DatosSimulacion &datos, const string &nombreArchivo, con
 
 void GuardardatosSIMECO(string &usuario, directorios &directorio)
 {
-    DatosSimulacion datos;
+    DatosSimulacion datosS;
 
-    datos.poblacionTotalEspecie1 = "500";
-    datos.poblacionTotalEspecie2 = "500";
-    datos.poblacionTotalEspecie3 = "750";
-    datos.poblacionTotalEspecie4 = "200";
+    datosS.poblacionTotalEspecie1 = "500";
+    datosS.poblacionTotalEspecie2 = "500";
+    datosS.poblacionTotalEspecie3 = "0";
+    datosS.poblacionTotalEspecie4 = "0";
 
-    datos.edadPromedioEspecie1 = "5";
-    datos.edadPromedioEspecie2 = "3";
-    datos.edadPromedioEspecie3 = "4";
-    datos.edadPromedioEspecie4 = "2";
+    datosS.edadPromedioEspecie1 = "5";
+    datosS.edadPromedioEspecie2 = "3";
+    datosS.edadPromedioEspecie3 = "0";
+    datosS.edadPromedioEspecie4 = "0";
 
-    datos.tasaNatalidadEspecie1 = "10";
-    datos.tasaNatalidadEspecie2 = "20";
-    datos.tasaNatalidadEspecie3 = "15";
-    datos.tasaNatalidadEspecie4 = "8";
+    datosS.tasaNatalidadEspecie1 = "10";
+    datosS.tasaNatalidadEspecie2 = "20";
+    datosS.tasaNatalidadEspecie3 = "0";
+    datosS.tasaNatalidadEspecie4 = "0";
 
-    datos.tasaMortalidadEspecie1 = "5";
-    datos.tasaMortalidadEspecie2 = "10";
-    datos.tasaMortalidadEspecie3 = "7";
-    datos.tasaMortalidadEspecie4 = "3";
+    datosS.tasaMortalidadEspecie1 = "0.20";
+    datosS.tasaMortalidadEspecie2 = "0.10";
+    datosS.tasaMortalidadEspecie3 = "0";
+    datosS.tasaMortalidadEspecie4 = "0";
 
-    datos.crecimientoPoblacionEspecie1 = "5";
-    datos.crecimientoPoblacionEspecie2 = "8";
-    datos.crecimientoPoblacionEspecie3 = "6";
-    datos.crecimientoPoblacionEspecie4 = "2";
+    datosS.crecimientoPoblacionEspecie1 = "5";
+    datosS.crecimientoPoblacionEspecie2 = "8";
+    datosS.crecimientoPoblacionEspecie3 = "0";
+    datosS.crecimientoPoblacionEspecie4 = "0";
 
-    datos.promedioIndividuos = "800";
-    datos.poblacionTotal = "1450";
-    datos.aguaDisponible = "50000";
-    datos.hierbaDisponible = "100000";
+    datosS.promedioIndividuos = "800";
+    datosS.poblacionTotal = "1450";
+    datosS.aguaDisponible = "50000";
+    datosS.hierbaDisponible = "100000";
 
-    datos.carneDisponible = "20000";
-    datos.carronaDisponible = "10000";
-    datos.estacionInicial = "Verano";
-    datos.estacionActual = "Otono";
+    datosS.carneDisponible = "20000";
+    datosS.carronaDisponible = "10000";
+    datosS.estacionInicial = "Verano";
+    datosS.estacionActual = "Otono";
 
-    datos.anoInicio = "2020";
-    datos.anoActual = "2023";
-    datos.desastresOcurridos = "2";
-    datos.desastresIniciadosUsuario = "3";
+    datosS.anoInicio = "2020";
+    datosS.anoActual = "2023";
+    datosS.desastresOcurridos = "2";
+    datosS.desastresIniciadosUsuario = "3";
 
-    datos.incendios = "1";
-    datos.sequias = "0";
-    datos.inundaciones = "2";
-    datos.huracanes = "2";
+    datosS.incendios = "1";
+    datosS.sequias = "0";
+    datosS.inundaciones = "2";
+    datosS.huracanes = "2";
 
     string nombreCSV;
     searchDir(usuario, directorio);
-    nombreCSV = existeArchivo("datos", directorio.folderD);
+    nombreCSV = existeArchivo("datos", directorio.folderD, ".csv");
 
-    crearCSV(datos, nombreCSV, directorio.folderD);
+    crearCSV(datosS, nombreCSV, directorio.folderD);
 
     string nombreBin;
 
-    nombreBin = existeArchivo("datos", directorio.folderD);
+    nombreBin = existeArchivo("datos", directorio.folderD, ".csv");
 
     nombreBin = nombreCSV + ".bin";
 
-    guardarBinario(datos, nombreBin, directorio.folderD);
+    guardarBinario(datosS, nombreBin, directorio.folderD);
 
     // Lectura del archivo binario
 

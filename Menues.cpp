@@ -12,9 +12,9 @@
 #include "Excel.cpp"
 #include "barraDeCarga.cpp"
 #include "RelacionAnimalRecursos.cpp"
-
+#include "pantallacarga2.cpp"
+#include "pantallacarga1.cpp"
 // HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
-
 
 using namespace std;
 
@@ -23,20 +23,20 @@ struct Usuario
     char nombreUsuario[100];
     char contrasena[100];
 };
-
-void mostrarEstadoInicialEcosistema(Ecosistema& ecosistema)
+string NombreBinA;
+streampos posicionactual;
+void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 {
 
-    
     clearScreen();
     cout << "Estado inicial del ecosistema:\n"
          << endl;
     cout << "Recursos iniciales:\n";
     // cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
-    cout << "- Agua: " << ecosistema.recursosIniciales.agua <<"m3"<< endl;
-    cout << "- Carrona: " << ecosistema.recursosIniciales.carrona <<"Kg" <<endl;
-    cout << "- Carne: " << ecosistema.recursosIniciales.carne <<"Kg"<< endl;
-    cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion <<"m2"<< endl;
+    cout << "- Agua: " << ecosistema.recursosIniciales.agua << "m3" << endl;
+    cout << "- Carrona: " << ecosistema.recursosIniciales.carrona << "Kg" << endl;
+    cout << "- Carne: " << ecosistema.recursosIniciales.carne << "Kg" << endl;
+    cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion << "m2" << endl;
 
     cout << "\nEspecies registradas:\n";
     cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
@@ -47,7 +47,6 @@ void mostrarEstadoInicialEcosistema(Ecosistema& ecosistema)
     cin.ignore();
     cin.get();
 }
-
 
 void registrarRecursos(Recursos &recursos)
 {
@@ -72,18 +71,17 @@ void registrarRecursos(Recursos &recursos)
     cin.get();
 }
 
-void mostrarEstadoEcosistema(Ecosistema& ecosistema)
+void mostrarEstadoEcosistema(Ecosistema &ecosistema)
 {
-    
- 
+
     clearScreen();
     cout << "Estado actual del ecosistema:\n"
          << endl;
     cout << "Recursos:\n";
-    cout << "- Agua: " << ecosistema.recursosActuales.agua <<"m3"<< endl;
-    cout << "- Carrona: " << ecosistema.recursosActuales.carrona <<"Kg"<< endl;
-    cout << "- Carne: " << ecosistema.recursosActuales.carne << "Kg"<<endl;
-    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion <<"m2"<< endl;
+    cout << "- Agua: " << ecosistema.recursosActuales.agua << "m3" << endl;
+    cout << "- Carrona: " << ecosistema.recursosActuales.carrona << "Kg" << endl;
+    cout << "- Carne: " << ecosistema.recursosActuales.carne << "Kg" << endl;
+    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion << "m2" << endl;
 
     cout << "\nEspecies:\n";
     cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
@@ -98,7 +96,6 @@ void mostrarEstadoEcosistema(Ecosistema& ecosistema)
 void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
 {
 
-    
     clearScreen();
     cout << "Generando desastre...\n"
          << endl;
@@ -110,19 +107,19 @@ void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
         cout << "Incendio" << endl;
         ecosistema.recursosActuales.vegetacion *= 0.1; // Gran reduccion
         ecosistema.recursosActuales.agua *= 0.9;       // Reduccion leve
-        
+
         break;
     case TipoDesastre::Inundacion:
         cout << "Inundacion" << endl;
         ecosistema.recursosActuales.agua *= 1.6;       // Aumento significativo
         ecosistema.recursosActuales.vegetacion *= 1.4; // Aumento significativo
-        
+
         break;
     case TipoDesastre::Sequia:
         cout << "Sequia" << endl;
         ecosistema.recursosActuales.agua *= 0.3;       // Gran reduccion
         ecosistema.recursosActuales.vegetacion *= 0.5; // Reduccion moderada
-        
+
         break;
     case TipoDesastre::Huracan:
         cout << "Huracan" << endl;
@@ -132,7 +129,7 @@ void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
     default:
         break;
     }
-    //Por el momento los desastres solo afectan a los recursos
+    // Por el momento los desastres solo afectan a los recursos
 
     cout << "\nDesastre generado correctamente.\n"
          << endl;
@@ -279,8 +276,7 @@ int Fvmain(string &usuario, directorios &directorio)
     vector<Venado> venados; // 10 machos y 10 hembras
     vector<Puma> pumas;     // 1 macho y 1 hembra
 
-
-    //Esta funcion es solo si el usuario no tiene partida guardada
+    // Esta funcion es solo si el usuario no tiene partida guardada
     iniciarEspecies(venados, pumas);
 
     int carneInicialEcosistema;
@@ -289,13 +285,13 @@ int Fvmain(string &usuario, directorios &directorio)
         carneInicialEcosistema += venado.peso;
     }
     Recursos recursosInicialesEcosistema(100000, 1000, carneInicialEcosistema, 100000); // 100000 m3 de agua, 1000 kg de carrona, 100000 m2 de vegetacion
-    
+
     Ecosistema datosEcosistema(int(venados.size()), int(pumas.size()), recursosInicialesEcosistema);
- 
+
     bool Guardado = false;
     bool Excel = true;
     int opcion, opcionMenuPartida, OpcionMenuExcel;
-    
+
     do
     {
         clearScreen();
@@ -306,7 +302,8 @@ int Fvmain(string &usuario, directorios &directorio)
         cout << "3. Iniciar ciclos" << endl;
         cout << "4. Generar desastre" << endl;
         cout << "5. Gestor de Datos de partida" << endl;
-        cout << "6. Salir" << endl;
+        cout << "6. Abrir pagina Web SIMECO" << endl;
+        cout << "7. Salir" << endl;
         cout << "\nIngrese una opcion: ";
         cin >> opcionS;
         if (esNumero(opcionS))
@@ -324,10 +321,10 @@ int Fvmain(string &usuario, directorios &directorio)
                 break;
             case 3:
                 mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema);
-                cout<< "hola waos";
+                cout << "hola waos";
                 cin.get();
                 break;
- 
+
             case 4:
                 int tipoDesastre;
                 clearScreen();
@@ -365,6 +362,7 @@ int Fvmain(string &usuario, directorios &directorio)
             {
                 cout << "1. Generar Excel" << endl;
                 cout << "2. Guardar Partida" << endl;
+                cout << "3. Cargar Partida" <<endl;
                 cin >> opcionS;
                 esNumero(opcionS);
                 opcionMenuPartida = stoi(opcionS);
@@ -380,23 +378,56 @@ int Fvmain(string &usuario, directorios &directorio)
                     else
                     {
                         cout << "Debes guardar la partida antes de mostrar los datos";
+                        system("pause");
                     }
 
                     break;
                 }
                 case 2:
                 {
-                    // GuardarAnimales(ciclonum,vector1,vector2,vector3,vector4);
+                    system("pause");
+                    NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
+                    system("pause");
+                    bool terminar = false;
+                    for (auto &venado : venados)
+                    {
+                        datos.edad = venado.mostrarEdad();
+                        if (venado.determinarGenero() == Genero::Macho)
+                        {
+                            datos.genero = 0;
+                        }
+                        else
+                        {
+                            datos.genero = 1;
+                        }
+                        GuardarAnimal(datos, terminar, NombreBinA);
+                    }
+                    terminar = true;
+                    GuardarAnimal(datos, terminar, NombreBinA);
                     // GuardarRecursos(recursos);
                     // GuardarDesastres(listadesastres);
                     barraCarga(5);
                     Guardado = true;
+                    break;
+                }
+                case 3:
+                {
+                    int cuenta = 0;
+                    NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
+                    bool terminar = false;
+                    LeerAnimal(datos, terminar, NombreBinA, venados, pumas, posicionactual, cuenta);
+                    break;
                 }
                 default:
                     break;
                 }
             }
             case 6:
+            {
+                system("start index.html");
+                break;
+            }
+            case 7:
             {
                 clearScreen();
                 cout << "Saliendo del programa...\n"
@@ -415,7 +446,7 @@ int Fvmain(string &usuario, directorios &directorio)
         {
             cerr << "Error: Debe de ser un numero entero" << endl;
         }
-    } while (opcion != 6);
+    } while (opcion != 7);
 
     return 0;
 }
@@ -487,6 +518,7 @@ void MenuLogin(string &usuario)
                     usuario = nombreUsuario;
                     // Llama a searchDir con la version del nombre de usuario con guiones
                     searchDir(UsuarioConGuiones, directorio);
+                    mainImagenes();
                     Fvmain(UsuarioConGuiones, directorio);
                     opcion = 3;
                 }
@@ -511,6 +543,7 @@ void MenuLogin(string &usuario)
         else
         {
             cout << "Error: Debe ser un valor numerico" << endl;
+            
         }
     } while (opcion != 3);
 }
