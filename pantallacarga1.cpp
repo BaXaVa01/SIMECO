@@ -71,7 +71,7 @@ void imprimirBarraDeCarga(int x, int y, int longitud, int progreso) {
     cout << "[";
     int barrasCompletadas = static_cast<int>(static_cast<float>(progreso) / 100 * longitud);
     for (int i = 0; i < longitud; ++i) {
-        if (i < barrasCompletadas) {
+        if (i < barrasCompletadas+10) {
             cout << "=";
         } else {
             cout << " ";
@@ -125,8 +125,14 @@ int main() {
         
         imprimirBarraDeCarga(xPatito, yPatito + alturaPatito + 2, longitudBarra, progresoBarra);
 
-        cout<<"\n                                                           "<<progresoBarra<<"%";
-        progresoBarra += 2;
+        
+        progresoBarra += 3;
+        if(progresoBarra < 100){
+            cout<<"\n                                                           "<<progresoBarra<<"%";
+
+        }else{
+            cout<<"\n                                                           100%";
+        }
 
         if (progresoBarra > 100) {
             progresoBarra = 0;
