@@ -449,7 +449,8 @@ void reproducirseP(vector<Puma> &pumas, estaciones estacion)
 }
 void reproducirseV(vector<Venado> &venados, estaciones estacion)
 {
-    if(estacion != estaciones::Otonio){
+    if (estacion != estaciones::Otonio)
+    {
         return;
     }
     // Encontrar una hembra disponible para la reproducción
@@ -612,7 +613,7 @@ string estacionString(estaciones estacion)
 // public:
 //     vector<Venado> venados;
 //     vector<Puma> pumas;
-    
+
 //     Especie(vector<Venado> &venados, vector<Puma> &pumas)
 //         : venados(venados), pumas(pumas) {}
 // };
@@ -659,7 +660,8 @@ string estacionString(estaciones estacion)
 //         recursosIniciales = recursos;
 //     }
 
-class Ecosistema {
+class Ecosistema
+{
 public:
     int pVenados;
     int pPumas;
@@ -667,8 +669,7 @@ public:
     Recursos recursosActuales;
 
     Ecosistema(int venados, int pumas, Recursos &recursos)
-        :recursosIniciales(recursos), recursosActuales(recursos), pVenados(venados), pPumas(pumas) {}
-
+        : recursosIniciales(recursos), recursosActuales(recursos), pVenados(venados), pPumas(pumas) {}
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -696,7 +697,7 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
             alimentarVenados(venados, ecosistema.recursosActuales);
             alimentarPumas(pumas, venados, ecosistema.recursosActuales);
             auto it = venados.begin();
-            while  (it != venados.end())
+            while (it != venados.end())
             {
                 // Se actualiza la edad del venado en semanas
                 it->envejecer(estacion, venados);
@@ -726,14 +727,76 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
                 }
             }
         }
-        
+
         reproducirseP(pumas, estacion);
         reproducirseV(venados, estacion);
         actualizarCarne(venados, ecosistema.recursosActuales);
-
     }
-    
-
 
     return 0;
+}
+
+void LeerAnimal(DatosAnimal &datos, bool &terminar, const string &fileName, vector<Venado> &Lvenados, vector<Puma> &Lpumas, streampos &posicionActual, int &count)
+{
+    bool puma = false;
+    ifstream file(fileName);
+    if (!file.is_open())
+    {
+        cerr << "Error al abrir el archivo." << endl;
+        return;
+    }
+
+    // Mueve el puntero a la última posición conocida
+    file.seekg(posicionActual);
+
+    string line;
+    while (getline(file, line))
+    {
+        if (line == ",-")
+        {
+            puma = true; // Cambia a leer datos para pumas
+            count++;
+            continue; // Continúa con la siguiente iteración del bucle
+        }
+
+        stringstream ss(line);
+        string item;
+        getline(ss, item, ',');
+        datos.edad = stoi(item);
+        getline(ss, item, ',');
+        datos.genero = stoi(item);
+        terminar = false;
+
+        if (puma)
+        {
+            if (datos.genero == 0)
+            {
+                Lpumas.push_back(Puma(Genero::Macho, datos.edad));
+            }
+            else
+            {
+                Lpumas.push_back(Puma(Genero::Hembra, datos.edad));
+            }
+        }
+        else
+        {
+            if (datos.genero == 0)
+            {
+                Lvenados.push_back(Venado(Genero::Macho, datos.edad));
+            }
+            else
+            {
+                Lvenados.push_back(Venado(Genero::Hembra, datos.edad));
+            }
+        }
+
+        // Actualiza la posición actual para la próxima llamada
+        posicionActual = file.tellg();
+    }
+
+    file.close();
+    if (line == ",-" && count == 2)
+    {
+        terminar = true;
+    }
 }

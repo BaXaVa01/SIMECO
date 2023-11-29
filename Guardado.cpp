@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
 
 using namespace std;
 
@@ -102,7 +103,7 @@ void createFolder(string usuario) {
         printf("Error abriendo archivo animales\n");
     }
 
-    dirA += "\\ciclo0.bin";
+    dirA += "\\ciclo1.bin";
 
     animalFileClonado = fopen(dirA.c_str(), "wb");
 
@@ -128,7 +129,7 @@ void createFolder(string usuario) {
         printf("Error abriendo archivo Desastresl\n");
     }
     
-    dirD += "\\ciclo0.bin";
+    dirD += "\\ciclo1.bin";
 
     desastreFileClonado = fopen(dirD.c_str(), "wb");
 
@@ -151,7 +152,7 @@ void createFolder(string usuario) {
         printf("Error abriendo archivo Ecosisitema\n");
     }
 
-    dirE += "\\ciclo0.bin";
+    dirE += "\\ciclo1.bin";
 
     ecosistemaFileClonado = fopen(dirE.c_str(), "wb");
 
@@ -165,7 +166,7 @@ void createFolder(string usuario) {
 }
 
 bool verificarPartidas(string directorio, string usuario){
-    string dir = directorio + "\\"+ usuario +"\\animales\\ciclo0.bin";
+    string dir = directorio + "\\"+ usuario +"\\animales\\ciclo1.bin";
     FILE *archivo = fopen(dir.c_str(), "rb");
     if (archivo != NULL)
     {

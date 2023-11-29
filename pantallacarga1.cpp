@@ -80,7 +80,7 @@ void imprimirBarraDeCarga(int x, int y, int longitud, int progreso) {
     cout << "]";
 }
 
-int main() {
+int mainBarra1() {
     SetConsoleOutputCP(65001);
 
     // Calcular la posición inicial para centrar el bloque de texto
