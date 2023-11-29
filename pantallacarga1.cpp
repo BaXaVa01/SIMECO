@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <thread>
 #include <chrono>
-#include "barraDeCarga.cpp"
+
 
 using namespace std;
 
@@ -138,7 +138,7 @@ int main() {
             xPatito = (80 - anchoPatito) / 2;
         }
     }
-    
+
 
     return 0;
 }
