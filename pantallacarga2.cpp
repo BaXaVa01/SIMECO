@@ -208,7 +208,7 @@ __________________________________██░░░░████████____
 __________________________________████████████████________██__██░░██__██___________________________________
 __________________________________████████████______________████████_______________________________________
 __________________________________██████______________________██████_______________________________________
-    
+
 
 
 ____████____________████████________________________________________________________________
@@ -340,9 +340,6 @@ ______________________________________▒▒▒▒______▒▒▒▒________▒�
 
 */
 
-
-
-
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -351,17 +348,25 @@ ______________________________________▒▒▒▒______▒▒▒▒________▒�
 #ifdef _WIN32
 #include <Windows.h>
 #endif
-
-void mostrarImagen(const std::string& imagen) {
+void FullScreen()
+{
+    keybd_event(VK_MENU, 0x36, 0, 0);
+    keybd_event(VK_RETURN, 0x1C, 0, 0);
+    keybd_event(VK_RETURN, 0x1C, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_MENU, 0x38, KEYEVENTF_KEYUP, 0);
+}
+void mostrarImagen(const std::string &imagen)
+{
     std::cout << imagen << "\n";
 }
 
-int main() {
-    // Verificar si el sistema operativo es Windows
-    #ifdef _WIN32
+void mainImagenes()
+{
+// Verificar si el sistema operativo es Windows
+#ifdef _WIN32
     // Cambiar la página de códigos a UTF-8 (65001) en Windows
     SetConsoleOutputCP(65001);
-    #endif
+#endif
 
     // Definir las imágenes con caracteres especiales
     std::string imagen1 = R"(
@@ -529,22 +534,26 @@ ______________________________________▒▒▒▒______▒▒▒▒________▒�
 
     // Duración en milisegundos entre cada imagen (ajusta según sea necesario)
     int duracionEntreImagenes = 2000;
+    int pausa = 1;
 
     // Mostrar las imágenes en una animación
-    while (true) {
-        for (int i = 0; i < numImagenes; ++i) {
+    while (pausa != 0)
+    {
+        for (int i = 0; i < numImagenes; ++i)
+        {
             mostrarImagen(imagenes[i]);
 
             // Esperar antes de mostrar la siguiente imagen
             std::this_thread::sleep_for(std::chrono::milliseconds(duracionEntreImagenes));
-            // Limpiar la pantalla (puedes ajustar esto según tu sistema operativo)
-            #ifdef _WIN32
+// Limpiar la pantalla (puedes ajustar esto según tu sistema operativo)
+#ifdef _WIN32
             system("cls");
-            #else
+#else
             system("clear");
-            #endif
+#endif
         }
+        pausa--;
     }
 
-    return 0;
+    return;
 }

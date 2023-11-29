@@ -80,7 +80,7 @@ void ExcelGenerador(string &usuario, directorios &directorio, bool Auto)
         cout<<"Numero de ciclo a cargar: ";
         cin>>Indice;
     }
-    nombreOriginal = buscarNombreIndice("datos", Indice, directorio.folderD);
+    nombreOriginal = buscarNombreIndice("datos", Indice, directorio.folderD,".csv");
     cout << nombreOriginal;
     system("pause");
     if (actualizarNombre(nombreOriginal, nombreNuevo))
