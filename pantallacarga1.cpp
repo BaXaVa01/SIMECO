@@ -80,6 +80,9 @@ void imprimirBarraDeCarga(int x, int y, int longitud, int progreso) {
     cout << "]";
 }
 
+
+
+
 int main() {
     SetConsoleOutputCP(65001);
 
@@ -96,6 +99,8 @@ int main() {
     int yPatito = yTexto + alturaTexto + 1; // 
     int progresoBarra = 0;
     int longitudBarra = 75;
+
+    int xCoutCentrado = (80 - longitudBarra) / 2;
 
 
     while (true) {
@@ -120,10 +125,12 @@ int main() {
         
         imprimirBarraDeCarga(xPatito, yPatito + alturaPatito + 2, longitudBarra, progresoBarra);
 
-        progresoBarra += 5;
+        cout<<"\n                                                           "<<progresoBarra<<"%";
+        progresoBarra += 2;
 
         if (progresoBarra > 100) {
             progresoBarra = 0;
+            
             return false;
         }
 
