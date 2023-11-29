@@ -26,22 +26,21 @@ struct Usuario
 
 void mostrarEstadoInicialEcosistema(Ecosistema& ecosistema)
 {
-    int pumasP = ecosistema.poblacionPumas();
-    int venadosP = ecosistema.poblacionVenados();
-    Recursos recursos = ecosistema.getRecursosIniciales();
+
+    
     clearScreen();
     cout << "Estado inicial del ecosistema:\n"
          << endl;
     cout << "Recursos iniciales:\n";
     // cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
-    cout << "- Agua: " << recursos.agua <<"m3"<< endl;
-    cout << "- Carrona: " << recursos.carrona <<"Kg" <<endl;
-    cout << "- Carne: " << recursos.carne <<"Kg"<< endl;
-    cout << "- Vegetacion: " << recursos.vegetacion <<"m2"<< endl;
+    cout << "- Agua: " << ecosistema.recursosIniciales.agua <<"m3"<< endl;
+    cout << "- Carrona: " << ecosistema.recursosIniciales.carrona <<"Kg" <<endl;
+    cout << "- Carne: " << ecosistema.recursosIniciales.carne <<"Kg"<< endl;
+    cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion <<"m2"<< endl;
 
     cout << "\nEspecies registradas:\n";
-    cout << "-Poblacion Venados: " << venadosP << endl;
-    cout << "-Poblacion Pumas: " << pumasP << endl;
+    cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
+    cout << "-Poblacion Pumas: " << ecosistema.pPumas << endl;
 
     cout << endl;
     cout << "Presione cualquier tecla para continuar...";
@@ -76,22 +75,19 @@ void registrarRecursos(Recursos &recursos)
 void mostrarEstadoEcosistema(Ecosistema& ecosistema)
 {
     
-    int pumasP = ecosistema.poblacionPumas();
-    int venadosP = ecosistema.poblacionVenados();
-
-    Recursos recursos = ecosistema.getRecursosIniciales();
+ 
     clearScreen();
     cout << "Estado actual del ecosistema:\n"
          << endl;
     cout << "Recursos:\n";
-    cout << "- Agua: " << recursos.agua <<"m3"<< endl;
-    cout << "- Carrona: " << recursos.carrona <<"Kg"<< endl;
-    cout << "- Carne: " << recursos.carne << "Kg"<<endl;
-    cout << "- Vegetacion: " << recursos.vegetacion <<"m2"<< endl;
+    cout << "- Agua: " << ecosistema.recursosActuales.agua <<"m3"<< endl;
+    cout << "- Carrona: " << ecosistema.recursosActuales.carrona <<"Kg"<< endl;
+    cout << "- Carne: " << ecosistema.recursosActuales.carne << "Kg"<<endl;
+    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion <<"m2"<< endl;
 
     cout << "\nEspecies:\n";
-    cout << "-Poblacion Venados: " << venadosP << endl;
-    cout << "-Poblacion Pumas: " << pumasP << endl;
+    cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
+    cout << "-Poblacion Pumas: " << ecosistema.pPumas << endl;
 
     cout << endl;
     cout << "Presione cualquier tecla para continuar...";
@@ -102,7 +98,7 @@ void mostrarEstadoEcosistema(Ecosistema& ecosistema)
 void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
 {
 
-    Recursos recursos = ecosistema.getRecursosActuales();
+    
     clearScreen();
     cout << "Generando desastre...\n"
          << endl;
@@ -112,27 +108,26 @@ void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
     {
     case TipoDesastre::Incendio:
         cout << "Incendio" << endl;
-        recursos.vegetacion *= 0.1; // Gran reduccion
-        recursos.agua *= 0.9;       // Reduccion leve
-        ecosistema.actualizarRecursos(recursos);
+        ecosistema.recursosActuales.vegetacion *= 0.1; // Gran reduccion
+        ecosistema.recursosActuales.agua *= 0.9;       // Reduccion leve
+        
         break;
     case TipoDesastre::Inundacion:
         cout << "Inundacion" << endl;
-        recursos.agua *= 1.6;       // Aumento significativo
-        recursos.vegetacion *= 1.4; // Aumento significativo
-        ecosistema.actualizarRecursos(recursos);
+        ecosistema.recursosActuales.agua *= 1.6;       // Aumento significativo
+        ecosistema.recursosActuales.vegetacion *= 1.4; // Aumento significativo
+        
         break;
     case TipoDesastre::Sequia:
         cout << "Sequia" << endl;
-        recursos.agua *= 0.3;       // Gran reduccion
-        recursos.vegetacion *= 0.5; // Reduccion moderada
-        ecosistema.actualizarRecursos(recursos);
+        ecosistema.recursosActuales.agua *= 0.3;       // Gran reduccion
+        ecosistema.recursosActuales.vegetacion *= 0.5; // Reduccion moderada
+        
         break;
     case TipoDesastre::Huracan:
         cout << "Huracan" << endl;
-        recursos.agua *= 0.6;       // Reduccion significativa
-        recursos.vegetacion *= 0.4; // Reduccion significativa
-        ecosistema.actualizarRecursos(recursos);
+        ecosistema.recursosActuales.agua *= 0.6;       // Reduccion significativa
+        ecosistema.recursosActuales.vegetacion *= 0.4; // Reduccion significativa
         break;
     default:
         break;
@@ -280,20 +275,29 @@ string opcionS;
 // int Fvmain(int& ciclo, directorios& path)
 int Fvmain(string &usuario, directorios &directorio)
 {
-
+    // Estos vectores son necesarios siempre para el inicio de la partida
     vector<Venado> venados; // 10 machos y 10 hembras
     vector<Puma> pumas;     // 1 macho y 1 hembra
 
-    int pumasP, venadosP;
-    Recursos recursos(0, 0, 0, 0);
-    Ecosistema& ecosistema = Ecosistema::getInstance(venadosP, pumasP, recursos);
+
+    //Esta funcion es solo si el usuario no tiene partida guardada
+    iniciarEspecies(venados, pumas);
+
+    int carneInicialEcosistema;
+    for (const auto &venado : venados)
+    {
+        carneInicialEcosistema += venado.peso;
+    }
+    Recursos recursosInicialesEcosistema(100000, 1000, carneInicialEcosistema, 100000); // 100000 m3 de agua, 1000 kg de carrona, 100000 m2 de vegetacion
+    
+    Ecosistema datosEcosistema(int(venados.size()), int(pumas.size()), recursosInicialesEcosistema);
+ 
     bool Guardado = false;
     bool Excel = true;
     int opcion, opcionMenuPartida, OpcionMenuExcel;
-
+    
     do
     {
-        
         clearScreen();
         cout << "Menu:\n"
              << endl;
@@ -311,13 +315,15 @@ int Fvmain(string &usuario, directorios &directorio)
             switch (opcion)
             {
             case 1:
-                mostrarEstadoInicialEcosistema(ecosistema);
+                mostrarEstadoInicialEcosistema(datosEcosistema);
                 break;
             case 2:
-                mostrarEstadoEcosistema(ecosistema);
+                datosEcosistema.pPumas = pumas.size();
+                datosEcosistema.pVenados = venados.size();
+                mostrarEstadoEcosistema(datosEcosistema);
                 break;
             case 3:
-                mainRelacionAnimalRecurso(usuario);
+                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema);
                 cout<< "hola waos";
                 cin.get();
                 break;
@@ -325,12 +331,6 @@ int Fvmain(string &usuario, directorios &directorio)
             case 4:
                 int tipoDesastre;
                 clearScreen();
-
-                // if(ciclo == 0){
-                //     cout << "Usted se encuentra en el ciclo <<0>>, se le recomienda no generar ningun desastrer\n" << endl;
-                //     cin.get();
-                //     clearScreen();
-                // }
 
                 cout << "El ciclo en el que se encuentra es:" << endl;
                 cout << "Generar desastre:\n"
@@ -346,16 +346,16 @@ int Fvmain(string &usuario, directorios &directorio)
                 switch (tipoDesastre)
                 {
                 case 1:
-                    generarDesastre(ecosistema, TipoDesastre::Incendio);
+                    generarDesastre(datosEcosistema, TipoDesastre::Incendio);
                     break;
                 case 2:
-                    generarDesastre(ecosistema, TipoDesastre::Inundacion);
+                    generarDesastre(datosEcosistema, TipoDesastre::Inundacion);
                     break;
                 case 3:
-                    generarDesastre(ecosistema, TipoDesastre::Sequia);
+                    generarDesastre(datosEcosistema, TipoDesastre::Sequia);
                     break;
                 case 4:
-                    generarDesastre(ecosistema, TipoDesastre::Huracan);
+                    generarDesastre(datosEcosistema, TipoDesastre::Huracan);
                     break;
                 default:
                     break;
