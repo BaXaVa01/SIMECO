@@ -83,7 +83,7 @@ void imprimirBarraDeCarga(int x, int y, int longitud, int progreso) {
 
 
 
-int mainBarra1() {
+int main() {
     SetConsoleOutputCP(65001);
 
     // Calcular la posición inicial para centrar el bloque de texto
