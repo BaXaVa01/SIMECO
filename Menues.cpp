@@ -13,7 +13,6 @@
 #include "barraDeCarga.cpp"
 #include "RelacionAnimalRecursos.cpp"
 #include "pantallacarga2.cpp"
-#include "pantallacarga1.cpp"
 // HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
 
 using namespace std;
@@ -518,6 +517,7 @@ void MenuLogin(string &usuario)
                     usuario = nombreUsuario;
                     // Llama a searchDir con la version del nombre de usuario con guiones
                     searchDir(UsuarioConGuiones, directorio);
+                    FullScreen();
                     mainImagenes();
                     Fvmain(UsuarioConGuiones, directorio);
                     opcion = 3;

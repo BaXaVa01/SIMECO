@@ -126,7 +126,7 @@ int mainBarra1() {
         imprimirBarraDeCarga(xPatito, yPatito + alturaPatito + 2, longitudBarra, progresoBarra);
 
         
-        progresoBarra += 2;
+        progresoBarra += 3; 
         if(progresoBarra < 100){
             cout<<"\n                                                           "<<progresoBarra<<"%";
 
