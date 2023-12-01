@@ -43,21 +43,53 @@ public:
     Recursos(int agua, int carrona, int carne, int vegetacion)
         : agua(agua), carrona(carrona), carne(carne), vegetacion(vegetacion), vegetacionConsumida(0) {}
 
-    void actualizarRecursos(estaciones estacion)
+    void actualizarRecursos(estaciones estacion, int vegetacionConsumida)
     {
         // Tengo que poner un nivel maximo de vegetacion
         const int nivelMaxVegetacion = 100000;
-        const int nivelMaxAgua = 10000;
+        const int nivelMaxAgua = 120000;
+        int factorRegeneracion;
+        switch (estacion)
+        {
+        case Primavera:
+            agua += 10000;
+            if (agua > nivelMaxAgua)
+            {
+                agua = nivelMaxAgua;
+            }
 
-        // switch(estacion) {
-        //     case Primavera:
+            break;
+        case Verano:
+            agua += 5000;
+            if (agua > agua)
+            {
+                agua = nivelMaxAgua;
+            }
+            vegetacion += agua * 0.05f;
+            break;
+        case Otonio:
+            agua += 9000;
+            if (agua > nivelMaxAgua)
+            {
+                agua = nivelMaxAgua;
+            }
+            vegetacion += agua * 0.1f;
+            break;
+        case Invierno:
+            agua += 25000;
+            if (agua > nivelMaxAgua)
+            {
+                agua = nivelMaxAgua;
+            }
+            vegetacion += agua * 0.1f;
+            break;
+        }
+        factorRegeneracion = (agua - 3/5 * vegetacion) / vegetacion;
+        vegetacion += factorRegeneracion * vegetacionConsumida + 0.3f * vegetacionConsumida;
 
-        //     case Verano:
-
-        //     case Otonio:
-
-        //     case Invierno:
-        // }
+        if(vegetacion > nivelMaxVegetacion){
+            vegetacion = nivelMaxVegetacion;
+        }
     }
 };
 // como me gusta mi novia
@@ -683,6 +715,7 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
     cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
     int cantidadCiclos;
     cin >> cantidadCiclos;
+    int vegetacionConsumida = ecosistema.recursosActuales.vegetacion;
 
     estaciones estacion;
     int CicloActual = 1;
@@ -727,10 +760,11 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
                 }
             }
         }
-
+        vegetacionConsumida -= ecosistema.recursosActuales.vegetacion;
         reproducirseP(pumas, estacion);
         reproducirseV(venados, estacion);
         actualizarCarne(venados, ecosistema.recursosActuales);
+        ecosistema.recursosActuales.actualizarRecursos(estacion, vegetacionConsumida);
     }
 
     return 0;

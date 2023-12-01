@@ -291,19 +291,22 @@ int Fvmain(string &usuario, directorios &directorio)
     bool Guardado = false;
     bool Excel = true;
     int opcion, opcionMenuPartida, OpcionMenuExcel;
-
+    Ecosistema datosInicial(datosEcosistema);
+    Ecosistema datosEcosistemaAnt(datosEcosistema);
     do
     {
+        
         clearScreen();
         cout << "Menu:\n"
              << endl;
         cout << "1. Ver estado inicial del ecosistema" << endl;
-        cout << "2. Ver estado actual del ecosistema" << endl;
-        cout << "3. Iniciar ciclos" << endl;
-        cout << "4. Generar desastre" << endl;
-        cout << "5. Gestor de Datos de partida" << endl;
-        cout << "6. Abrir pagina Web SIMECO" << endl;
-        cout << "7. Salir" << endl;
+        cout << "2. Ver estado anterior del ecosistema" << endl;
+        cout << "3. Ver estado actual del ecosistema" << endl;
+        cout << "4. Iniciar ciclos" << endl;
+        cout << "5. Generar desastre" << endl;
+        cout << "6. Gestor de Datos de partida" << endl;
+        cout << "7. Abrir pagina Web SIMECO" << endl;
+        cout << "8. Salir" << endl;
         cout << "\nIngrese una opcion: ";
         cin >> opcionS;
         if (esNumero(opcionS))
@@ -312,20 +315,25 @@ int Fvmain(string &usuario, directorios &directorio)
             switch (opcion)
             {
             case 1:
-                mostrarEstadoInicialEcosistema(datosEcosistema);
+                mostrarEstadoInicialEcosistema(datosInicial);
                 break;
             case 2:
-                datosEcosistema.pPumas = pumas.size();
-                datosEcosistema.pVenados = venados.size();
-                mostrarEstadoEcosistema(datosEcosistema);
+                mostrarEstadoInicialEcosistema(datosEcosistemaAnt);
                 break;
             case 3:
+                datosEcosistema.pPumas = pumas.size();
+                datosEcosistema.pVenados = venados.size();
+                actualizarCarne(venados, datosEcosistema.recursosActuales);
+                mostrarEstadoEcosistema(datosEcosistema);
+                break;
+            case 4:
+                datosEcosistemaAnt = datosEcosistema;
                 mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema);
                 cout << "hola waos";
                 cin.get();
                 break;
 
-            case 4:
+            case 5:
                 int tipoDesastre;
                 clearScreen();
 
@@ -358,7 +366,7 @@ int Fvmain(string &usuario, directorios &directorio)
                     break;
                 }
                 break;
-            case 5:
+            case 6:
             {
                 cout << "1. Generar Excel" << endl;
                 cout << "2. Guardar Partida" << endl;
@@ -454,12 +462,12 @@ int Fvmain(string &usuario, directorios &directorio)
                 }
                 break;
             }
-            case 6:
+            case 7:
             {
                 system("start index.html");
                 break;
             }
-            case 7:
+            case 8:
             {
                 clearScreen();
                 cout << "Saliendo del programa...\n"
@@ -551,7 +559,7 @@ void MenuLogin(string &usuario)
                     // Llama a searchDir con la version del nombre de usuario con guiones
                     searchDir(UsuarioConGuiones, directorio);
                     FullScreen();
-                    mainImagenes();
+                    mainBarra1();
                     Fvmain(UsuarioConGuiones, directorio);
                     opcion = 3;
                 }
