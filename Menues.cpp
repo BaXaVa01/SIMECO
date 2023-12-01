@@ -773,7 +773,7 @@ int Fvmain(string &usuario, directorios &directorio)
                     venados.clear();
                     pumas.clear();
                     LeerAnimal(NombreBinA, venados, pumas);
-                    mainP3();
+                    
                     break;
                 }
                 default:
