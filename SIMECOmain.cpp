@@ -8,7 +8,7 @@ directorios path;
 int main()
 {
     string usuario;
-
+    mainBarra1();
     MenuLogin(usuario); 
 
     searchDir(usuario, path);

@@ -25,60 +25,29 @@ struct DatosAnimal
 };
 DatosAnimal datos;
 
-void GuardarAnimal(const DatosAnimal datos, bool terminar, const string &fileName)
+void GuardarAnimal(const DatosAnimal datos, bool ultimoDelGrupo, const string &fileName)
 {
-    ifstream file(fileName);
-    string content;
-    int commaCount = 0;
-    size_t lastCommaPosition = string::npos;
-    if (!file.is_open())
+    // Abre el archivo en modo de append para añadir datos al final
+    ofstream outFile(fileName, ios::app);
+
+    if (!outFile.is_open())
     {
         cerr << "Error al abrir el archivo." << endl;
         return;
     }
 
-    // Lee todo el contenido del archivo
-    string line;
-    while (getline(file, line))
+    // Añade los datos del animal actual al final del archivo
+    outFile << to_string(datos.edad) + "," + to_string(datos.genero) + ",";
+
+    // Añade un salto de línea si es el último animal del grupo
+    if (ultimoDelGrupo)
     {
-        for (size_t i = 0; i < line.size(); ++i)
-        {
-            if (line[i] == ',')
-            {
-                lastCommaPosition = content.size() + i;
-                commaCount++;
-            }
-        }
-        content += line + "\n";
+        outFile << "-";
     }
 
-    file.close();
-
-    // Si terminar es true, simplemente añade "-", de lo contrario, añade los datos
-    if (terminar)
-    {
-        content += "-";
-    }
-    else
-    {
-        if (lastCommaPosition != string::npos)
-        {
-            content.insert(lastCommaPosition + 1, to_string(datos.edad) + "," + to_string(datos.genero) + ",");
-        }
-    }
-
-    // Sobrescribe el archivo con el contenido modificado
-    ofstream outFile(fileName);
-    if (outFile.is_open())
-    {
-        outFile << content;
-        outFile.close();
-    }
-    else
-    {
-        cerr << "Error al abrir el archivo para escribir." << endl;
-    }
+    outFile.close();
 }
+
 
 string existeArchivo(const string &nombrebase, const string &ruta, string ext)
 {
@@ -90,9 +59,9 @@ string existeArchivo(const string &nombrebase, const string &ruta, string ext)
 
             ifstream prueba(ruta + "\\" + nombrePrueba);
 
-            if (prueba)
+            if (!prueba)
             {
-                nombrePrueba = ruta + "\\" + nombrePrueba;
+                nombrePrueba = ruta + "\\" + nombrebase + to_string(i - 1) + ext;
                 return nombrePrueba;
             }
         }
