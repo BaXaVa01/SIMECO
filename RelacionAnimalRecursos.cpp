@@ -65,7 +65,7 @@ public:
             {
                 agua = nivelMaxAgua;
             }
-            vegetacion += agua * 0.05f;
+            
             break;
         case Otonio:
             agua += 9000;
@@ -73,7 +73,7 @@ public:
             {
                 agua = nivelMaxAgua;
             }
-            vegetacion += agua * 0.1f;
+            
             break;
         case Invierno:
             agua += 25000;
@@ -81,11 +81,11 @@ public:
             {
                 agua = nivelMaxAgua;
             }
-            vegetacion += agua * 0.1f;
+            
             break;
         }
         factorRegeneracion = (agua - 3/5 * vegetacion) / vegetacion;
-        vegetacion += factorRegeneracion * vegetacionConsumida + 0.3f * vegetacionConsumida;
+        vegetacion += factorRegeneracion * vegetacionConsumida + 0.1f * vegetacionConsumida;
 
         if(vegetacion > nivelMaxVegetacion){
             vegetacion = nivelMaxVegetacion;

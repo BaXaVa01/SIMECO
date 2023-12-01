@@ -293,7 +293,7 @@ int Fvmain(string &usuario, directorios &directorio)
     bool Excel = true;
     int opcion, opcionMenuPartida, OpcionMenuExcel;
     Ecosistema datosInicial(datosEcosistema);
-    Ecosistema datosEcosistemaAnt(datosEcosistema);
+    Ecosistema datosEcosistemaAnt(datosInicial);
     do
     {
         
@@ -319,7 +319,7 @@ int Fvmain(string &usuario, directorios &directorio)
                 mostrarEstadoInicialEcosistema(datosInicial);
                 break;
             case 2:
-                mostrarEstadoInicialEcosistema(datosEcosistemaAnt);
+                mostrarEstadoEcosistema(datosEcosistemaAnt);
                 break;
             case 3:
                 datosEcosistema.pPumas = pumas.size();
@@ -329,9 +329,9 @@ int Fvmain(string &usuario, directorios &directorio)
                 break;
             case 4:
                 datosEcosistemaAnt = datosEcosistema;
-            Extractordatos extractor;
+                Extractordatos extractor;
                 mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema,extractor);
-                cout << "hola waos";
+                
                 cin.get();
                 break;
 
@@ -486,7 +486,7 @@ int Fvmain(string &usuario, directorios &directorio)
         {
             cerr << "Error: Debe de ser un numero entero" << endl;
         }
-    } while (opcion != 7);
+    } while (opcion != 8);
 
     return 0;
 }
