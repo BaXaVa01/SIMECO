@@ -100,9 +100,6 @@ int mainBarra1() {
     int progresoBarra = 0;
     int longitudBarra = 75;
 
-    int xCoutCentrado = (80 - longitudBarra) / 2;
-
-
     while (true) {
         system("cls");
 
@@ -126,7 +123,7 @@ int mainBarra1() {
         imprimirBarraDeCarga(xPatito, yPatito + alturaPatito + 2, longitudBarra, progresoBarra);
 
         
-        progresoBarra += 3; 
+        progresoBarra += 2;
         if(progresoBarra < 100){
             cout<<"\n                                                           "<<progresoBarra<<"%";
 
