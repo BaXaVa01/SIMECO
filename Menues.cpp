@@ -13,6 +13,7 @@
 #include "barraDeCarga.cpp"
 #include "RelacionAnimalRecursos.cpp"
 #include "pantallacarga2.cpp"
+#include "pantallacarga1.cpp"
 // HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
 
 using namespace std;
@@ -361,7 +362,7 @@ int Fvmain(string &usuario, directorios &directorio)
             {
                 cout << "1. Generar Excel" << endl;
                 cout << "2. Guardar Partida" << endl;
-                cout << "3. Cargar Partida" <<endl;
+                cout << "3. Cargar Partida" << endl;
                 cin >> opcionS;
                 esNumero(opcionS);
                 opcionMenuPartida = stoi(opcionS);
@@ -384,10 +385,12 @@ int Fvmain(string &usuario, directorios &directorio)
                 }
                 case 2:
                 {
-                    system("pause");
                     NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
-                    system("pause");
-                    bool terminar = false;
+                    bool ultimoDelGrupo;
+
+                    // Guardar datos de venados
+                    ultimoDelGrupo = false;
+                    size_t i=1;
                     for (auto &venado : venados)
                     {
                         datos.edad = venado.mostrarEdad();
@@ -399,10 +402,39 @@ int Fvmain(string &usuario, directorios &directorio)
                         {
                             datos.genero = 1;
                         }
-                        GuardarAnimal(datos, terminar, NombreBinA);
+                        if (i==venados.size())
+                        {
+                            ultimoDelGrupo=true;
+                        }
+                        
+                        
+                        GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
+                        i++;
                     }
-                    terminar = true;
-                    GuardarAnimal(datos, terminar, NombreBinA);
+
+                    // Guardar datos de pumas
+                    i=1;
+                    ultimoDelGrupo = false;
+                    for (auto &puma : pumas)
+                    {
+                        datos.edad = puma.mostrarEdad();
+                        if (puma.determinarGenero() == Genero::Macho)
+                        {
+                            datos.genero = 0;
+                        }
+                        else
+                        {
+                            datos.genero = 1;
+                        }
+                        if (i==pumas.size())
+                        {
+                            ultimoDelGrupo=true;
+                        }
+                        
+                        
+                        GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
+                        i++;
+                    }
                     // GuardarRecursos(recursos);
                     // GuardarDesastres(listadesastres);
                     barraCarga(5);
@@ -411,15 +443,16 @@ int Fvmain(string &usuario, directorios &directorio)
                 }
                 case 3:
                 {
-                    int cuenta = 0;
                     NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
-                    bool terminar = false;
-                    LeerAnimal(datos, terminar, NombreBinA, venados, pumas, posicionactual, cuenta);
+                    venados.clear();
+                    pumas.clear();
+                    LeerAnimal(NombreBinA, venados, pumas);
                     break;
                 }
                 default:
                     break;
                 }
+                break;
             }
             case 6:
             {
@@ -543,7 +576,6 @@ void MenuLogin(string &usuario)
         else
         {
             cout << "Error: Debe ser un valor numerico" << endl;
-            
         }
     } while (opcion != 3);
 }

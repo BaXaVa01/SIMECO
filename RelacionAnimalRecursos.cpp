@@ -736,9 +736,23 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
     return 0;
 }
 
-void LeerAnimal(DatosAnimal &datos, bool &terminar, const string &fileName, vector<Venado> &Lvenados, vector<Puma> &Lpumas, streampos &posicionActual, int &count)
+bool contieneGuion(const string &token)
 {
-    bool puma = false;
+    return token.find('-') != string::npos;
+}
+
+bool eFNumero(const string &str)
+{
+    if (str.empty())
+    {
+        return false;
+    }
+    size_t inicio = (str[0] == '-') ? 1 : 0;
+    return str.find_first_not_of("0123456789", inicio) == string::npos;
+}
+
+void LeerAnimal(const string &fileName, vector<Venado> &Lvenados, vector<Puma> &Lpumas)
+{
     ifstream file(fileName);
     if (!file.is_open())
     {
@@ -746,57 +760,76 @@ void LeerAnimal(DatosAnimal &datos, bool &terminar, const string &fileName, vect
         return;
     }
 
-    // Mueve el puntero a la última posición conocida
-    file.seekg(posicionActual);
-
+    vector<int> datosAnimales;
+    size_t conteoComas = 0;
+    size_t indicePumas = numeric_limits<size_t>::max(); // Índice para el cambio a pumas
     string line;
+    bool comas=false;
     while (getline(file, line))
     {
-        if (line == ",-")
-        {
-            puma = true; // Cambia a leer datos para pumas
-            count++;
-            continue; // Continúa con la siguiente iteración del bucle
-        }
-
         stringstream ss(line);
-        string item;
-        getline(ss, item, ',');
-        datos.edad = stoi(item);
-        getline(ss, item, ',');
-        datos.genero = stoi(item);
-        terminar = false;
-
-        if (puma)
+        string token;
+        while (getline(ss, token, ','))
         {
-            if (datos.genero == 0)
+
+            if (contieneGuion(token))
             {
-                Lpumas.push_back(Puma(Genero::Macho, datos.edad));
+                indicePumas = conteoComas; // Cada par de datos está separado por una coma
+                cout << "comas: " << indicePumas;
+                comas=true;
+                system("pause");
+                continue;
+            }
+
+            if (eFNumero(token))
+            {
+                try
+                {
+                    datosAnimales.push_back(stoi(token));
+                    if (!comas)
+                    {
+                        conteoComas++;
+                    }
+                    
+                }
+                catch (const std::invalid_argument &e)
+                {
+                    cerr << "Invalid argument: " << token << endl;
+                    return;
+                }
+            }
+        }
+    }
+
+    file.close();
+
+    // Construir objetos Venado y Puma a partir de datosAnimales
+    for (size_t i = 0; i < datosAnimales.size(); i += 2)
+    {
+        int edad = datosAnimales[i];
+        int genero = datosAnimales[i + 1];
+
+        if (i >= indicePumas)
+        {
+            if (genero == 0)
+            {
+                Lpumas.push_back(Puma(Genero::Macho, edad));
             }
             else
             {
-                Lpumas.push_back(Puma(Genero::Hembra, datos.edad));
+                Lpumas.push_back(Puma(Genero::Hembra, edad));
             }
         }
         else
         {
-            if (datos.genero == 0)
+            if (genero == 0)
             {
-                Lvenados.push_back(Venado(Genero::Macho, datos.edad));
+                Lvenados.push_back(Venado(Genero::Macho, edad));
             }
             else
             {
-                Lvenados.push_back(Venado(Genero::Hembra, datos.edad));
+                Lvenados.push_back(Venado(Genero::Hembra, edad));
             }
         }
-
-        // Actualiza la posición actual para la próxima llamada
-        posicionActual = file.tellg();
-    }
-
-    file.close();
-    if (line == ",-" && count == 2)
-    {
-        terminar = true;
     }
 }
