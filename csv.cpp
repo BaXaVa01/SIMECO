@@ -18,6 +18,14 @@ struct DatosSimulacion
     string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
     string incendios, sequias, inundaciones, huracanes;
 };
+struct Extractordatos
+{
+    int contadorMuerteV;
+    int contadorMuerteP;
+    int AnteVenados;
+    int AntePumas;
+};
+
 struct DatosAnimal
 {
     int edad;
@@ -98,6 +106,11 @@ string buscarNombreIndice(const string &nombreBase, int indice, const string &ru
         return "";
     }
     return nombrePrueba;
+}
+
+void Escribircsv(DatosSimulacion &datos)
+{
+
 }
 
 // Función que cambia el nombre temporalmente

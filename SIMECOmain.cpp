@@ -7,7 +7,11 @@ directorios path;
 
 int main()
 {
+<<<<<<< HEAD
     mainImagenes();
+=======
+    FullScreen();
+>>>>>>> b9f4f5940216a5e2f59f00a95ebb13057db4af7f
     string usuario;
     
     MenuLogin(usuario); 

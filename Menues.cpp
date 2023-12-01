@@ -24,6 +24,7 @@ struct Usuario
     char contrasena[100];
 };
 string NombreBinA;
+int contadorFase;
 streampos posicionactual;
 void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 {
@@ -328,7 +329,8 @@ int Fvmain(string &usuario, directorios &directorio)
                 break;
             case 4:
                 datosEcosistemaAnt = datosEcosistema;
-                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema);
+            Extractordatos extractor;
+                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema,extractor);
                 cout << "hola waos";
                 cin.get();
                 break;
@@ -398,7 +400,7 @@ int Fvmain(string &usuario, directorios &directorio)
 
                     // Guardar datos de venados
                     ultimoDelGrupo = false;
-                    size_t i=1;
+                    size_t i = 1;
                     for (auto &venado : venados)
                     {
                         datos.edad = venado.mostrarEdad();
@@ -410,18 +412,17 @@ int Fvmain(string &usuario, directorios &directorio)
                         {
                             datos.genero = 1;
                         }
-                        if (i==venados.size())
+                        if (i == venados.size())
                         {
-                            ultimoDelGrupo=true;
+                            ultimoDelGrupo = true;
                         }
-                        
-                        
+
                         GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
                         i++;
                     }
 
                     // Guardar datos de pumas
-                    i=1;
+                    i = 1;
                     ultimoDelGrupo = false;
                     for (auto &puma : pumas)
                     {
@@ -434,12 +435,11 @@ int Fvmain(string &usuario, directorios &directorio)
                         {
                             datos.genero = 1;
                         }
-                        if (i==pumas.size())
+                        if (i == pumas.size())
                         {
-                            ultimoDelGrupo=true;
+                            ultimoDelGrupo = true;
                         }
-                        
-                        
+
                         GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
                         i++;
                     }
@@ -586,4 +586,69 @@ void MenuLogin(string &usuario)
             cout << "Error: Debe ser un valor numerico" << endl;
         }
     } while (opcion != 3);
+}
+
+void ExtraerDatos(vector<Venado> venados, vector<Puma> pumas, DatosSimulacion &datos, Ecosistema ecosistema,Extractordatos extract)
+{
+    int edadpromedio;
+    int contador = 0;
+    
+    datos.poblacionTotalEspecie1 = venados.size();
+    datos.poblacionTotalEspecie2 = pumas.size();
+    datos.poblacionTotalEspecie3 = "0";
+    datos.poblacionTotalEspecie4 = "0";
+
+    for (auto &venado : venados)
+    {
+        edadpromedio = venado.mostrarEdad();
+        contador++;
+    }
+
+    datos.edadPromedioEspecie1 = edadpromedio / contador;
+
+    contador = 0;
+    for (auto &puma : pumas)
+    {
+        edadpromedio = puma.mostrarEdad();
+        contador++;
+    }
+
+    datos.edadPromedioEspecie2 = edadpromedio / contador;
+    datos.edadPromedioEspecie3 = "0";
+    datos.edadPromedioEspecie4 = "0";
+
+    datos.tasaNatalidadEspecie1 = extract.contadorMuerteV/stoi(datos.poblacionTotalEspecie1);
+    datos.tasaNatalidadEspecie2 = extract.contadorMuerteP/stoi(datos.poblacionTotalEspecie2);
+    datos.tasaNatalidadEspecie3 = "0";
+    datos.tasaNatalidadEspecie4 = "0";
+
+    datos.tasaMortalidadEspecie1 = extract.contadorMuerteV/stoi(datos.poblacionTotalEspecie1);
+    datos.tasaMortalidadEspecie2 = extract.contadorMuerteP/stoi(datos.poblacionTotalEspecie2);
+    datos.tasaMortalidadEspecie3 = "0";
+    datos.tasaMortalidadEspecie4 = "0";
+
+    datos.crecimientoPoblacionEspecie1 = "5";
+    datos.crecimientoPoblacionEspecie2 = "8";
+    datos.crecimientoPoblacionEspecie3 = "0";
+    datos.crecimientoPoblacionEspecie4 = "0";
+
+    datos.promedioIndividuos = "800";
+    datos.poblacionTotal = "1450";
+    datos.aguaDisponible = "50000";
+    datos.hierbaDisponible = "100000";
+
+    datos.carneDisponible = "20000";
+    datos.carronaDisponible = "10000";
+    datos.estacionInicial = "Verano";
+    datos.estacionActual = "Otono";
+
+    datos.anoInicio = "2020";
+    datos.anoActual = "2023";
+    datos.desastresOcurridos = "2";
+    datos.desastresIniciadosUsuario = "3";
+
+    datos.incendios = "1";
+    datos.sequias = "0";
+    datos.inundaciones = "2";
+    datos.huracanes = "2";
 }
