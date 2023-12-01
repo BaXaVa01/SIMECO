@@ -545,6 +545,7 @@ int Fvmain(string &usuario, directorios &directorio)
 
 void MenuLogin(string &usuario)
 {
+    mainBarra1();
     const char *archivoUsuarios = "usuarios.bin";
     Usuario nuevoUsuario;
     string nombreUsuario, contrasena, UsuarioConGuiones;
@@ -610,7 +611,6 @@ void MenuLogin(string &usuario)
                     usuario = nombreUsuario;
                     // Llama a searchDir con la version del nombre de usuario con guiones
                     searchDir(UsuarioConGuiones, directorio);
-                    FullScreen();
                     mainBarra1();
                     Fvmain(UsuarioConGuiones, directorio);
                     opcion = 3;
