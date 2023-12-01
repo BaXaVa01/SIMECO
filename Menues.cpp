@@ -16,7 +16,28 @@
 #include "pantallacarga1.cpp"
 // HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
 
+#define RESET "\033[0m"
+#define GREEN "\e[1;32m"
+#define BLUE "\033[34m"
+#define YELLOW "\033[33m"
+#define GREY "\033[90m"
+#define UNDERLINE "\033[4m"
+
 using namespace std;
+
+void printColoredText(const std::string &text, int color)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+    std::cout << text;
+    SetConsoleTextAttribute(hConsole, 7); // Restablece el color a blanco predeterminado
+}
+
+void printBorderLine(int length, char borderChar, int color)
+{
+    printColoredText(std::string(length, borderChar), color);
+}
+
 Extractordatos extractor;
 DatosSimulacion datosS;
 struct Usuario
@@ -30,25 +51,66 @@ streampos posicionactual;
 void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract);
 void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 {
+    system("cls"); // Limpia la pantalla en Windows
 
-    clearScreen();
-    cout << "Estado inicial del ecosistema:\n"
-         << endl;
-    cout << "Recursos iniciales:\n";
-    // cout << "- Agua: " << ecosistema.recursosIniciales.agua << endl;
-    cout << "- Agua: " << ecosistema.recursosIniciales.agua << "m3" << endl;
-    cout << "- Carrona: " << ecosistema.recursosIniciales.carrona << "Kg" << endl;
-    cout << "- Carne: " << ecosistema.recursosIniciales.carne << "Kg" << endl;
-    cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion << "m2" << endl;
+    // Coordenadas para posicionar el marco del título
+    int x = 5;
+    int y = 5;
 
-    cout << "\nEspecies registradas:\n";
-    cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
-    cout << "-Poblacion Pumas: " << ecosistema.pPumas << endl;
+    // Imprime un marco alrededor del título
+    const std::string titulo = "Estado inicial del ecosistema";
+    const int tituloLength = titulo.length() + 4; // Longitud del título + 4 espacios de margen
+    gotoxy(x, y);
+    printBorderLine(tituloLength, '*', 9); // Línea superior del marco
 
-    cout << endl;
-    cout << "Presione cualquier tecla para continuar...";
-    cin.ignore();
-    cin.get();
+    gotoxy(x, y + 1);
+    std::cout << "* " << titulo << " *"; // Título con margen
+
+    gotoxy(x, y + 2);
+    printBorderLine(tituloLength, '*', 9); // Línea inferior del marco
+    std::cout << "\n";
+
+    // Coordenadas para el contenido
+    int contenidoX = x;
+    int contenidoY = y + 3;
+
+    // Establecer coordenadas para el contenido dentro del marco
+    gotoxy(contenidoX, contenidoY);
+    printBorderLine(tituloLength, '*', 14); // Borde de color amarillo oscuro para el contenido
+
+    // Imprimir el contenido dentro del marco con gotoxy
+    gotoxy(contenidoX + 2, contenidoY + 1);
+    printBoldText("Recursos iniciales:\n");
+    gotoxy(contenidoX + 2, contenidoY + 2);
+    printBoldText("- Agua: ");
+    std::cout << ecosistema.recursosIniciales.agua << GREEN << " m3" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 3);
+    printBoldText("- Carrona: ");
+    std::cout << ecosistema.recursosIniciales.carrona << GREEN << " Kg" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 4);
+    printBoldText("- Carne: ");
+    std::cout << ecosistema.recursosIniciales.carne << GREEN << " Kg" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 5);
+    printBoldText("- Vegetacion: ");
+    std::cout << ecosistema.recursosIniciales.vegetacion << GREEN << " m2" << RESET << std::endl;
+
+    // Imprimir borde inferior para el texto de las especies
+    gotoxy(contenidoX, contenidoY + 6);
+    printBorderLine(tituloLength, '*', 14); // Borde de color amarillo oscuro para el contenido de las especies
+
+    gotoxy(contenidoX + 4, contenidoY + 7);
+    printBoldText("Especies registradas:\n");
+    gotoxy(contenidoX + 2, contenidoY + 8);
+    printBoldText("- Poblacion Venados: ");
+    std::cout << ecosistema.pVenados << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 9);
+    printBoldText("- Poblacion Pumas: ");
+    std::cout << ecosistema.pPumas << std::endl;
+
+    gotoxy(contenidoX, contenidoY + 10);
+    std::cout << "\nPresione cualquier tecla para continuar...";
+    std::cin.ignore();
+    std::cin.get();
 }
 
 void registrarRecursos(Recursos &recursos)
@@ -78,54 +140,113 @@ void mostrarEstadoEcosistema(Ecosistema &ecosistema)
 {
 
     clearScreen();
-    cout << "Estado actual del ecosistema:\n"
-         << endl;
-    cout << "Recursos:\n";
-    cout << "- Agua: " << ecosistema.recursosActuales.agua << "m3" << endl;
-    cout << "- Carrona: " << ecosistema.recursosActuales.carrona << "Kg" << endl;
-    cout << "- Carne: " << ecosistema.recursosActuales.carne << "Kg" << endl;
-    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion << "m2" << endl;
 
-    cout << "\nEspecies:\n";
-    cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
-    cout << "-Poblacion Pumas: " << ecosistema.pPumas << endl;
+    // Coordenadas para posicionar el marco del título
+    int x = 5;
+    int y = 5;
 
-    cout << endl;
-    cout << "Presione cualquier tecla para continuar...";
+    // Imprime un marco alrededor del título
+    const std::string titulo = "Estado actual del ecosistema:";
+    const int tituloLength = titulo.length() + 4; // Longitud del título + 4 espacios de margen
+    gotoxy(x, y);
+
+    printBorderLine(tituloLength, '*', 9); // Línea superior del marco
+
+    gotoxy(x, y + 1);
+    std::cout << "* " << titulo << " *"; // Título con margen
+
+    gotoxy(x, y + 2);
+    printBorderLine(tituloLength, '*', 9); // Línea inferior del marco
+    std::cout << "\n";
+
+    // Coordenadas para el contenido
+    int contenidoX = x;
+    int contenidoY = y + 3;
+
+    // Establecer coordenadas para el contenido dentro del marco
+    gotoxy(contenidoX, contenidoY);
+    printBorderLine(tituloLength, '*', 14); // Borde de color amarillo oscuro para el contenido
+
+    // Imprimir el contenido dentro del marco con gotoxy
+    gotoxy(contenidoX + 2, contenidoY + 1);
+    printBoldText("Recursos:\n");
+    gotoxy(contenidoX + 2, contenidoY + 2);
+    printBoldText("- Agua: ");
+    std::cout << ecosistema.recursosActuales.agua << GREEN << " m3" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 3);
+    printBoldText("- Carrona: ");
+    std::cout << ecosistema.recursosActuales.carrona << GREEN << " Kg" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 4);
+    printBoldText("- Carne: ");
+    std::cout << ecosistema.recursosActuales.carne << GREEN << " Kg" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 5);
+    printBoldText("- Vegetacion: ");
+    std::cout << ecosistema.recursosActuales.vegetacion << GREEN << " m2" << RESET << std::endl;
+
+    // Imprimir borde inferior para el texto de las especies
+    gotoxy(contenidoX, contenidoY + 6);
+    printBorderLine(tituloLength, '*', 14); // Borde de color amarillo oscuro para el contenido de las especies
+
+    // Imprimir texto adicional con borde amarillo oscuro
+    gotoxy(contenidoX + 2, contenidoY + 7);
+    printBoldText("Especies:\n");
+    gotoxy(contenidoX + 2, contenidoY + 8);
+    printBoldText("- Poblacion Venados: ");
+    std::cout << ecosistema.pVenados << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 9);
+    printBoldText("- Poblacion Pumas: ");
+    std::cout << ecosistema.pPumas << std::endl;
+
+    gotoxy(contenidoX, contenidoY + 10);
+    std::cout << "\nPresione cualquier tecla para continuar...";
     cin.ignore();
     cin.get();
+
 }
 
 void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
 {
-
     clearScreen();
-    cout << "Generando desastre...\n"
-         << endl;
+    // Coordenadas para posicionar el cuadro y el texto
+    int x = 5;
+    int y = 5;
+
+    // Imprimir cuadro azul
+    gotoxy(x, y);
+    printBorderLine(40, '*', 11); // Línea superior del cuadro
+
+    gotoxy(x, y + 1);
+    cout << "*       Tipo de desastre *"; // Texto con margen
+
+    gotoxy(x, y + 2);
+    printBorderLine(40, '*', 11); // Línea inferior del cuadro
+    cout << endl;
+
+    // Posicionar texto del tipo de desastre dentro del cuadro
+    gotoxy(x + 2, y + 4);
+    cout << BLUE << "Generando desastre..." << RESET << endl;
+    gotoxy(x + 2, y + 5);
     cout << "Tipo de desastre: ";
 
     switch (tipoDesastre)
     {
     case TipoDesastre::Incendio:
-        cout << "Incendio" << endl;
+        cout << RED << "Incendio" << RESET << endl;
         ecosistema.recursosActuales.vegetacion *= 0.1; // Gran reduccion
         ecosistema.recursosActuales.agua *= 0.9;       // Reduccion leve
-
         break;
     case TipoDesastre::Inundacion:
-        cout << "Inundacion" << endl;
+        cout << BLUE << "Inundacion" << RESET << endl;
         ecosistema.recursosActuales.agua *= 1.6;       // Aumento significativo
         ecosistema.recursosActuales.vegetacion *= 1.4; // Aumento significativo
-
         break;
     case TipoDesastre::Sequia:
-        cout << "Sequia" << endl;
+        cout << YELLOW << "Sequia" << RESET << endl;
         ecosistema.recursosActuales.agua *= 0.3;       // Gran reduccion
         ecosistema.recursosActuales.vegetacion *= 0.5; // Reduccion moderada
-
         break;
     case TipoDesastre::Huracan:
-        cout << "Huracan" << endl;
+        cout << GREY << "Huracan" << RESET << endl;
         ecosistema.recursosActuales.agua *= 0.6;       // Reduccion significativa
         ecosistema.recursosActuales.vegetacion *= 0.4; // Reduccion significativa
         break;
@@ -133,12 +254,12 @@ void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
         break;
     }
     // Por el momento los desastres solo afectan a los recursos
+    gotoxy(x + 3, y + 7);
 
-    cout << "\nDesastre generado correctamente.\n"
-         << endl;
+    cout << GREEN << "\nDesastre generado correctamente." << RESET << endl;
     cout << "Presione cualquier tecla para continuar...";
-    cin.ignore();
-    cin.get();
+    std::cin.ignore();
+    std::cin.get();
 }
 
 void reemplazarEspacios(char *str, char find, char replace)
@@ -334,20 +455,43 @@ int Fvmain(string &usuario, directorios &directorio)
     estaciones estacion;
     do
     {
-
         clearScreen();
-        cout << "Menu:\n"
-             << endl;
-        cout << "1. Ver estado inicial del ecosistema" << endl;
-        cout << "2. Ver estado anterior del ecosistema" << endl;
-        cout << "3. Ver estado actual del ecosistema" << endl;
-        cout << "4. Iniciar ciclos" << endl;
-        cout << "5. Generar desastre" << endl;
-        cout << "6. Gestor de Datos de partida" << endl;
-        cout << "7. Abrir pagina Web SIMECO" << endl;
-        cout << "8. Salir" << endl;
-        cout << "\nIngrese una opcion: ";
-        cin >> opcionS;
+        int x = 5;
+        int y = 5;
+
+        // Imprimir cuadro azul
+        gotoxy(x, y);
+        printBorderLine(40, '*', 11); // Línea superior del cuadro
+
+        gotoxy(x, y + 1);
+        cout << "              *Menu*"; // Texto con margen
+
+        gotoxy(x, y + 2);
+        printBorderLine(40, '*', 11); // Línea inferior del cuadro
+        cout << endl;
+
+        // Imprimir opciones del menú
+        gotoxy(x + 2, y + 4);
+        cout << "1. Ver estado" << GREEN << " inicial"
+             << "del ecosistema" << RESET << endl;
+        gotoxy(x + 2, y + 5);
+        cout << "2. Ver estado" << YELLOW << " actual"
+             << "del ecosistema" << RESET << endl;
+        gotoxy(x + 2, y + 6);
+        cout << "3. Iniciar ciclos" << endl;
+        gotoxy(x + 2, y + 7);
+        cout << "4. Generar desastre" << endl;
+        gotoxy(x + 2, y + 8);
+        cout << "5. Gestor de Datos de partida" << endl;
+        gotoxy(x + 2, y + 9);
+        cout << BLUE << "6. Abrir pagina Web SIMECO" << RESET << endl;
+        gotoxy(x + 2, y + 10);
+        cout << RED << "7. Salir" << RESET << endl;
+
+        gotoxy(x + 2, y + 12);
+        cout << "Ingrese una opcion: ";
+        std::cin >> opcionS;
+
         if (esNumero(opcionS))
         {
             opcion = stoi(opcionS);
@@ -420,19 +564,35 @@ int Fvmain(string &usuario, directorios &directorio)
 
             case 5:
             {
-
                 clearScreen();
+                // Coordenadas para posicionar el cuadro y el texto
+                int x = 5;
+                int y = 5;
 
-                cout << "El ciclo en el que se encuentra es:" << endl;
-                cout << "Generar desastre:\n"
-                     << endl;
-                cout << "Tipos de desastre:" << endl;
-                cout << "1. Incendio" << endl;
-                cout << "2. Inundacion" << endl;
-                cout << "3. Sequia" << endl;
-                cout << "4. Huracan" << endl;
-                cout << "\nIngrese el numero correspondiente al tipo de desastre: ";
-                cin >> tipoDesastre;
+                // Imprimir cuadro azul
+                gotoxy(x, y);
+                printBorderLine(40, '*', 11); // Línea superior del cuadro
+
+                gotoxy(x, y + 1);
+                cout << "         * Gestor de Partida *" << endl; // Texto con margen
+
+                gotoxy(x, y + 2);
+                printBorderLine(40, '*', 11); // Línea inferior del cuadro
+                cout << endl;
+
+                // Imprimir opciones del menú
+                gotoxy(x + 2, y + 4);
+                cout << BLUE << "1. Generar Excel" << RESET << endl;
+                gotoxy(x + 2, y + 5);
+                cout << GREEN << "2. Guardar Partida" << RESET << endl;
+                gotoxy(x + 2, y + 6);
+                cout << BLUE << "3. Cargar Partida" << RESET << endl;
+
+                gotoxy(x + 2, y + 8);
+                cout << "Ingrese una opcion: ";
+                std::cin >> opcionS;
+                esNumero(opcionS);
+                opcionMenuPartida = stoi(opcionS);
 
                 switch (tipoDesastre)
                 {

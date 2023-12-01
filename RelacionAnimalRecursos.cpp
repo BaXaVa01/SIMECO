@@ -9,6 +9,9 @@
 
 using namespace std;
 
+#define RED "\033[31m"
+#define RESET "\033[0m"
+
 enum estaciones
 {
     Primavera,
@@ -700,7 +703,18 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Ecosistema& ecosistemaGlobal =  Ecosistema::getInstance(poblacionVenados, poblacionPumas, recursosIniciales);
+void printBoldText(const string &text)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+    WORD originalAttrs = consoleInfo.wAttributes;
 
+    SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY | originalAttrs);
+    std::cout << text;
+
+    SetConsoleTextAttribute(hConsole, originalAttrs);
+}
 int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal)
 {
     // Se definen los recursos iniciales del ecosistema
