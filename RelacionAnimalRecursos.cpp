@@ -80,7 +80,7 @@ public:
     }
 };
 // como me gusta mi novia
-
+// Mejor empiezo con los animales en general
 
 class Especies
 {
@@ -146,9 +146,7 @@ public:
     void envejecer(estaciones estacion, vector<Venado> &venados)
     {
         edad++;
-        nivelHambre -= 1;
-        nivelSed -= 1;  
-        if (edad >= edadMax || nivelHambre <= 0 || nivelSed <= 0)
+        if (edad > edadMax || nivelHambre < 0 || nivelSed < 0)
         {
             vivo = false;
             return;
@@ -474,7 +472,7 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
     {
         return;
     }
- 
+    // Encontrar una hembra disponible para la reproducción
     for (auto &Hembra : venados)
     {
         if (Hembra.determinarGenero() != Genero::Hembra && !Hembra.EdadrepT())
@@ -488,7 +486,7 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
         for (int criasv = 0; criasv < dis(gen); criasv++)
         {
             Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-            venados.push_back(Venado(nuevoGeneroV, 1)); // Se agrega el venado a la lista
+            venados.push_back(move(Venado(nuevoGeneroV, 1))); // Se agrega el venado a la lista
         }
     }
 }
@@ -510,16 +508,15 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
 
         for (auto &venado : venados)
         {
-            if(recursos.vegetacion <= 0){
-                break;
-            }
-            
-            if (recursos.vegetacion > venado.consumo)
+            if (recursos.vegetacion > 0)
             {
                 venado.consumirRecursos(recursos);
             }
-        
-            
+            else
+            {
+                venado.nuevoEstado(false);
+                break; // YA no hay para los demas animales
+            }
         }
         return;
     }
@@ -590,22 +587,19 @@ void iniciarEspecies(vector<Venado> &venados, vector<Puma> &pumas, int venadosH,
     for (int CicloActual = 0; CicloActual < venadosH; CicloActual++)
     {
         venados.push_back(Venado(Genero::Hembra, 120));
-        
     }
     for (int CicloActual = 0; CicloActual < venadosM; CicloActual++)
     {
-  
+
         venados.push_back(Venado(Genero::Macho, 120));
     }
     for (int CicloActual = 0; CicloActual < pumasH; CicloActual++)
     {
         pumas.push_back(Puma(Genero::Hembra, 26));
-        
     }
     for (int CicloActual = 0; CicloActual < pumasM; CicloActual++)
     {
         pumas.push_back(Puma(Genero::Macho, 26));
-        
     }
 }
 estaciones estacionNum(int ciclo)
@@ -707,35 +701,22 @@ public:
 
 // Ecosistema& ecosistemaGlobal =  Ecosistema::getInstance(poblacionVenados, poblacionPumas, recursosIniciales);
 
-int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema,Extractordatos &extract, int &CicloAnterior)
+int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal)
 {
     // Se definen los recursos iniciales del ecosistema
 
     cout << "Cuantos ciclos queres simular?" << endl;
-    
+    cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
     int cantidadCiclos;
     cin >> cantidadCiclos;
     int vegetacionConsumida = ecosistema.recursosActuales.vegetacion;
-
+    extract.cnum = cantidadCiclos;
     estaciones estacion;
     int CicloActual = 1;
-    
-
     for (CicloActual; CicloActual <= cantidadCiclos; CicloActual++)
     {
         clearScreen();
-        estacion = estacionNum(CicloActual + 4 + CicloAnterior);
-                clearScreen();
-        
-        cout << "Ciclo: " << CicloActual + CicloAnterior << "        Estacion Actual: " << estacion << endl;
-        cout << "Recursos vegetacion: " << ecosistema.recursosActuales.vegetacion << endl;
-        cout << "Recursos agua: " << ecosistema.recursosActuales.agua << endl;
-        cout << "Carne: " << ecosistema.recursosActuales.carne << endl;
-        cout << "Venados: " << venados.size() << endl;
-        cout << "Pumas: " << pumas.size() << endl;
-        
-        cin.ignore();
-        cin.get();
+        estacion = estacionNum(CicloActual + 4);
 
         for (int semanaActual = 0; semanaActual < 13; semanaActual++)
         {
@@ -750,6 +731,7 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
 
                 if (!it->estadoVivo())
                 {
+
                     it = venados.erase(it);
                     extract.contadorMuerteV++;
                 }
@@ -774,17 +756,14 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
                 }
             }
         }
-        reproducirseV(venados, estacion);
-        reproducirseP(pumas, estacion);
         vegetacionConsumida -= ecosistema.recursosActuales.vegetacion;
-        ecosistema.recursosActuales.actualizarRecursos(estacion, vegetacionConsumida);
-
-
-        
+        reproducirseP(pumas, estacion);
+        reproducirseV(venados, estacion);
         actualizarCarne(venados, ecosistema.recursosActuales);
-        
+        ecosistema.recursosActuales.actualizarRecursos(estacion, vegetacionConsumida);
     }
-    CicloAnterior += cantidadCiclos;
+    estacionglobal = estacion;
+
     return 0;
 }
 
@@ -816,7 +795,7 @@ void LeerAnimal(const string &fileName, vector<Venado> &Lvenados, vector<Puma> &
     size_t conteoComas = 0;
     size_t indicePumas; // Índice para el cambio a pumas
     string line;
-    bool comas=false;
+    bool comas = false;
     while (getline(file, line))
     {
         stringstream ss(line);
@@ -827,7 +806,7 @@ void LeerAnimal(const string &fileName, vector<Venado> &Lvenados, vector<Puma> &
             if (contieneGuion(token))
             {
                 indicePumas = conteoComas; // Cada par de datos está separado por una coma
-                comas=true;
+                comas = true;
                 continue;
             }
 
@@ -840,7 +819,6 @@ void LeerAnimal(const string &fileName, vector<Venado> &Lvenados, vector<Puma> &
                     {
                         conteoComas++;
                     }
-                    
                 }
                 catch (const std::invalid_argument &e)
                 {

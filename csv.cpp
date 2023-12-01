@@ -14,6 +14,7 @@ struct DatosSimulacion
     string tasaMortalidadEspecie1, tasaMortalidadEspecie2, tasaMortalidadEspecie3, tasaMortalidadEspecie4;
     string crecimientoPoblacionEspecie1, crecimientoPoblacionEspecie2, crecimientoPoblacionEspecie3, crecimientoPoblacionEspecie4;
     string promedioIndividuos, poblacionTotal, aguaDisponible, hierbaDisponible;
+    string promedioIndividuosA, poblacionTotalA, aguaDisponibleA, hierbaDisponibleA;
     string carneDisponible, carronaDisponible, estacionInicial, estacionActual;
     string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
     string incendios, sequias, inundaciones, huracanes;
@@ -24,6 +25,25 @@ struct Extractordatos
     int contadorMuerteP;
     int AnteVenados;
     int AntePumas;
+    int EdadV;
+    int EdadP;
+    int PV;
+    int PP;
+    int aguaAct;
+    int vegetacionAct;
+    int carronaAct;
+    int carneAct;
+    int aguaA;
+    int EstacionA;
+    int estacionAct;
+    int vegetacionA;
+    int carronaA;
+    int carneA;
+    int cantInc;
+    int cantSeq;
+    int cantInd;
+    int cantHur;
+    int cnum;
 };
 
 struct DatosAnimal
@@ -55,7 +75,6 @@ void GuardarAnimal(const DatosAnimal datos, bool ultimoDelGrupo, const string &f
 
     outFile.close();
 }
-
 
 string existeArchivo(const string &nombrebase, const string &ruta, string ext)
 {
@@ -110,7 +129,6 @@ string buscarNombreIndice(const string &nombreBase, int indice, const string &ru
 
 void Escribircsv(DatosSimulacion &datos)
 {
-
 }
 
 // Función que cambia el nombre temporalmente
@@ -235,54 +253,8 @@ void cargarDatosBinario(DatosSimulacion &datos, const string &nombreArchivo, con
     return;
 }
 
-void GuardardatosSIMECO(string &usuario, directorios &directorio)
+void GuardardatosSIMECO(string &usuario, directorios &directorio,DatosSimulacion datosS)
 {
-    DatosSimulacion datosS;
-
-    datosS.poblacionTotalEspecie1 = "500";
-    datosS.poblacionTotalEspecie2 = "500";
-    datosS.poblacionTotalEspecie3 = "0";
-    datosS.poblacionTotalEspecie4 = "0";
-
-    datosS.edadPromedioEspecie1 = "5";
-    datosS.edadPromedioEspecie2 = "3";
-    datosS.edadPromedioEspecie3 = "0";
-    datosS.edadPromedioEspecie4 = "0";
-
-    datosS.tasaNatalidadEspecie1 = "10";
-    datosS.tasaNatalidadEspecie2 = "20";
-    datosS.tasaNatalidadEspecie3 = "0";
-    datosS.tasaNatalidadEspecie4 = "0";
-
-    datosS.tasaMortalidadEspecie1 = "0.20";
-    datosS.tasaMortalidadEspecie2 = "0.10";
-    datosS.tasaMortalidadEspecie3 = "0";
-    datosS.tasaMortalidadEspecie4 = "0";
-
-    datosS.crecimientoPoblacionEspecie1 = "5";
-    datosS.crecimientoPoblacionEspecie2 = "8";
-    datosS.crecimientoPoblacionEspecie3 = "0";
-    datosS.crecimientoPoblacionEspecie4 = "0";
-
-    datosS.promedioIndividuos = "800";
-    datosS.poblacionTotal = "1450";
-    datosS.aguaDisponible = "50000";
-    datosS.hierbaDisponible = "100000";
-
-    datosS.carneDisponible = "20000";
-    datosS.carronaDisponible = "10000";
-    datosS.estacionInicial = "Verano";
-    datosS.estacionActual = "Otono";
-
-    datosS.anoInicio = "2020";
-    datosS.anoActual = "2023";
-    datosS.desastresOcurridos = "2";
-    datosS.desastresIniciadosUsuario = "3";
-
-    datosS.incendios = "1";
-    datosS.sequias = "0";
-    datosS.inundaciones = "2";
-    datosS.huracanes = "2";
 
     string nombreCSV;
     searchDir(usuario, directorio);

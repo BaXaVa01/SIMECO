@@ -10,7 +10,7 @@
 
 
 
-int main(){
+int mainP3(){
 // Verificar si el sistema operativo es Windows
 #ifdef _WIN32
     // Cambiar la página de códigos a UTF-8 (65001) en Windows

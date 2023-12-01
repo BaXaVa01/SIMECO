@@ -12,12 +12,13 @@
 #include "Excel.cpp"
 #include "barraDeCarga.cpp"
 #include "RelacionAnimalRecursos.cpp"
-#include "pantallacarga2.cpp"
+#include "pantallacarga3.cpp"
 #include "pantallacarga1.cpp"
 // HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
 
 using namespace std;
-
+Extractordatos extractor;
+DatosSimulacion datosS;
 struct Usuario
 {
     char nombreUsuario[100];
@@ -26,9 +27,10 @@ struct Usuario
 string NombreBinA;
 int contadorFase;
 streampos posicionactual;
+void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract);
 void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 {
-    float hectareas = ecosistema.recursosIniciales.vegetacion / 22 * 10000;
+
     clearScreen();
     cout << "Estado inicial del ecosistema:\n"
          << endl;
@@ -37,7 +39,6 @@ void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
     cout << "- Agua: " << ecosistema.recursosIniciales.agua << "m3" << endl;
     cout << "- Carrona: " << ecosistema.recursosIniciales.carrona << "Kg" << endl;
     cout << "- Carne: " << ecosistema.recursosIniciales.carne << "Kg" << endl;
-    cout << "- Vegetacion: " << hectareas << "hectareas" << endl;
     cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion << "m2" << endl;
 
     cout << "\nEspecies registradas:\n";
@@ -78,27 +79,6 @@ void mostrarEstadoEcosistema(Ecosistema &ecosistema)
 
     clearScreen();
     cout << "Estado actual del ecosistema:\n"
-         << endl;
-    cout << "Recursos:\n";
-    cout << "- Agua: " << ecosistema.recursosActuales.agua << "m3" << endl;
-    cout << "- Carrona: " << ecosistema.recursosActuales.carrona << "Kg" << endl;
-    cout << "- Carne: " << ecosistema.recursosActuales.carne << "Kg" << endl;
-    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion << "m2" << endl;
-
-    cout << "\nEspecies:\n";
-    cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
-    cout << "-Poblacion Pumas: " << ecosistema.pPumas << endl;
-
-    cout << endl;
-    cout << "Presione cualquier tecla para continuar...";
-    cin.ignore();
-    cin.get();
-}
-void mostrarEstadoEcosistemaAnterior(Ecosistema &ecosistema)
-{
-
-    clearScreen();
-    cout << "Estado aterior del ecosistema:\n"
          << endl;
     cout << "Recursos:\n";
     cout << "- Agua: " << ecosistema.recursosActuales.agua << "m3" << endl;
@@ -298,7 +278,8 @@ int Fvmain(string &usuario, directorios &directorio)
     // Estos vectores son necesarios siempre para el inicio de la partida
     vector<Venado> venados; // 10 machos y 10 hembras
     vector<Puma> pumas;     // 1 macho y 1 hembra
-    int cantidadVenadosHembra, cantidadPumasMacho, cantidadVenadosMacho, cantidadPumasHembra;
+
+        int cantidadVenadosHembra, cantidadPumasMacho, cantidadVenadosMacho, cantidadPumasHembra;
     // Esta funcion es solo si el usuario no tiene partida guardada
     cout << "Bienvenido a SIMECO" << endl;  
     
@@ -331,24 +312,29 @@ int Fvmain(string &usuario, directorios &directorio)
     
     
     limpiarPantalla();
+
     int carneInicialEcosistema;
+    int tipoDesastre;
     for (const auto &venado : venados)
     {
         carneInicialEcosistema += venado.peso;
     }
-    Recursos recursosInicialesEcosistema(1000000, 1000, carneInicialEcosistema, 10000000); // 100000 m3 de agua, 1000 kg de carrona, 100000 m2 de vegetacion
+    Recursos recursosInicialesEcosistema(100000, 1000, carneInicialEcosistema, 100000); // 100000 m3 de agua, 1000 kg de carrona, 100000 m2 de vegetacion
 
     Ecosistema datosEcosistema(int(venados.size()), int(pumas.size()), recursosInicialesEcosistema);
 
     bool Guardado = false;
     bool Excel = true;
+    bool Estacion = false;
     int opcion, opcionMenuPartida, OpcionMenuExcel;
     Ecosistema datosInicial(datosEcosistema);
-    Ecosistema datosEcosistemaAnt(datosInicial);
-    int CicloActual = 1;
+    Ecosistema datosEcosistemaAnt(datosEcosistema);
+    int edadpromedio;
+    int contador;
+    estaciones estacion;
     do
     {
-        
+
         clearScreen();
         cout << "Menu:\n"
              << endl;
@@ -368,27 +354,73 @@ int Fvmain(string &usuario, directorios &directorio)
             switch (opcion)
             {
             case 1:
+            {
                 mostrarEstadoInicialEcosistema(datosInicial);
                 break;
+            }
+
             case 2:
-                mostrarEstadoEcosistemaAnterior(datosEcosistemaAnt);
+            {
+                mostrarEstadoInicialEcosistema(datosEcosistemaAnt);
                 break;
+            }
+
             case 3:
+            {
                 datosEcosistema.pPumas = pumas.size();
                 datosEcosistema.pVenados = venados.size();
                 actualizarCarne(venados, datosEcosistema.recursosActuales);
                 mostrarEstadoEcosistema(datosEcosistema);
                 break;
+            }
             case 4:
+            {
                 datosEcosistemaAnt = datosEcosistema;
-                Extractordatos extractor;
-                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema,extractor, CicloActual);
-                
+                extractor.AnteVenados = venados.size();
+                extractor.AntePumas = pumas.size();
+                extractor.aguaA = datosEcosistemaAnt.recursosActuales.agua;
+                extractor.carneA = datosEcosistemaAnt.recursosActuales.carne;
+                extractor.vegetacionA = datosEcosistemaAnt.recursosActuales.vegetacion;
+                extractor.carronaA = datosEcosistemaAnt.recursosActuales.carrona;
+                if (Estacion)
+                {
+                    extractor.EstacionA = estacion;
+                }
+                extractor.cantHur = 0;
+                extractor.cantInc = 0;
+                extractor.cantInd = 0;
+                extractor.cantSeq = 0;
+                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion);
+                extractor.aguaAct = datosEcosistema.recursosActuales.agua;
+                contador = 0;
+                for (auto &venado : venados)
+                {
+                    edadpromedio += venado.mostrarEdad();
+                    contador++;
+                }
+                extractor.EdadV = edadpromedio / contador;
+                contador = 0;
+                edadpromedio=0;
+                for (auto &puma : pumas)
+                {
+                    edadpromedio += puma.mostrarEdad();
+                    contador++;
+                }
+                extractor.EdadP = edadpromedio / contador;
+                extractor.carneAct = datosEcosistema.recursosActuales.carne;
+                extractor.vegetacionAct = datosEcosistema.recursosActuales.vegetacion;
+                extractor.carronaAct = datosEcosistema.recursosActuales.carrona;
+                extractor.PV = venados.size();
+                extractor.PP = pumas.size();
+                extractor.estacionAct = estacion;
+                Estacion = true;
                 cin.get();
                 break;
+            }
 
             case 5:
-                int tipoDesastre;
+            {
+
                 clearScreen();
 
                 cout << "El ciclo en el que se encuentra es:" << endl;
@@ -406,20 +438,25 @@ int Fvmain(string &usuario, directorios &directorio)
                 {
                 case 1:
                     generarDesastre(datosEcosistema, TipoDesastre::Incendio);
+                    extractor.cantInc++;
                     break;
                 case 2:
                     generarDesastre(datosEcosistema, TipoDesastre::Inundacion);
+                    extractor.cantInd++;
                     break;
                 case 3:
                     generarDesastre(datosEcosistema, TipoDesastre::Sequia);
+                    extractor.cantSeq++;
                     break;
                 case 4:
                     generarDesastre(datosEcosistema, TipoDesastre::Huracan);
+                    extractor.cantHur++;
                     break;
                 default:
                     break;
                 }
                 break;
+            }
             case 6:
             {
                 cout << "1. Generar Excel" << endl;
@@ -497,6 +534,8 @@ int Fvmain(string &usuario, directorios &directorio)
                     }
                     // GuardarRecursos(recursos);
                     // GuardarDesastres(listadesastres);
+                    ExtraerDatos(datosS, extractor);
+                    GuardardatosSIMECO(usuario, directorio, datosS);
                     barraCarga(5);
                     Guardado = true;
                     break;
@@ -507,6 +546,7 @@ int Fvmain(string &usuario, directorios &directorio)
                     venados.clear();
                     pumas.clear();
                     LeerAnimal(NombreBinA, venados, pumas);
+                    mainP3();
                     break;
                 }
                 default:
@@ -589,7 +629,6 @@ void MenuLogin(string &usuario)
                 prepararCadenaParaGuardar(&UsuarioConGuiones[0]);
                 createFolder(UsuarioConGuiones);
                 searchDir(UsuarioConGuiones, directorio);
-                GuardardatosSIMECO(UsuarioConGuiones, directorio);
                 break;
             }
             case 2:
@@ -640,67 +679,107 @@ void MenuLogin(string &usuario)
     } while (opcion != 3);
 }
 
-void ExtraerDatos(vector<Venado> venados, vector<Puma> pumas, DatosSimulacion &datos, Ecosistema ecosistema,Extractordatos extract)
+void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract)
 {
-    int edadpromedio;
-    int contador = 0;
-    
-    datos.poblacionTotalEspecie1 = venados.size();
-    datos.poblacionTotalEspecie2 = pumas.size();
+    float result;
+    datos.poblacionTotalEspecie1 = to_string(extract.PV);
+    datos.poblacionTotalEspecie2 = to_string(extract.PP);
     datos.poblacionTotalEspecie3 = "0";
     datos.poblacionTotalEspecie4 = "0";
 
-    for (auto &venado : venados)
-    {
-        edadpromedio = venado.mostrarEdad();
-        contador++;
-    }
+    datos.edadPromedioEspecie1 = to_string(extract.EdadV);
 
-    datos.edadPromedioEspecie1 = edadpromedio / contador;
-
-    contador = 0;
-    for (auto &puma : pumas)
-    {
-        edadpromedio = puma.mostrarEdad();
-        contador++;
-    }
-
-    datos.edadPromedioEspecie2 = edadpromedio / contador;
+    datos.edadPromedioEspecie2 = to_string(extract.EdadP);
     datos.edadPromedioEspecie3 = "0";
     datos.edadPromedioEspecie4 = "0";
-
-    datos.tasaNatalidadEspecie1 = extract.contadorMuerteV/stoi(datos.poblacionTotalEspecie1);
-    datos.tasaNatalidadEspecie2 = extract.contadorMuerteP/stoi(datos.poblacionTotalEspecie2);
+    result = 0;
+    result = static_cast<float>((extract.PV - extract.AnteVenados + extract.contadorMuerteV) / extract.PV);
+    datos.tasaNatalidadEspecie1 = to_string(result);
+    result = 0;
+    result = static_cast<float>((extract.PP - extract.AntePumas + extract.contadorMuerteP) / extract.PP);
+    datos.tasaNatalidadEspecie2 = to_string(result);
     datos.tasaNatalidadEspecie3 = "0";
     datos.tasaNatalidadEspecie4 = "0";
 
-    datos.tasaMortalidadEspecie1 = extract.contadorMuerteV/stoi(datos.poblacionTotalEspecie1);
-    datos.tasaMortalidadEspecie2 = extract.contadorMuerteP/stoi(datos.poblacionTotalEspecie2);
+    result = 0;
+    result = static_cast<float>(extract.contadorMuerteV / extract.PV);
+    datos.tasaMortalidadEspecie1 = to_string(result);
+    result = 0;
+    result = static_cast<float>(extract.contadorMuerteP / extract.PP);
+    datos.tasaMortalidadEspecie2 = to_string(result);
     datos.tasaMortalidadEspecie3 = "0";
     datos.tasaMortalidadEspecie4 = "0";
 
-    datos.crecimientoPoblacionEspecie1 = "5";
-    datos.crecimientoPoblacionEspecie2 = "8";
+    result = 0;
+    result = static_cast<float>((extract.PV - extract.AnteVenados) / extract.AnteVenados);
+    datos.crecimientoPoblacionEspecie1 = to_string(result);
+    result = 0;
+    result = static_cast<float>((extract.PP - extract.AntePumas) / extract.AntePumas);
+    datos.crecimientoPoblacionEspecie2 = to_string(result);
     datos.crecimientoPoblacionEspecie3 = "0";
     datos.crecimientoPoblacionEspecie4 = "0";
 
-    datos.promedioIndividuos = "800";
-    datos.poblacionTotal = "1450";
-    datos.aguaDisponible = "50000";
-    datos.hierbaDisponible = "100000";
+    result = 0;
+    result = static_cast<float>((extract.PV + extract.PP) / 2);
+    datos.promedioIndividuos = to_string(result);
+    result=0;
+    result = extract.PV + extract.PP;
+    datos.poblacionTotal = to_string(result);
+    datos.aguaDisponible = to_string(extract.aguaAct);
+    datos.hierbaDisponible = to_string(extract.vegetacionAct);
+    system("pause");
 
-    datos.carneDisponible = "20000";
-    datos.carronaDisponible = "10000";
-    datos.estacionInicial = "Verano";
-    datos.estacionActual = "Otono";
+    datos.carneDisponible = to_string(extract.carneAct);
+    datos.carronaDisponible = to_string(extract.carronaAct);
+    int esta;
+    string estacioncita;
+    esta = extract.EstacionA;
+    if (esta == 0)
+    {
+        estacioncita = "Primavera";
+    }
+    if (esta == 1)
+    {
+        estacioncita = "Verano";
+    }
+    if (esta == 2)
+    {
+        estacioncita = "Otonio";
+    }
+    if (esta == 3)
+    {
+        estacioncita = "Invierno";
+    }
 
-    datos.anoInicio = "2020";
-    datos.anoActual = "2023";
-    datos.desastresOcurridos = "2";
-    datos.desastresIniciadosUsuario = "3";
+    datos.estacionInicial = estacioncita;
 
-    datos.incendios = "1";
-    datos.sequias = "0";
-    datos.inundaciones = "2";
-    datos.huracanes = "2";
+    esta = extract.estacionAct;
+    if (esta == 0)
+    {
+        estacioncita = "Primavera";
+    }
+    if (esta == 1)
+    {
+        estacioncita = "Verano";
+    }
+    if (esta == 2)
+    {
+        estacioncita = "Otonio";
+    }
+    if (esta == 3)
+    {
+        estacioncita = "Invierno";
+    }
+    datos.estacionActual = estacioncita;
+
+    datos.anoInicio = "2006";
+    int ano = 2006 + (extract.cnum / 4);
+    datos.anoActual = to_string(ano);
+    datos.desastresOcurridos = to_string(extract.cantHur + extract.cantInc + extract.cantInd + extract.cantSeq);
+    datos.desastresIniciadosUsuario = datos.desastresOcurridos;
+
+    datos.incendios = to_string(extract.cantInc);
+    datos.sequias = to_string(extract.cantSeq);
+    datos.inundaciones = to_string(extract.cantInd);
+    datos.huracanes = to_string(extract.cantHur);
 }
