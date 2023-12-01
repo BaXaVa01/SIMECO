@@ -15,7 +15,7 @@
 #include "pantallacarga3.cpp"
 #include "pantallacarga1.cpp"
 // HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
-
+#define PINK "\033[35m"
 #define RESET "\033[0m"
 #define GREEN "\e[1;32m"
 #define BLUE "\033[34m"
@@ -469,20 +469,23 @@ int Fvmain(string &usuario, directorios &directorio)
     // Esta funcion es solo si el usuario no tiene partida guardada
     cout << "Bienvenido a SIMECO" << endl;
 
-    cout << "                   Desea entrar en el modo avanzado?" << endl;
-    cout << "                   1. Si \n 2.No" << endl;
+    clearScreen();
+
+    cout << BLUE << "                   Desea entrar en el modo avanzado?" << RESET << endl;
+    cout << GREEN << "                   1. Si" << RESET << endl;
+    cout << RED << "                    2. No" << RESET << endl;
     int opl;
     cin >> opl;
     if (opl == 1)
     {
         cout << "A continuacion, se le pedira que ingrese los datos iniciales del ecosistema." << endl;
-        cout << "Ingrese los venados hembra que desea:";
+        cout << "Ingrese los venados" << PINK << " hembra" << RESET << " que desea:";
         cin >> cantidadVenadosHembra;
-        cout << "Ingrese los venados macho que desea:";
+        cout << "Ingrese los venados" << BLUE << " macho" << RESET << " que desea:";
         cin >> cantidadVenadosMacho;
-        cout << "Ingrese los pumas hembra que desea:";
+        cout << "Ingrese los pumas" << PINK << " hembra" << RESET << " que desea:";
         cin >> cantidadPumasHembra;
-        cout << "Ingrese los pumas macho que desea:";
+        cout << "Ingrese los pumas"<< BLUE << " macho que desea:" << RESET;
         cin >> cantidadPumasMacho;
 
         iniciarEspecies(venados, pumas, cantidadVenadosHembra, cantidadVenadosMacho, cantidadPumasHembra, cantidadPumasMacho);
@@ -857,12 +860,30 @@ void MenuLogin(string &usuario)
             }
             case 2:
             {
-                limpiarPantalla();
-                
-                cout << "Iniciar sesion:" << endl;
-                cout << "Nombre de usuario: ";
+                clearScreen();
+                // Coordenadas para posicionar el cuadro y el texto
+                int x = 5;
+                int y = 5;
+
+                // Imprimir cuadro azul
+                gotoxy(x, y);
+                printBorderLine(40, '*', 11); // Línea superior del cuadro
+
+                gotoxy(x, y + 1);
+                cout << "         * LOGIN *" << endl; // Texto con margen
+
+                gotoxy(x, y + 2);
+                printBorderLine(40, '*', 11); // Línea inferior del cuadro
+                cout << endl;
+
+                gotoxy(x + 2, y + 4);
+                cout << BLUE << "Iniciar sesion:" << RESET << endl;
+                gotoxy(x + 2, y + 5);
+                cout << RED << "Nombre de usuario: " << RESET;
+                gotoxy(x + 2, y + 6);
                 getline(cin, nombreUsuario);
-                cout << "Contrasenia: ";
+                gotoxy(x + 2, y + 7);
+                cout << RED << "Contrasenia: " << RESET;
                 getline(cin, contrasena);
 
                 // Convierte el nombre de usuario a su version con guiones para la busqueda
