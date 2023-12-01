@@ -103,7 +103,7 @@ int mainBarra1() {
     int xPatito = (maxColumns + anchoPatito) / 2; // Centrar horizontalmente
     int yPatito = yTexto + alturaTexto + 1; // 
     int progresoBarra = 0;
-    int longitudBarra = 110;
+    int longitudBarra = 150;
 
     while (true) {
         system("cls");
@@ -125,7 +125,7 @@ int mainBarra1() {
             cout << "*";
         }
         
-        imprimirBarraDeCarga(xPatito, yPatito + alturaPatito + 2, longitudBarra, progresoBarra);
+        imprimirBarraDeCarga(1, yPatito + alturaPatito + 2, longitudBarra, progresoBarra);
         
         cout<<"\n";
         int espaciosCentrado = round((maxColumns - 3) / 2);
