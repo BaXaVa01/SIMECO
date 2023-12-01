@@ -32,3 +32,6 @@
 *.app
 /InterfazGaficaJava/loggin/nbproject/private/
 /InterfazGaficaJava/loggin/build/
+/HOMEPAGE/nbproject/private/
+/HOMEPAGE/build/
+/HOMEPAGE/dist/
