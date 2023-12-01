@@ -675,7 +675,7 @@ public:
 
 // Ecosistema& ecosistemaGlobal =  Ecosistema::getInstance(poblacionVenados, poblacionPumas, recursosIniciales);
 
-int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema)
+int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema,Extractordatos &extract)
 {
     // Se definen los recursos iniciales del ecosistema
 
@@ -706,6 +706,7 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
                 {
 
                     it = venados.erase(it);
+                    extract.contadorMuerteV++;
                 }
                 else
                 {
@@ -720,6 +721,7 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
                 if (eso->estadoVivo() == false)
                 {
                     pumas.erase(eso);
+                    extract.contadorMuerteP++;
                 }
                 else
                 {
@@ -762,7 +764,7 @@ void LeerAnimal(const string &fileName, vector<Venado> &Lvenados, vector<Puma> &
 
     vector<int> datosAnimales;
     size_t conteoComas = 0;
-    size_t indicePumas = numeric_limits<size_t>::max(); // Índice para el cambio a pumas
+    size_t indicePumas; // Índice para el cambio a pumas
     string line;
     bool comas=false;
     while (getline(file, line))
@@ -775,9 +777,7 @@ void LeerAnimal(const string &fileName, vector<Venado> &Lvenados, vector<Puma> &
             if (contieneGuion(token))
             {
                 indicePumas = conteoComas; // Cada par de datos está separado por una coma
-                cout << "comas: " << indicePumas;
                 comas=true;
-                system("pause");
                 continue;
             }
 
