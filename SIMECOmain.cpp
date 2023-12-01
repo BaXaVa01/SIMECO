@@ -7,6 +7,7 @@ directorios path;
 
 int main()
 {
+    FullScreen();
     string usuario;
     mainBarra1();
     MenuLogin(usuario); 
