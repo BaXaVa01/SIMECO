@@ -11,7 +11,6 @@ int main()
     string usuario;
     mainBarra1();
     MenuLogin(usuario); 
-
     searchDir(usuario, path);
     system("cls");
     barraCarga(5);
