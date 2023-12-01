@@ -493,6 +493,7 @@ int Fvmain(string &usuario, directorios &directorio)
 
 void MenuLogin(string &usuario)
 {
+    mainBarra1();
     const char *archivoUsuarios = "usuarios.bin";
     Usuario nuevoUsuario;
     string nombreUsuario, contrasena, UsuarioConGuiones;

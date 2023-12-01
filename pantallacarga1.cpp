@@ -74,7 +74,7 @@ void imprimirBarraDeCarga(int x, int y, int longitud, int progreso) {
     int barrasCompletadas = static_cast<int>(static_cast<float>(progreso) / 100 * longitud);
     for (int i = 0; i < longitud; ++i) {
         if (i < barrasCompletadas+10) {
-            cout << "=";
+            cout << char(254);
         } else {
             cout << " ";
         }
@@ -89,7 +89,6 @@ int mainBarra1() {
     const int maxRows = 25;
     const int maxColumns = 150;
     cout << "\033[8;" << maxRows << ";" << maxColumns << "t";
-    SetConsoleOutputCP(65001);
 
     // Calcular la posición inicial para centrar el bloque de texto
     int anchoTexto = 69; // Ajusta según el ancho de tu bloque de texto
