@@ -28,7 +28,7 @@ int contadorFase;
 streampos posicionactual;
 void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 {
-
+    float hectareas = ecosistema.recursosIniciales.vegetacion / 22 * 10000;
     clearScreen();
     cout << "Estado inicial del ecosistema:\n"
          << endl;
@@ -37,6 +37,7 @@ void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
     cout << "- Agua: " << ecosistema.recursosIniciales.agua << "m3" << endl;
     cout << "- Carrona: " << ecosistema.recursosIniciales.carrona << "Kg" << endl;
     cout << "- Carne: " << ecosistema.recursosIniciales.carne << "Kg" << endl;
+    cout << "- Vegetacion: " << hectareas << "hectareas" << endl;
     cout << "- Vegetacion: " << ecosistema.recursosIniciales.vegetacion << "m2" << endl;
 
     cout << "\nEspecies registradas:\n";
@@ -77,6 +78,27 @@ void mostrarEstadoEcosistema(Ecosistema &ecosistema)
 
     clearScreen();
     cout << "Estado actual del ecosistema:\n"
+         << endl;
+    cout << "Recursos:\n";
+    cout << "- Agua: " << ecosistema.recursosActuales.agua << "m3" << endl;
+    cout << "- Carrona: " << ecosistema.recursosActuales.carrona << "Kg" << endl;
+    cout << "- Carne: " << ecosistema.recursosActuales.carne << "Kg" << endl;
+    cout << "- Vegetacion: " << ecosistema.recursosActuales.vegetacion << "m2" << endl;
+
+    cout << "\nEspecies:\n";
+    cout << "-Poblacion Venados: " << ecosistema.pVenados << endl;
+    cout << "-Poblacion Pumas: " << ecosistema.pPumas << endl;
+
+    cout << endl;
+    cout << "Presione cualquier tecla para continuar...";
+    cin.ignore();
+    cin.get();
+}
+void mostrarEstadoEcosistemaAnterior(Ecosistema &ecosistema)
+{
+
+    clearScreen();
+    cout << "Estado aterior del ecosistema:\n"
          << endl;
     cout << "Recursos:\n";
     cout << "- Agua: " << ecosistema.recursosActuales.agua << "m3" << endl;
@@ -276,16 +298,45 @@ int Fvmain(string &usuario, directorios &directorio)
     // Estos vectores son necesarios siempre para el inicio de la partida
     vector<Venado> venados; // 10 machos y 10 hembras
     vector<Puma> pumas;     // 1 macho y 1 hembra
-
+    int cantidadVenadosHembra, cantidadPumasMacho, cantidadVenadosMacho, cantidadPumasHembra;
     // Esta funcion es solo si el usuario no tiene partida guardada
-    iniciarEspecies(venados, pumas);
+    cout << "Bienvenido a SIMECO" << endl;  
+    
+    
+    cout << "                   Desea entrar en el modo avanzado?"<<endl;
+    cout << "                   1. Si \n 2.No"<<endl;
+    int opl;    
+    cin >> opl;
+    if (opl == 1)
+    {
+        cout << "A continuacion, se le pedira que ingrese los datos iniciales del ecosistema." << endl;
+        cout << "Ingrese los venados hembra que desea:";
+        cin >> cantidadVenadosHembra;
+        cout << "Ingrese los venados macho que desea:";
+        cin >> cantidadVenadosMacho;
+        cout << "Ingrese los pumas hembra que desea:";
+        cin >> cantidadPumasHembra;
+        cout << "Ingrese los pumas macho que desea:";
+        cin >> cantidadPumasMacho;
+        
 
+        iniciarEspecies(venados, pumas, cantidadVenadosHembra, cantidadVenadosMacho,cantidadPumasHembra,cantidadPumasMacho);
+    }
+    else
+    {
+        cout << "Entrara con los datos iniciales por defecto" << endl;
+        iniciarEspecies(venados, pumas, 50, 50, 1, 1);
+    }
+
+    
+    
+    limpiarPantalla();
     int carneInicialEcosistema;
     for (const auto &venado : venados)
     {
         carneInicialEcosistema += venado.peso;
     }
-    Recursos recursosInicialesEcosistema(100000, 1000, carneInicialEcosistema, 100000); // 100000 m3 de agua, 1000 kg de carrona, 100000 m2 de vegetacion
+    Recursos recursosInicialesEcosistema(1000000, 1000, carneInicialEcosistema, 10000000); // 100000 m3 de agua, 1000 kg de carrona, 100000 m2 de vegetacion
 
     Ecosistema datosEcosistema(int(venados.size()), int(pumas.size()), recursosInicialesEcosistema);
 
@@ -294,6 +345,7 @@ int Fvmain(string &usuario, directorios &directorio)
     int opcion, opcionMenuPartida, OpcionMenuExcel;
     Ecosistema datosInicial(datosEcosistema);
     Ecosistema datosEcosistemaAnt(datosInicial);
+    int CicloActual = 1;
     do
     {
         
@@ -319,7 +371,7 @@ int Fvmain(string &usuario, directorios &directorio)
                 mostrarEstadoInicialEcosistema(datosInicial);
                 break;
             case 2:
-                mostrarEstadoEcosistema(datosEcosistemaAnt);
+                mostrarEstadoEcosistemaAnterior(datosEcosistemaAnt);
                 break;
             case 3:
                 datosEcosistema.pPumas = pumas.size();
@@ -330,7 +382,7 @@ int Fvmain(string &usuario, directorios &directorio)
             case 4:
                 datosEcosistemaAnt = datosEcosistema;
                 Extractordatos extractor;
-                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema,extractor);
+                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema,extractor, CicloActual);
                 
                 cin.get();
                 break;

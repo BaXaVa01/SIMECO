@@ -46,54 +46,41 @@ public:
     void actualizarRecursos(estaciones estacion, int vegetacionConsumida)
     {
         // Tengo que poner un nivel maximo de vegetacion
-        const int nivelMaxVegetacion = 100000;
-        const int nivelMaxAgua = 120000;
+        const int nivelMaxVegetacion = 10000000;
+        const int nivelMaxAgua = 1200000;
         int factorRegeneracion;
         switch (estacion)
         {
         case Primavera:
-            agua += 10000;
-            if (agua > nivelMaxAgua)
-            {
-                agua = nivelMaxAgua;
-            }
-
+            agua += 6000;
+            vegetacion += 450000;
             break;
         case Verano:
-            agua += 5000;
-            if (agua > agua)
-            {
-                agua = nivelMaxAgua;
-            }
-            
+            agua += 2000;
+            vegetacion += 230000;
             break;
         case Otonio:
-            agua += 9000;
-            if (agua > nivelMaxAgua)
-            {
-                agua = nivelMaxAgua;
-            }
-            
+            agua += 7000;  
+            vegetacion += 500000;
             break;
         case Invierno:
-            agua += 25000;
-            if (agua > nivelMaxAgua)
-            {
-                agua = nivelMaxAgua;
-            }
-            
+            agua += 8000;
+            vegetacion += 600000;
+
             break;
         }
-        factorRegeneracion = (agua - 3/5 * vegetacion) / vegetacion;
-        vegetacion += factorRegeneracion * vegetacionConsumida + 0.1f * vegetacionConsumida;
-
-        if(vegetacion > nivelMaxVegetacion){
+        if (vegetacion > nivelMaxVegetacion)
+        {
             vegetacion = nivelMaxVegetacion;
         }
+        if(agua > nivelMaxAgua){
+            agua = nivelMaxAgua;
+        }
+
     }
 };
 // como me gusta mi novia
-// Mejor empiezo con los animales en general
+
 
 class Especies
 {
@@ -159,7 +146,9 @@ public:
     void envejecer(estaciones estacion, vector<Venado> &venados)
     {
         edad++;
-        if (edad > edadMax || nivelHambre < 0 || nivelSed < 0)
+        nivelHambre -= 1;
+        nivelSed -= 1;  
+        if (edad >= edadMax || nivelHambre <= 0 || nivelSed <= 0)
         {
             vivo = false;
             return;
@@ -485,7 +474,7 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
     {
         return;
     }
-    // Encontrar una hembra disponible para la reproducción
+ 
     for (auto &Hembra : venados)
     {
         if (Hembra.determinarGenero() != Genero::Hembra && !Hembra.EdadrepT())
@@ -499,7 +488,7 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
         for (int criasv = 0; criasv < dis(gen); criasv++)
         {
             Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-            venados.push_back(move(Venado(nuevoGeneroV, 1))); // Se agrega el venado a la lista
+            venados.push_back(Venado(nuevoGeneroV, 1)); // Se agrega el venado a la lista
         }
     }
 }
@@ -521,15 +510,16 @@ void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
 
         for (auto &venado : venados)
         {
-            if (recursos.vegetacion > 0)
+            if(recursos.vegetacion <= 0){
+                break;
+            }
+            
+            if (recursos.vegetacion > venado.consumo)
             {
                 venado.consumirRecursos(recursos);
             }
-            else
-            {
-                venado.nuevoEstado(false);
-                break; // YA no hay para los demas animales
-            }
+        
+            
         }
         return;
     }
@@ -595,17 +585,27 @@ void alimentarPumas(vector<Puma> &pumas, vector<Venado> &venados, Recursos &recu
         }
     }
 }
-void iniciarEspecies(vector<Venado> &venados, vector<Puma> &pumas)
+void iniciarEspecies(vector<Venado> &venados, vector<Puma> &pumas, int venadosH, int venadosM, int pumasH, int pumasM)
 {
-    for (int CicloActual = 0; CicloActual < 50; CicloActual++)
+    for (int CicloActual = 0; CicloActual < venadosH; CicloActual++)
     {
         venados.push_back(Venado(Genero::Hembra, 120));
+        
+    }
+    for (int CicloActual = 0; CicloActual < venadosM; CicloActual++)
+    {
+  
         venados.push_back(Venado(Genero::Macho, 120));
     }
-    for (int CicloActual = 0; CicloActual < 1; CicloActual++)
+    for (int CicloActual = 0; CicloActual < pumasH; CicloActual++)
     {
         pumas.push_back(Puma(Genero::Hembra, 26));
+        
+    }
+    for (int CicloActual = 0; CicloActual < pumasM; CicloActual++)
+    {
         pumas.push_back(Puma(Genero::Macho, 26));
+        
     }
 }
 estaciones estacionNum(int ciclo)
@@ -707,22 +707,35 @@ public:
 
 // Ecosistema& ecosistemaGlobal =  Ecosistema::getInstance(poblacionVenados, poblacionPumas, recursosIniciales);
 
-int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema,Extractordatos &extract)
+int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema,Extractordatos &extract, int &CicloAnterior)
 {
     // Se definen los recursos iniciales del ecosistema
 
     cout << "Cuantos ciclos queres simular?" << endl;
-    cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
+    
     int cantidadCiclos;
     cin >> cantidadCiclos;
     int vegetacionConsumida = ecosistema.recursosActuales.vegetacion;
 
     estaciones estacion;
     int CicloActual = 1;
+    
+
     for (CicloActual; CicloActual <= cantidadCiclos; CicloActual++)
     {
         clearScreen();
-        estacion = estacionNum(CicloActual + 4);
+        estacion = estacionNum(CicloActual + 4 + CicloAnterior);
+                clearScreen();
+        
+        cout << "Ciclo: " << CicloActual + CicloAnterior << "        Estacion Actual: " << estacion << endl;
+        cout << "Recursos vegetacion: " << ecosistema.recursosActuales.vegetacion << endl;
+        cout << "Recursos agua: " << ecosistema.recursosActuales.agua << endl;
+        cout << "Carne: " << ecosistema.recursosActuales.carne << endl;
+        cout << "Venados: " << venados.size() << endl;
+        cout << "Pumas: " << pumas.size() << endl;
+        
+        cin.ignore();
+        cin.get();
 
         for (int semanaActual = 0; semanaActual < 13; semanaActual++)
         {
@@ -737,7 +750,6 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
 
                 if (!it->estadoVivo())
                 {
-
                     it = venados.erase(it);
                     extract.contadorMuerteV++;
                 }
@@ -762,13 +774,17 @@ int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Pu
                 }
             }
         }
-        vegetacionConsumida -= ecosistema.recursosActuales.vegetacion;
-        reproducirseP(pumas, estacion);
         reproducirseV(venados, estacion);
-        actualizarCarne(venados, ecosistema.recursosActuales);
+        reproducirseP(pumas, estacion);
+        vegetacionConsumida -= ecosistema.recursosActuales.vegetacion;
         ecosistema.recursosActuales.actualizarRecursos(estacion, vegetacionConsumida);
-    }
 
+
+        
+        actualizarCarne(venados, ecosistema.recursosActuales);
+        
+    }
+    CicloAnterior += cantidadCiclos;
     return 0;
 }
 
