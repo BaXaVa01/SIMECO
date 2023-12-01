@@ -61,7 +61,7 @@ public:
             break;
         case Verano:
             agua += 5000;
-            if (agua > agua)
+            if (agua > nivelMaxAgua)
             {
                 agua = nivelMaxAgua;
             }
