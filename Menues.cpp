@@ -201,7 +201,72 @@ void mostrarEstadoEcosistema(Ecosistema &ecosistema)
     std::cout << "\nPresione cualquier tecla para continuar...";
     cin.ignore();
     cin.get();
+}
+void mostrarEstadoEcosistemaAnterior(Ecosistema &ecosistema)
+{
 
+    clearScreen();
+
+    // Coordenadas para posicionar el marco del título
+    int x = 5;
+    int y = 5;
+
+    // Imprime un marco alrededor del título
+    const std::string titulo = "Estado anterior del ecosistema:";
+    const int tituloLength = titulo.length() + 4; // Longitud del título + 4 espacios de margen
+    gotoxy(x, y);
+
+    printBorderLine(tituloLength, '*', 9); // Línea superior del marco
+
+    gotoxy(x, y + 1);
+    std::cout << "* " << titulo << " *"; // Título con margen
+
+    gotoxy(x, y + 2);
+    printBorderLine(tituloLength, '*', 9); // Línea inferior del marco
+    std::cout << "\n";
+
+    // Coordenadas para el contenido
+    int contenidoX = x;
+    int contenidoY = y + 3;
+
+    // Establecer coordenadas para el contenido dentro del marco
+    gotoxy(contenidoX, contenidoY);
+    printBorderLine(tituloLength, '*', 14); // Borde de color amarillo oscuro para el contenido
+
+    // Imprimir el contenido dentro del marco con gotoxy
+    gotoxy(contenidoX + 2, contenidoY + 1);
+    printBoldText("Recursos:\n");
+    gotoxy(contenidoX + 2, contenidoY + 2);
+    printBoldText("- Agua: ");
+    std::cout << ecosistema.recursosActuales.agua << GREEN << " m3" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 3);
+    printBoldText("- Carrona: ");
+    std::cout << ecosistema.recursosActuales.carrona << GREEN << " Kg" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 4);
+    printBoldText("- Carne: ");
+    std::cout << ecosistema.recursosActuales.carne << GREEN << " Kg" << RESET << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 5);
+    printBoldText("- Vegetacion: ");
+    std::cout << ecosistema.recursosActuales.vegetacion << GREEN << " m2" << RESET << std::endl;
+
+    // Imprimir borde inferior para el texto de las especies
+    gotoxy(contenidoX, contenidoY + 6);
+    printBorderLine(tituloLength, '*', 14); // Borde de color amarillo oscuro para el contenido de las especies
+
+    // Imprimir texto adicional con borde amarillo oscuro
+    gotoxy(contenidoX + 2, contenidoY + 7);
+    printBoldText("Especies:\n");
+    gotoxy(contenidoX + 2, contenidoY + 8);
+    printBoldText("- Poblacion Venados: ");
+    std::cout << ecosistema.pVenados << std::endl;
+    gotoxy(contenidoX + 2, contenidoY + 9);
+    printBoldText("- Poblacion Pumas: ");
+    std::cout << ecosistema.pPumas << std::endl;
+
+    gotoxy(contenidoX, contenidoY + 10);
+    std::cout << "\nPresione cualquier tecla para continuar...";
+    cin.ignore();
+    cin.get();
 }
 
 void generarDesastre(Ecosistema &ecosistema, TipoDesastre tipoDesastre)
@@ -400,14 +465,13 @@ int Fvmain(string &usuario, directorios &directorio)
     vector<Venado> venados; // 10 machos y 10 hembras
     vector<Puma> pumas;     // 1 macho y 1 hembra
 
-        int cantidadVenadosHembra, cantidadPumasMacho, cantidadVenadosMacho, cantidadPumasHembra;
+    int cantidadVenadosHembra, cantidadPumasMacho, cantidadVenadosMacho, cantidadPumasHembra;
     // Esta funcion es solo si el usuario no tiene partida guardada
-    cout << "Bienvenido a SIMECO" << endl;  
-    
-    
-    cout << "                   Desea entrar en el modo avanzado?"<<endl;
-    cout << "                   1. Si \n 2.No"<<endl;
-    int opl;    
+    cout << "Bienvenido a SIMECO" << endl;
+
+    cout << "                   Desea entrar en el modo avanzado?" << endl;
+    cout << "                   1. Si \n 2.No" << endl;
+    int opl;
     cin >> opl;
     if (opl == 1)
     {
@@ -420,9 +484,8 @@ int Fvmain(string &usuario, directorios &directorio)
         cin >> cantidadPumasHembra;
         cout << "Ingrese los pumas macho que desea:";
         cin >> cantidadPumasMacho;
-        
 
-        iniciarEspecies(venados, pumas, cantidadVenadosHembra, cantidadVenadosMacho,cantidadPumasHembra,cantidadPumasMacho);
+        iniciarEspecies(venados, pumas, cantidadVenadosHembra, cantidadVenadosMacho, cantidadPumasHembra, cantidadPumasMacho);
     }
     else
     {
@@ -430,8 +493,6 @@ int Fvmain(string &usuario, directorios &directorio)
         iniciarEspecies(venados, pumas, 50, 50, 1, 1);
     }
 
-    
-    
     limpiarPantalla();
 
     int carneInicialEcosistema;
@@ -475,18 +536,21 @@ int Fvmain(string &usuario, directorios &directorio)
         cout << "1. Ver estado" << GREEN << " inicial"
              << "del ecosistema" << RESET << endl;
         gotoxy(x + 2, y + 5);
-        cout << "2. Ver estado" << YELLOW << " actual"
+        cout << "2. Ver estado" << RED << "anterior"
              << "del ecosistema" << RESET << endl;
         gotoxy(x + 2, y + 6);
-        cout << "3. Iniciar ciclos" << endl;
+        cout << "3. Ver estado" << YELLOW << " actual"
+             << "del ecosistema" << RESET << endl;
         gotoxy(x + 2, y + 7);
-        cout << "4. Generar desastre" << endl;
+        cout << "4. Iniciar ciclos" << endl;
         gotoxy(x + 2, y + 8);
-        cout << "5. Gestor de Datos de partida" << endl;
+        cout << "5. Generar desastre" << endl;
         gotoxy(x + 2, y + 9);
-        cout << BLUE << "6. Abrir pagina Web SIMECO" << RESET << endl;
+        cout << "6. Gestor de Datos de partida" << endl;
         gotoxy(x + 2, y + 10);
-        cout << RED << "7. Salir" << RESET << endl;
+        cout << BLUE << "7. Abrir pagina Web SIMECO" << RESET << endl;
+        gotoxy(x + 2, y + 11);
+        cout << RED << "8. Salir" << RESET << endl;
 
         gotoxy(x + 2, y + 12);
         cout << "Ingrese una opcion: ";
@@ -505,7 +569,7 @@ int Fvmain(string &usuario, directorios &directorio)
 
             case 2:
             {
-                mostrarEstadoInicialEcosistema(datosEcosistemaAnt);
+                mostrarEstadoEcosistemaAnterior(datosEcosistemaAnt);
                 break;
             }
 
@@ -544,7 +608,7 @@ int Fvmain(string &usuario, directorios &directorio)
                 }
                 extractor.EdadV = edadpromedio / contador;
                 contador = 0;
-                edadpromedio=0;
+                edadpromedio = 0;
                 for (auto &puma : pumas)
                 {
                     edadpromedio += puma.mostrarEdad();
@@ -794,6 +858,7 @@ void MenuLogin(string &usuario)
             case 2:
             {
                 limpiarPantalla();
+                
                 cout << "Iniciar sesion:" << endl;
                 cout << "Nombre de usuario: ";
                 getline(cin, nombreUsuario);
@@ -882,7 +947,7 @@ void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract)
     result = 0;
     result = static_cast<float>((extract.PV + extract.PP) / 2);
     datos.promedioIndividuos = to_string(result);
-    result=0;
+    result = 0;
     result = extract.PV + extract.PP;
     datos.poblacionTotal = to_string(result);
     datos.aguaDisponible = to_string(extract.aguaAct);
