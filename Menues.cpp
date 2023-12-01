@@ -559,7 +559,6 @@ void MenuLogin(string &usuario)
                     usuario = nombreUsuario;
                     // Llama a searchDir con la version del nombre de usuario con guiones
                     searchDir(UsuarioConGuiones, directorio);
-                    FullScreen();
                     mainBarra1();
                     Fvmain(UsuarioConGuiones, directorio);
                     opcion = 3;

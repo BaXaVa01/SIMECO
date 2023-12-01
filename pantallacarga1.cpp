@@ -156,7 +156,7 @@ int mainBarra1() {
             xPatito = (80 - anchoPatito) / 2;
         }
     }
-
+    return true;
     system("cls");
     return 0;
 }
