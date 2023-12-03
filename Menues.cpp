@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <filesystem>
 #include <random>
 #include <cstdio>
 #include <cstring>
@@ -14,7 +15,7 @@
 #include "RelacionAnimalRecursos.cpp"
 #include "pantallacarga3.cpp"
 #include "pantallacarga1.cpp"
-// HAY QUE ELIMINAR EL clearScreen al momento de unir los modulos relacion Animal recursos
+// COLORES
 #define PINK "\033[35m"
 #define RESET "\033[0m"
 #define GREEN "\e[1;32m"
@@ -49,6 +50,7 @@ string NombreBinA;
 int contadorFase;
 streampos posicionactual;
 void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract);
+
 void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 {
     system("cls"); // Limpia la pantalla en Windows
@@ -80,18 +82,18 @@ void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 
     // Imprimir el contenido dentro del marco con gotoxy
     gotoxy(contenidoX + 2, contenidoY + 1);
-    printBoldText("Recursos iniciales:\n");
+    printBoldText("Recursos  en el ecosistema:\n");
     gotoxy(contenidoX + 2, contenidoY + 2);
-    printBoldText("- Agua: ");
+    printBoldText("-> Agua: ");
     std::cout << ecosistema.recursosIniciales.agua << GREEN << " m3" << RESET << std::endl;
     gotoxy(contenidoX + 2, contenidoY + 3);
-    printBoldText("- Carrona: ");
+    printBoldText("-> Carrona: ");
     std::cout << ecosistema.recursosIniciales.carrona << GREEN << " Kg" << RESET << std::endl;
     gotoxy(contenidoX + 2, contenidoY + 4);
-    printBoldText("- Carne: ");
+    printBoldText("-> Carne: ");
     std::cout << ecosistema.recursosIniciales.carne << GREEN << " Kg" << RESET << std::endl;
     gotoxy(contenidoX + 2, contenidoY + 5);
-    printBoldText("- Vegetacion: ");
+    printBoldText("-> Vegetacion: ");
     std::cout << ecosistema.recursosIniciales.vegetacion << GREEN << " m2" << RESET << std::endl;
 
     // Imprimir borde inferior para el texto de las especies
@@ -455,9 +457,23 @@ void aMinusculas(char *cadena)
         }
     }
 }
+void eliminarDatos(const string ruta)
+{
+    ofstream(ruta, ios::trunc);
+}
 
 string opcionS;
-
+bool existenDatos(const string &ruta)
+{
+    try
+    {
+        return std::filesystem::file_size(ruta) > 0;
+    }
+    catch (std::filesystem::filesystem_error &e)
+    {
+        return false;
+    }
+}
 // int Fvmain(int& ciclo, directorios& path)
 int Fvmain(string &usuario, directorios &directorio)
 {
@@ -471,9 +487,9 @@ int Fvmain(string &usuario, directorios &directorio)
 
     clearScreen();
 
-    cout << BLUE << "                   Desea entrar en el modo avanzado?" << RESET << endl;
-    cout << GREEN << "                   1. Si" << RESET << endl;
-    cout << RED << "                    2. No" << RESET << endl;
+    cout << BLUE << "Desea entrar en el modo avanzado?" << RESET << endl;
+    cout << GREEN << "1. Si" << RESET << endl;
+    cout << RED << "2. No" << RESET << endl;
     int opl;
     cin >> opl;
     if (opl == 1)
@@ -485,7 +501,7 @@ int Fvmain(string &usuario, directorios &directorio)
         cin >> cantidadVenadosMacho;
         cout << "Ingrese los pumas" << PINK << " hembra" << RESET << " que desea:";
         cin >> cantidadPumasHembra;
-        cout << "Ingrese los pumas"<< BLUE << " macho que desea:" << RESET;
+        cout << "Ingrese los pumas" << BLUE << " macho que desea:" << RESET;
         cin >> cantidadPumasMacho;
 
         iniciarEspecies(venados, pumas, cantidadVenadosHembra, cantidadVenadosMacho, cantidadPumasHembra, cantidadPumasMacho);
@@ -517,6 +533,7 @@ int Fvmain(string &usuario, directorios &directorio)
     int edadpromedio;
     int contador;
     estaciones estacion;
+    int ciclosSimular;
     do
     {
         clearScreen();
@@ -536,16 +553,16 @@ int Fvmain(string &usuario, directorios &directorio)
 
         // Imprimir opciones del menú
         gotoxy(x + 2, y + 4);
-        cout << "1. Ver estado" << GREEN << " inicial"
-             << "del ecosistema" << RESET << endl;
+        cout << "1. Ver estado" << RED << " inicial"
+             << " del ecosistema" << RESET << endl;
         gotoxy(x + 2, y + 5);
-        cout << "2. Ver estado" << RED << "anterior"
-             << "del ecosistema" << RESET << endl;
+        cout << "2. Ver estado" << YELLOW << " anterior"
+             << " del ecosistema" << RESET << endl;
         gotoxy(x + 2, y + 6);
-        cout << "3. Ver estado" << YELLOW << " actual"
-             << "del ecosistema" << RESET << endl;
+        cout << "3. Ver estado" << GREEN << " actual"
+             << " del ecosistema" << RESET << endl;
         gotoxy(x + 2, y + 7);
-        cout << "4. Iniciar ciclos" << endl;
+        cout << GREY << "4. Iniciar ciclos" << RESET << endl;
         gotoxy(x + 2, y + 8);
         cout << "5. Generar desastre" << endl;
         gotoxy(x + 2, y + 9);
@@ -601,7 +618,10 @@ int Fvmain(string &usuario, directorios &directorio)
                 extractor.cantInc = 0;
                 extractor.cantInd = 0;
                 extractor.cantSeq = 0;
-                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion);
+                limpiarPantalla();
+                cout << "Ingrese la cantidad de ciclos que desea simular: ";
+                cin >> ciclosSimular;
+                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion, ciclosSimular);
                 extractor.aguaAct = datosEcosistema.recursosActuales.agua;
                 contador = 0;
                 for (auto &venado : venados)
@@ -630,6 +650,43 @@ int Fvmain(string &usuario, directorios &directorio)
             }
 
             case 5:
+            {
+                clearScreen();
+
+                cout << "Generar desastre:\n"
+                     << endl;
+                cout << GREY << "Tipos de desastre:" << RESET << endl;
+                cout << RED << "1. Incendio" << RESET << endl;
+                cout << BLUE << "2. Inundacion" << RESET << endl;
+                cout << YELLOW << "3. Sequia" << RESET << endl;
+                cout << GREEN << "4. Huracan" << RESET << endl;
+                cout << GREY << "\nIngrese el numero correspondiente al tipo de desastre: " << RESET;
+                cin >> tipoDesastre;
+
+                switch (tipoDesastre)
+                {
+                case 1:
+                    generarDesastre(datosEcosistema, TipoDesastre::Incendio);
+                    extractor.cantInc++;
+                    break;
+                case 2:
+                    generarDesastre(datosEcosistema, TipoDesastre::Inundacion);
+                    extractor.cantInd++;
+                    break;
+                case 3:
+                    generarDesastre(datosEcosistema, TipoDesastre::Sequia);
+                    extractor.cantSeq++;
+                    break;
+                case 4:
+                    generarDesastre(datosEcosistema, TipoDesastre::Huracan);
+                    extractor.cantHur++;
+                    break;
+                default:
+                    break;
+                }
+                break;
+            }
+            case 6:
             {
                 clearScreen();
                 // Coordenadas para posicionar el cuadro y el texto
@@ -661,49 +718,21 @@ int Fvmain(string &usuario, directorios &directorio)
                 esNumero(opcionS);
                 opcionMenuPartida = stoi(opcionS);
 
-                switch (tipoDesastre)
-                {
-                case 1:
-                    generarDesastre(datosEcosistema, TipoDesastre::Incendio);
-                    extractor.cantInc++;
-                    break;
-                case 2:
-                    generarDesastre(datosEcosistema, TipoDesastre::Inundacion);
-                    extractor.cantInd++;
-                    break;
-                case 3:
-                    generarDesastre(datosEcosistema, TipoDesastre::Sequia);
-                    extractor.cantSeq++;
-                    break;
-                case 4:
-                    generarDesastre(datosEcosistema, TipoDesastre::Huracan);
-                    extractor.cantHur++;
-                    break;
-                default:
-                    break;
-                }
-                break;
-            }
-            case 6:
-            {
-                cout << "1. Generar Excel" << endl;
-                cout << "2. Guardar Partida" << endl;
-                cout << "3. Cargar Partida" << endl;
-                cin >> opcionS;
-                esNumero(opcionS);
-                opcionMenuPartida = stoi(opcionS);
                 switch (opcionMenuPartida)
                 {
+                    NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
+                    NombreBinA += "ciclo1.bin";
                 case 1:
                 {
-                    if (Guardado)
+
+                    if (Guardado || existenDatos(NombreBinA))
                     {
                         clearScreen();
                         ExcelGenerador(usuario, directorio, Excel);
                     }
                     else
                     {
-                        cout << "Debes guardar la partida antes de mostrar los datos";
+                        cout << "No tienes datos guardados \n";
                         system("pause");
                     }
 
@@ -713,6 +742,8 @@ int Fvmain(string &usuario, directorios &directorio)
                 {
                     NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
                     bool ultimoDelGrupo;
+
+                    eliminarDatos(NombreBinA);
 
                     // Guardar datos de venados
                     ultimoDelGrupo = false;
@@ -763,7 +794,7 @@ int Fvmain(string &usuario, directorios &directorio)
                     // GuardarDesastres(listadesastres);
                     ExtraerDatos(datosS, extractor);
                     GuardardatosSIMECO(usuario, directorio, datosS);
-                    barraCarga(5);
+                    // barraCarga(5);
                     Guardado = true;
                     break;
                 }
@@ -773,7 +804,7 @@ int Fvmain(string &usuario, directorios &directorio)
                     venados.clear();
                     pumas.clear();
                     LeerAnimal(NombreBinA, venados, pumas);
-                    
+
                     break;
                 }
                 default:
@@ -786,14 +817,6 @@ int Fvmain(string &usuario, directorios &directorio)
                 system("start index.html");
                 break;
             }
-            case 8:
-            {
-                clearScreen();
-                cout << "Saliendo del programa...\n"
-                     << endl;
-                system("pause");
-                break;
-            }
             default:
                 clearScreen();
                 cout << "Opcion invalida. Por favor, ingrese una opcion valida.\n"
@@ -804,6 +827,7 @@ int Fvmain(string &usuario, directorios &directorio)
         else
         {
             cerr << "Error: Debe de ser un numero entero" << endl;
+            cin.get();
         }
     } while (opcion != 8);
 
@@ -812,7 +836,7 @@ int Fvmain(string &usuario, directorios &directorio)
 
 void MenuLogin(string &usuario)
 {
-    mainBarra1();
+    // mainBarra1();
     const char *archivoUsuarios = "usuarios.bin";
     Usuario nuevoUsuario;
     string nombreUsuario, contrasena, UsuarioConGuiones;
@@ -896,7 +920,7 @@ void MenuLogin(string &usuario)
                     usuario = nombreUsuario;
                     // Llama a searchDir con la version del nombre de usuario con guiones
                     searchDir(UsuarioConGuiones, directorio);
-                    mainBarra1();
+                    // mainBarra1();
                     Fvmain(UsuarioConGuiones, directorio);
                     opcion = 3;
                 }

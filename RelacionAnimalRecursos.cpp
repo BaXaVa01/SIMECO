@@ -55,19 +55,19 @@ public:
         switch (estacion)
         {
         case Primavera:
-            agua += 6000;
+            agua += 20000;
             vegetacion += 450000;
             break;
         case Verano:
-            agua += 2000;
+            agua += 20000;
             vegetacion += 230000;
             break;
         case Otonio:
-            agua += 7000;  
+            agua += 45000;  
             vegetacion += 500000;
             break;
         case Invierno:
-            agua += 8000;
+            agua += 50000;
             vegetacion += 600000;
 
             break;
@@ -715,18 +715,19 @@ void printBoldText(const string &text)
 
     SetConsoleTextAttribute(hConsole, originalAttrs);
 }
-int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal)
+int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal, int &cantidadCiclos)
 {
     // Se definen los recursos iniciales del ecosistema
 
-    cout << "Cuantos ciclos queres simular?" << endl;
-    cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
-    int cantidadCiclos;
-    cin >> cantidadCiclos;
+    // cout << "Cuantos ciclos queres simular?" << endl;
+    // cout << "NOTA: Tenga en cuenta que el programa iniciara en Primavera automaticamente" << endl;
+    // int cantidadCiclos;
+    // cin >> cantidadCiclos;
     int vegetacionConsumida = ecosistema.recursosActuales.vegetacion;
     extract.cnum = cantidadCiclos;
     estaciones estacion;
     int CicloActual = 1;
+    
     for (CicloActual; CicloActual <= cantidadCiclos; CicloActual++)
     {
         clearScreen();
