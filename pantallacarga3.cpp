@@ -11,11 +11,8 @@
 
 
 int mainP3(){
+  UINT originalCP = GetConsoleOutputCP();
 // Verificar si el sistema operativo es Windows
-#ifdef _WIN32
-    // Cambiar la página de códigos a UTF-8 (65001) en Windows
-    SetConsoleOutputCP(65001);
-#endif
 
     // Definir las imágenes con caracteres especiales
     std::string imagen1 = R"(
@@ -325,14 +322,15 @@ int mainP3(){
     int numImagenes = sizeof(imagenes) / sizeof(imagenes[0]);
 
     // Duración en milisegundos entre cada imagen (ajusta según sea necesario)
-    int duracionEntreImagenes = 90;
-    int pausa = 1;
+    int duracionEntreImagenes = 80;
+    int pausa = 6;
 
     // Mostrar las imágenes en una animación
-    while (pausa != 0)
+    while (pausa != 3)
     {
         for (int i = 0; i < numImagenes; i++)
         {
+          SetConsoleOutputCP(65001);
             mostrarImagen(imagenes[i]);
 
             // Esperar antes de mostrar la siguiente imagen
@@ -344,8 +342,9 @@ int mainP3(){
             system("clear");
 #endif
         }
-        pausa++;
+        pausa--;
     }
+    SetConsoleOutputCP(originalCP);
 
     return 0;
 
