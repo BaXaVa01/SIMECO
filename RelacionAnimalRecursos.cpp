@@ -477,45 +477,31 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
     }
     // Encontrar una hembra disponible para la reproducción
 
-    int contador = 0;
-    int contadorH = 0;
-    int tamano;
-    int aleatorio;
-
-    for(auto &venado : venados){
-        if(venado.determinarGenero() == Genero::Hembra && venado.EdadrepT()){
-            tamano++;
-        }
-    }
-
     for (auto &Hembra : venados)
     {
 
-        contador++;
+        
 
         if (Hembra.determinarGenero() != Genero::Hembra || !Hembra.EdadrepT())
         {
             continue;
         }
 
-        contadorH++;
-        cout << contador << " / " << tamano << endl;
-        cout << "hembrasContador: " << contadorH;
         mt19937 gen(random_device{}());
-        cout << "se genero el numero aleatorio" << endl;
-        uniform_int_distribution<> dis(1, 3);
-        aleatorio = dis(gen);
-        cout << "se genero la distribucion >> "<< aleatorio << endl;
 
-        for (int criasv = 0; criasv < aleatorio; criasv++)
+        uniform_int_distribution<> dis(1, 3);
+        
+ 
+
+        for (int criasv = 0; criasv < dis(gen); criasv++)
         {
             Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-            cout << "ha nacido un nuevo venado, ";
+            
             venados.push_back(Venado(nuevoGeneroV, 1)); // Se agrega el venado a la lista
-            cout << "Se ha agregado un nuevo venado" << endl;
+            
         }
     }
-    cout << "finalizo todo" << endl;
+    
 }
 
 void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
