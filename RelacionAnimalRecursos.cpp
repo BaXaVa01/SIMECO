@@ -476,6 +476,8 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
         return;
     }
     // Encontrar una hembra disponible para la reproducción
+    int contado = 0;
+    
     for (auto &Hembra : venados)
     {
         if (Hembra.determinarGenero() != Genero::Hembra && !Hembra.EdadrepT())
@@ -489,7 +491,14 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
         for (int criasv = 0; criasv < dis(gen); criasv++)
         {
             Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
-            venados.push_back(move(Venado(nuevoGeneroV, 1))); // Se agrega el venado a la lista
+            cout << "ha nacido un nuevo venado, ";
+            try{
+                venados.push_back(Venado(nuevoGeneroV, 1)); // Se agrega el venado a la lista
+                cout << "Se ha agregado un nuevo venado" << endl;
+            }catch(const std::bad_alloc& e){
+                cout << "No hay memoria suficiente para crear mas venados" << endl;
+                return;
+            }
         }
     }
 }
@@ -715,7 +724,7 @@ void printBoldText(const string &text)
 
     SetConsoleTextAttribute(hConsole, originalAttrs);
 }
-int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal, int &cantidadCiclos)
+int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal, int &cantidadCiclosTotales, int cicloGlobal)
 {
     // Se definen los recursos iniciales del ecosistema
 
@@ -724,14 +733,17 @@ int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<P
     // int cantidadCiclos;
     // cin >> cantidadCiclos;
     int vegetacionConsumida = ecosistema.recursosActuales.vegetacion;
-    extract.cnum = cantidadCiclos;
+    extract.cnum = cantidadCiclosTotales;
+    // int cantidadCiclos;
+
     estaciones estacion;
     int CicloActual = 1;
     
-    for (CicloActual; CicloActual <= cantidadCiclos; CicloActual++)
+    for (CicloActual; CicloActual <= cantidadCiclosTotales; CicloActual++)
     {
-        clearScreen();
-        estacion = estacionNum(CicloActual + 4);
+        cout << "ciclo: " << CicloActual << endl;
+        
+        estacion = estacionNum(CicloActual + 4 + cicloGlobal);
 
         for (int semanaActual = 0; semanaActual < 13; semanaActual++)
         {
@@ -773,12 +785,15 @@ int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<P
         }
         vegetacionConsumida -= ecosistema.recursosActuales.vegetacion;
         reproducirseP(pumas, estacion);
+        cout << "  1.1 Pumas: " << pumas.size() <<" \n";
         reproducirseV(venados, estacion);
+        cout << "  1.2 Venados: " << venados.size() <<" \n";
         actualizarCarne(venados, ecosistema.recursosActuales);
         ecosistema.recursosActuales.actualizarRecursos(estacion, vegetacionConsumida);
     }
-    estacionglobal = estacion;
 
+    estacionglobal = estacion;
+    cin.get();
     return 0;
 }
 

@@ -533,7 +533,7 @@ int Fvmain(string &usuario, directorios &directorio)
     int edadpromedio;
     int contador;
     estaciones estacion;
-    int ciclosSimular;
+    int ciclosSimular, cicloGlobal;
     do
     {
         clearScreen();
@@ -621,7 +621,8 @@ int Fvmain(string &usuario, directorios &directorio)
                     limpiarPantalla();
                     cout << "Ingrese la cantidad de ciclos que desea simular: ";
                     cin >> ciclosSimular;
-                    mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion, ciclosSimular);
+                    mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion, ciclosSimular, cicloGlobal);
+                    cicloGlobal += ciclosSimular;
                     extractor.aguaAct = datosEcosistema.recursosActuales.agua;
                     contador = 0;
                     for (auto &venado : venados)
