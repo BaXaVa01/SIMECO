@@ -1083,11 +1083,7 @@ void CargarRecursos(Extractordatos &extractor, const string &rutacompleta)
     archivo.read(reinterpret_cast<char *>(&extractor.vegetacionAct), sizeof(extractor.vegetacionAct));
     archivo.read(reinterpret_cast<char *>(&extractor.carneAct), sizeof(extractor.carneAct));
     archivo.read(reinterpret_cast<char *>(&extractor.carronaAct), sizeof(extractor.carronaAct));
-    cout << extractor.aguaAct << endl;
-    cout << extractor.vegetacionAct << endl;
-    cout << extractor.carneAct << endl;
-    cout << extractor.carronaAct << endl;
-    system("pause");
+
 
     archivo.close();
 }
