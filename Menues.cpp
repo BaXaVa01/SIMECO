@@ -461,14 +461,13 @@ void aMinusculas(char *cadena)
 
 string opcionS;
 
-
 // int Fvmain(int& ciclo, directorios& path)
 int Fvmain(string &usuario, directorios &directorio)
 {
     // Estos vectores son necesarios siempre para el inicio de la partida
     vector<Venado> venados; // 10 machos y 10 hembras
     venados.reserve(7000);
-    vector<Puma> pumas;     // 1 macho y 1 hembra
+    vector<Puma> pumas; // 1 macho y 1 hembra
 
     // cout << "El tamano en bytes de la clase venado es de:" << sizeof(Venado) << endl;
     // cin.get();
@@ -610,6 +609,7 @@ int Fvmain(string &usuario, directorios &directorio)
                 cout << "Ingrese la cantidad de ciclos que desea simular: ";
                 cin >> ciclosSimular;
                 mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion, ciclosSimular, cicloGlobal);
+                mainP3();
                 cicloGlobal += ciclosSimular;
                 extractor.aguaAct = datosEcosistema.recursosActuales.agua;
                 contador = 0;
@@ -657,22 +657,22 @@ int Fvmain(string &usuario, directorios &directorio)
                 case 1:
                     generarDesastre(datosEcosistema, TipoDesastre::Incendio);
                     extractor.cantInc++;
-                    extractor.cicloInc=cicloGlobal;
+                    extractor.cicloInc = cicloGlobal;
                     break;
                 case 2:
                     generarDesastre(datosEcosistema, TipoDesastre::Inundacion);
                     extractor.cantInd++;
-                    extractor.cicloInd=cicloGlobal;
+                    extractor.cicloInd = cicloGlobal;
                     break;
                 case 3:
                     generarDesastre(datosEcosistema, TipoDesastre::Sequia);
                     extractor.cantSeq++;
-                    extractor.cicloSeq=cicloGlobal;
+                    extractor.cicloSeq = cicloGlobal;
                     break;
                 case 4:
                     generarDesastre(datosEcosistema, TipoDesastre::Huracan);
                     extractor.cantHur++;
-                    extractor.cicloHur=cicloGlobal;
+                    extractor.cicloHur = cicloGlobal;
                     break;
                 default:
                     break;
@@ -690,20 +690,20 @@ int Fvmain(string &usuario, directorios &directorio)
                 gotoxy(x, y);
                 printBorderLine(40, '*', 11); // Línea superior del cuadro
 
-                    gotoxy(x, y + 1);
-                    cout << "         * Gestor de datos *" << endl; // Texto con margen
+                gotoxy(x, y + 1);
+                cout << "         * Gestor de datos *" << endl; // Texto con margen
 
                 gotoxy(x, y + 2);
                 printBorderLine(40, '*', 11); // Línea inferior del cuadro
                 cout << endl;
 
-                    // Imprimir opciones del menú
-                    gotoxy(x + 2, y + 4);
-                    cout << BLUE << "1. Generar Excel" << RESET << endl;
-                    gotoxy(x + 2, y + 5);
-                    cout << GREEN << "2. Guardar Partida" << RESET << endl;
-                    gotoxy(x + 2, y + 6);
-                    cout << BLUE << "3. Cargar Partida" << RESET << endl;
+                // Imprimir opciones del menú
+                gotoxy(x + 2, y + 4);
+                cout << BLUE << "1. Generar Excel" << RESET << endl;
+                gotoxy(x + 2, y + 5);
+                cout << GREEN << "2. Guardar Partida" << RESET << endl;
+                gotoxy(x + 2, y + 6);
+                cout << BLUE << "3. Cargar Partida" << RESET << endl;
 
                 gotoxy(x + 2, y + 8);
                 cout << "Ingrese una opcion: ";
@@ -784,7 +784,7 @@ int Fvmain(string &usuario, directorios &directorio)
                         GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
                         i++;
                     }
-                    extractor.cnum=cicloGlobal;
+                    extractor.cnum = cicloGlobal;
                     ExtraerDatos(datosS, extractor);
                     recrearArchivoVacio(NombreBinB);
                     GuardarRecursos(extractor, NombreBinB);
@@ -852,11 +852,27 @@ void MenuLogin(string &usuario)
     do
     {
         limpiarPantalla();
-        cout << "Bienvenido al sistema de registro e inicio de sesion:" << endl;
-        cout << "1. Crear cuenta" << endl;
-        cout << "2. Iniciar sesion" << endl;
-        cout << "3. Salir" << endl;
-        cout << "Elija una opcion: ";
+        // Coordenadas para posicionar el cuadro y el texto
+        int x = 5;
+        int y = 5;
+
+        // Imprimir cuadro azul
+        gotoxy(x, y);
+        printBorderLine(75, '*', 11); // Línea superior del cuadro
+
+        gotoxy(x, y + 1);
+        cout << GREY <<"         * Bienvenido al sistema de registro e inicio de sesion *" << RESET <<endl; // Texto con margen
+
+        gotoxy(x, y + 2);
+        printBorderLine(75, '*', 11); // Línea inferior del cuadro
+
+        cout << GREY << "" << RESET << endl;
+
+        cout << "1." << GREEN << " Crear cuenta" << RESET << endl;
+        cout << "2." << BLUE << " Iniciar sesion" << RESET << endl;
+        cout << "3." << RED << " Salir " << RESET << endl;
+
+        cout << GREY << "Elija una opcion: " << RESET;
         cin >> opcionS;
 
         cin.ignore();
@@ -868,8 +884,8 @@ void MenuLogin(string &usuario)
             case 1:
             {
                 limpiarPantalla();
-                cout << "Crear una nueva cuenta:" << endl;
-                cout << "Nombre de usuario: ";
+                cout <<GREY<< "Crear una nueva cuenta:"<<RESET << endl;
+                cout <<RED<< "Nombre de usuario: "<<RESET;
                 cin.getline(nuevoUsuario.nombreUsuario, 100);
                 aMinusculas(nuevoUsuario.nombreUsuario);
                 if (nombreUsuarioExistente(archivoUsuarios, nuevoUsuario.nombreUsuario))
@@ -879,7 +895,7 @@ void MenuLogin(string &usuario)
                     break;
                 }
 
-                cout << "Contrasenia: ";
+                cout <<RED<< "Contrasenia: "<< RESET;
                 cin.getline(nuevoUsuario.contrasena, 100);
                 registrarUsuario(archivoUsuarios, nuevoUsuario);
                 UsuarioConGuiones = nuevoUsuario.nombreUsuario;
@@ -1003,7 +1019,11 @@ void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract)
     datos.poblacionTotal = to_string(result);
     datos.aguaDisponible = to_string(extract.aguaAct);
     datos.hierbaDisponible = to_string(extract.vegetacionAct);
-    system("pause");
+    
+    datos.aguaDisponibleA = to_string(extract.aguaA);
+    datos.hierbaDisponibleA = to_string(extract.vegetacionA);
+    datos.carneDisponibleA = to_string(extract.carneA);
+    datos.carronaDisponibleA = to_string(extract.carronaA);
 
     datos.carneDisponible = to_string(extract.carneAct);
     datos.carronaDisponible = to_string(extract.carronaAct);
@@ -1058,10 +1078,10 @@ void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract)
     datos.sequias = to_string(extract.cantSeq);
     datos.inundaciones = to_string(extract.cantInd);
     datos.huracanes = to_string(extract.cantHur);
-    datos.anoInc=to_string(extract.cicloInc);
-    datos.anoSeq=to_string(extract.cicloSeq);
-    datos.anoInd=to_string(extract.cicloInd);
-    datos.anoHur=to_string(extract.cicloHur);
+    datos.anoInc = to_string(extract.cicloInc);
+    datos.anoSeq = to_string(extract.cicloSeq);
+    datos.anoInd = to_string(extract.cicloInd);
+    datos.anoHur = to_string(extract.cicloHur);
 }
 
 void CargarRecursos(Extractordatos &extractor, const string &rutacompleta)
@@ -1079,11 +1099,7 @@ void CargarRecursos(Extractordatos &extractor, const string &rutacompleta)
     archivo.read(reinterpret_cast<char *>(&extractor.vegetacionAct), sizeof(extractor.vegetacionAct));
     archivo.read(reinterpret_cast<char *>(&extractor.carneAct), sizeof(extractor.carneAct));
     archivo.read(reinterpret_cast<char *>(&extractor.carronaAct), sizeof(extractor.carronaAct));
-    cout << extractor.aguaAct << endl;
-    cout << extractor.vegetacionAct << endl;
-    cout << extractor.carneAct << endl;
-    cout << extractor.carronaAct << endl;
-    system("pause");
+
 
     archivo.close();
 }

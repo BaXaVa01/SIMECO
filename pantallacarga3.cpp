@@ -326,7 +326,7 @@ int mainP3(){
     int pausa = 6;
 
     // Mostrar las imágenes en una animación
-    while (pausa != 0)
+    while (pausa != 3)
     {
         for (int i = 0; i < numImagenes; i++)
         {

@@ -16,7 +16,6 @@ int main()
     MenuLogin(usuario); 
     searchDir(usuario, path);
     system("cls");
-    barraCarga(5);
     
     return 0;
 }
