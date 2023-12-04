@@ -926,7 +926,6 @@ void MenuLogin(string &usuario)
                 cout << BLUE << "Iniciar sesion:" << RESET << endl;
                 gotoxy(x + 2, y + 5);
                 cout << RED << "Nombre de usuario: " << RESET;
-                gotoxy(x + 2, y + 6);
                 getline(cin, nombreUsuario);
                 gotoxy(x + 2, y + 7);
                 cout << RED << "Contrasenia: " << RESET;
