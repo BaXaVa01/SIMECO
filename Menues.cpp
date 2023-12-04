@@ -867,8 +867,8 @@ void MenuLogin(string &usuario)
 
         cout << GREY << "" << RESET << endl;
 
-        cout << "1." << GREEN << " Crear" << RESET << " cuenta" << endl;
-        cout << "2." << BLUE << " Iniciar" << RESET << " sesion" << endl;
+        cout << "1." << GREEN << " Crear cuenta" << RESET << endl;
+        cout << "2." << BLUE << " Iniciar sesion" << RESET << endl;
         cout << "3." << RED << " Salir " << RESET << endl;
 
         cout << GREY << "Elija una opcion: " << RESET;
