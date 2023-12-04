@@ -50,6 +50,7 @@ string NombreBinA, NombreBinB, NombreBinC; // Nombres de los archivos binarios
 int contadorFase;
 streampos posicionactual;
 void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract);
+void CargarRecursos(Extractordatos &extractor, const string &rutacompleta);
 
 void mostrarEstadoInicialEcosistema(Ecosistema &ecosistema)
 {
@@ -457,12 +458,9 @@ void aMinusculas(char *cadena)
         }
     }
 }
-void eliminarDatos(const string ruta)
-{
-    ofstream(ruta, ios::trunc);
-}
 
 string opcionS;
+
 
 // int Fvmain(int& ciclo, directorios& path)
 int Fvmain(string &usuario, directorios &directorio)
@@ -575,253 +573,261 @@ int Fvmain(string &usuario, directorios &directorio)
             opcion = stoi(opcionS);
             switch (opcion)
             {
+            case 1:
+            {
+                mostrarEstadoInicialEcosistema(datosInicial);
+                break;
+            }
+
+            case 2:
+            {
+                mostrarEstadoEcosistemaAnterior(datosEcosistemaAnt);
+                break;
+            }
+
+            case 3:
+            {
+                datosEcosistema.pPumas = pumas.size();
+                datosEcosistema.pVenados = venados.size();
+                actualizarCarne(venados, datosEcosistema.recursosActuales);
+                mostrarEstadoEcosistema(datosEcosistema);
+                break;
+            }
+            case 4:
+            {
+                datosEcosistemaAnt = datosEcosistema;
+                extractor.AnteVenados = venados.size();
+                extractor.AntePumas = pumas.size();
+                extractor.aguaA = datosEcosistemaAnt.recursosActuales.agua;
+                extractor.carneA = datosEcosistemaAnt.recursosActuales.carne;
+                extractor.vegetacionA = datosEcosistemaAnt.recursosActuales.vegetacion;
+                extractor.carronaA = datosEcosistemaAnt.recursosActuales.carrona;
+                if (Estacion)
+                {
+                    extractor.EstacionA = estacion;
+                }
+                limpiarPantalla();
+                cout << "Ingrese la cantidad de ciclos que desea simular: ";
+                cin >> ciclosSimular;
+                mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion, ciclosSimular, cicloGlobal);
+                cicloGlobal += ciclosSimular;
+                extractor.aguaAct = datosEcosistema.recursosActuales.agua;
+                contador = 0;
+                for (auto &venado : venados)
+                {
+                    edadpromedio += venado.mostrarEdad();
+                    contador++;
+                }
+                extractor.EdadV = edadpromedio / contador;
+                contador = 0;
+                edadpromedio = 0;
+                for (auto &puma : pumas)
+                {
+                    edadpromedio += puma.mostrarEdad();
+                    contador++;
+                }
+                extractor.EdadP = edadpromedio / contador;
+                extractor.carneAct = datosEcosistema.recursosActuales.carne;
+                extractor.vegetacionAct = datosEcosistema.recursosActuales.vegetacion;
+                extractor.carronaAct = datosEcosistema.recursosActuales.carrona;
+                extractor.PV = venados.size();
+                extractor.PP = pumas.size();
+                extractor.estacionAct = estacion;
+                Estacion = true;
+                cin.get();
+                break;
+            }
+
+            case 5:
+            {
+                clearScreen();
+
+                cout << "Generar desastre:\n"
+                     << endl;
+                cout << GREY << "Tipos de desastre:" << RESET << endl;
+                cout << RED << "1. Incendio" << RESET << endl;
+                cout << BLUE << "2. Inundacion" << RESET << endl;
+                cout << YELLOW << "3. Sequia" << RESET << endl;
+                cout << GREEN << "4. Huracan" << RESET << endl;
+                cout << GREY << "\nIngrese el numero correspondiente al tipo de desastre: " << RESET;
+                cin >> tipoDesastre;
+
+                switch (tipoDesastre)
+                {
                 case 1:
-                {
-                    mostrarEstadoInicialEcosistema(datosInicial);
+                    generarDesastre(datosEcosistema, TipoDesastre::Incendio);
+                    extractor.cantInc++;
+                    extractor.cicloInc=cicloGlobal;
                     break;
-                }
-
                 case 2:
-                {
-                    mostrarEstadoEcosistemaAnterior(datosEcosistemaAnt);
+                    generarDesastre(datosEcosistema, TipoDesastre::Inundacion);
+                    extractor.cantInd++;
+                    extractor.cicloInd=cicloGlobal;
                     break;
-                }
-
                 case 3:
-                {
-                    datosEcosistema.pPumas = pumas.size();
-                    datosEcosistema.pVenados = venados.size();
-                    actualizarCarne(venados, datosEcosistema.recursosActuales);
-                    mostrarEstadoEcosistema(datosEcosistema);
+                    generarDesastre(datosEcosistema, TipoDesastre::Sequia);
+                    extractor.cantSeq++;
+                    extractor.cicloSeq=cicloGlobal;
                     break;
-                }
                 case 4:
-                {
-                    datosEcosistemaAnt = datosEcosistema;
-                    extractor.AnteVenados = venados.size();
-                    extractor.AntePumas = pumas.size();
-                    extractor.aguaA = datosEcosistemaAnt.recursosActuales.agua;
-                    extractor.carneA = datosEcosistemaAnt.recursosActuales.carne;
-                    extractor.vegetacionA = datosEcosistemaAnt.recursosActuales.vegetacion;
-                    extractor.carronaA = datosEcosistemaAnt.recursosActuales.carrona;
-                    if (Estacion)
-                    {
-                        extractor.EstacionA = estacion;
-                    }
-                    extractor.cantHur = 0;
-                    extractor.cantInc = 0;
-                    extractor.cantInd = 0;
-                    extractor.cantSeq = 0;
-                    limpiarPantalla();
-                    cout << "Ingrese la cantidad de ciclos que desea simular: ";
-                    cin >> ciclosSimular;
-                    mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion, ciclosSimular, cicloGlobal);
-                    cicloGlobal += ciclosSimular;
-                    extractor.aguaAct = datosEcosistema.recursosActuales.agua;
-                    contador = 0;
-                    for (auto &venado : venados)
-                    {
-                        edadpromedio += venado.mostrarEdad();
-                        contador++;
-                    }
-                    extractor.EdadV = edadpromedio / contador;
-                    contador = 0;
-                    edadpromedio = 0;
-                    for (auto &puma : pumas)
-                    {
-                        edadpromedio += puma.mostrarEdad();
-                        contador++;
-                    }
-                    extractor.EdadP = edadpromedio / contador;
-                    extractor.carneAct = datosEcosistema.recursosActuales.carne;
-                    extractor.vegetacionAct = datosEcosistema.recursosActuales.vegetacion;
-                    extractor.carronaAct = datosEcosistema.recursosActuales.carrona;
-                    extractor.PV = venados.size();
-                    extractor.PP = pumas.size();
-                    extractor.estacionAct = estacion;
-                    Estacion = true;
-                    cin.get();
+                    generarDesastre(datosEcosistema, TipoDesastre::Huracan);
+                    extractor.cantHur++;
+                    extractor.cicloHur=cicloGlobal;
+                    break;
+                default:
                     break;
                 }
+                break;
+            }
+            case 6:
+            {
+                clearScreen();
+                // Coordenadas para posicionar el cuadro y el texto
+                int x = 5;
+                int y = 5;
 
-                case 5:
-                {
-                    clearScreen();
-
-                    cout << "Generar desastre:\n"
-                        << endl;
-                    cout << GREY << "Tipos de desastre:" << RESET << endl;
-                    cout << RED << "1. Incendio" << RESET << endl;
-                    cout << BLUE << "2. Inundacion" << RESET << endl;
-                    cout << YELLOW << "3. Sequia" << RESET << endl;
-                    cout << GREEN << "4. Huracan" << RESET << endl;
-                    cout << GREY << "\nIngrese el numero correspondiente al tipo de desastre: " << RESET;
-                    cin >> tipoDesastre;
-
-                    switch (tipoDesastre)
-                    {
-                    case 1:
-                        generarDesastre(datosEcosistema, TipoDesastre::Incendio);
-                        extractor.cantInc++;
-                        break;
-                    case 2:
-                        generarDesastre(datosEcosistema, TipoDesastre::Inundacion);
-                        extractor.cantInd++;
-                        break;
-                    case 3:
-                        generarDesastre(datosEcosistema, TipoDesastre::Sequia);
-                        extractor.cantSeq++;
-                        break;
-                    case 4:
-                        generarDesastre(datosEcosistema, TipoDesastre::Huracan);
-                        extractor.cantHur++;
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                }
-                case 6:
-                {
-                    clearScreen();
-                    // Coordenadas para posicionar el cuadro y el texto
-                    int x = 5;
-                    int y = 5;
-
-                    // Imprimir cuadro azul
-                    gotoxy(x, y);
-                    printBorderLine(40, '*', 11); // Línea superior del cuadro
+                // Imprimir cuadro azul
+                gotoxy(x, y);
+                printBorderLine(40, '*', 11); // Línea superior del cuadro
 
                     gotoxy(x, y + 1);
                     cout << "         * Gestor de datos *" << endl; // Texto con margen
 
-                    gotoxy(x, y + 2);
-                    printBorderLine(40, '*', 11); // Línea inferior del cuadro
-                    cout << endl;
+                gotoxy(x, y + 2);
+                printBorderLine(40, '*', 11); // Línea inferior del cuadro
+                cout << endl;
 
                     // Imprimir opciones del menú
                     gotoxy(x + 2, y + 4);
                     cout << BLUE << "1. Generar Excel" << RESET << endl;
                     gotoxy(x + 2, y + 5);
-                    cout << GREEN << "2. Guardar datos" << RESET << endl;
+                    cout << GREEN << "2. Guardar Partida" << RESET << endl;
                     gotoxy(x + 2, y + 6);
-                    cout << BLUE << "3. Cargar datos" << RESET << endl;
+                    cout << BLUE << "3. Cargar Partida" << RESET << endl;
 
-                    gotoxy(x + 2, y + 8);
-                    cout << "Ingrese una opcion: ";
-                    std::cin >> opcionS;
-                    esNumero(opcionS);
-                    opcionMenuPartida = stoi(opcionS);
+                gotoxy(x + 2, y + 8);
+                cout << "Ingrese una opcion: ";
+                std::cin >> opcionS;
+                esNumero(opcionS);
+                opcionMenuPartida = stoi(opcionS);
 
-                    switch (opcionMenuPartida)
-                    {
-                            NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
-                            NombreBinA += "ciclo1.bin";
-                        case 1:
-                        {
-
-                            if (Guardado)
-                            {
-                                clearScreen();
-                                ExcelGenerador(usuario, directorio, Excel);
-                            }
-                            else
-                            {
-                                cout << "No tienes datos guardados \n";
-                                system("pause");
-                            }
-
-                            break;
-                        }
-                        case 2:
-                        {
-                            NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
-                            NombreBinB = existeArchivo("ciclo", directorio.folder3, ".bin");
-                            NombreBinC = existeArchivo("ciclo", directorio.folder2, ".bin");
-                            bool ultimoDelGrupo;
-                            recrearArchivoVacio(NombreBinA);
-
-                            // Guardar datos de venados
-                            ultimoDelGrupo = false;
-                            size_t i = 1;
-                            for (auto &venado : venados)
-                            {
-                                datos.edad = venado.mostrarEdad();
-                                if (venado.determinarGenero() == Genero::Macho)
-                                {
-                                    datos.genero = 0;
-                                }
-                                else
-                                {
-                                    datos.genero = 1;
-                                }
-                                if (i == venados.size())
-                                {
-                                    ultimoDelGrupo = true;
-                                }
-
-                                GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
-                                i++;
-                            }
-
-                            // Guardar datos de pumas
-                            i = 1;
-                            ultimoDelGrupo = false;
-                            for (auto &puma : pumas)
-                            {
-                                datos.edad = puma.mostrarEdad();
-                                if (puma.determinarGenero() == Genero::Macho)
-                                {
-                                    datos.genero = 0;
-                                }
-                                else
-                                {
-                                    datos.genero = 1;
-                                }
-                                if (i == pumas.size())
-                                {
-                                    ultimoDelGrupo = true;
-                                }
-
-                                GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
-                                i++;
-                            }
-                            ExtraerDatos(datosS, extractor);
-                            recrearArchivoVacio(NombreBinB);
-                            GuardarRecursos(extractor, NombreBinB);
-                            recrearArchivoVacio(NombreBinC);
-                            GuardarDesastres(extractor, NombreBinC);
-                            GuardardatosSIMECO(usuario, directorio, datosS);
-                            barraCarga(5);
-                            Guardado = true;
-                            break;
-                        }
-                        case 3:
-                        {
-                            NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
-                            venados.clear();
-                            pumas.clear();
-                            LeerAnimal(NombreBinA, venados, pumas);
-
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                        break;
-                }
-                case 7:
+                switch (opcionMenuPartida)
                 {
-                    system("start index.html");
+                    NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
+                    NombreBinA += "ciclo1.bin";
+                case 1:
+                {
+
+                    if (Guardado)
+                    {
+                        clearScreen();
+                        ExcelGenerador(usuario, directorio, Excel);
+                    }
+                    else
+                    {
+                        cout << "No tienes datos guardados \n";
+                        system("pause");
+                    }
+
+                    break;
+                }
+                case 2:
+                {
+                    NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
+                    NombreBinB = existeArchivo("ciclo", directorio.folder3, ".bin");
+                    NombreBinC = existeArchivo("ciclo", directorio.folder2, ".bin");
+                    bool ultimoDelGrupo;
+                    recrearArchivoVacio(NombreBinA);
+
+                    // Guardar datos de venados
+                    ultimoDelGrupo = false;
+                    size_t i = 1;
+                    for (auto &venado : venados)
+                    {
+                        datos.edad = venado.mostrarEdad();
+                        if (venado.determinarGenero() == Genero::Macho)
+                        {
+                            datos.genero = 0;
+                        }
+                        else
+                        {
+                            datos.genero = 1;
+                        }
+                        if (i == venados.size())
+                        {
+                            ultimoDelGrupo = true;
+                        }
+
+                        GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
+                        i++;
+                    }
+
+                    // Guardar datos de pumas
+                    i = 1;
+                    ultimoDelGrupo = false;
+                    for (auto &puma : pumas)
+                    {
+                        datos.edad = puma.mostrarEdad();
+                        if (puma.determinarGenero() == Genero::Macho)
+                        {
+                            datos.genero = 0;
+                        }
+                        else
+                        {
+                            datos.genero = 1;
+                        }
+                        if (i == pumas.size())
+                        {
+                            ultimoDelGrupo = true;
+                        }
+
+                        GuardarAnimal(datos, ultimoDelGrupo, NombreBinA);
+                        i++;
+                    }
+                    extractor.cnum=cicloGlobal;
+                    ExtraerDatos(datosS, extractor);
+                    recrearArchivoVacio(NombreBinB);
+                    GuardarRecursos(extractor, NombreBinB);
+                    recrearArchivoVacio(NombreBinC);
+                    GuardarDesastres(extractor, NombreBinC);
+                    GuardardatosSIMECO(usuario, directorio, datosS);
+                    barraCarga(5);
+                    Guardado = true;
+                    break;
+                }
+                case 3:
+                {
+                    NombreBinA = existeArchivo("ciclo", directorio.folder1, ".bin");
+                    NombreBinB = existeArchivo("ciclo", directorio.folder3, ".bin");
+                    NombreBinC = existeArchivo("ciclo", directorio.folder2, ".bin");
+                    venados.clear();
+                    pumas.clear();
+                    CargarRecursos(extractor, NombreBinB);
+                    datosEcosistema.recursosActuales.agua = extractor.aguaAct;
+                    datosEcosistema.recursosActuales.vegetacion = extractor.vegetacionAct;
+                    datosEcosistema.recursosActuales.carne = extractor.carneAct;
+                    datosEcosistema.recursosActuales.carrona = extractor.carronaAct;
+                    LeerAnimal(NombreBinA, venados, pumas);
+
                     break;
                 }
                 default:
-                {
-                    clearScreen();
-                    cout << "Opcion invalida. Por favor, ingrese una opcion valida.\n"
-                        << endl;
                     break;
                 }
+                break;
+            }
+            case 7:
+            {
+                system("start index.html");
+                break;
+            }
+            default:
+            {
+                clearScreen();
+                cout << "Opcion invalida. Por favor, ingrese una opcion valida.\n"
+                     << endl;
+                break;
+            }
             }
         }
         else
@@ -1052,4 +1058,32 @@ void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract)
     datos.sequias = to_string(extract.cantSeq);
     datos.inundaciones = to_string(extract.cantInd);
     datos.huracanes = to_string(extract.cantHur);
+    datos.anoInc=to_string(extract.cicloInc);
+    datos.anoSeq=to_string(extract.cicloSeq);
+    datos.anoInd=to_string(extract.cicloInd);
+    datos.anoHur=to_string(extract.cicloHur);
+}
+
+void CargarRecursos(Extractordatos &extractor, const string &rutacompleta)
+{
+    ifstream archivo(rutacompleta, ios::binary);
+    if (!archivo)
+    {
+        cerr << "Error al abrir el archivo binario." << endl;
+        system("pause");
+        return;
+    }
+
+    // Leer los datos del archivo binario y almacenarlos en el extractor
+    archivo.read(reinterpret_cast<char *>(&extractor.aguaAct), sizeof(extractor.aguaAct));
+    archivo.read(reinterpret_cast<char *>(&extractor.vegetacionAct), sizeof(extractor.vegetacionAct));
+    archivo.read(reinterpret_cast<char *>(&extractor.carneAct), sizeof(extractor.carneAct));
+    archivo.read(reinterpret_cast<char *>(&extractor.carronaAct), sizeof(extractor.carronaAct));
+    cout << extractor.aguaAct << endl;
+    cout << extractor.vegetacionAct << endl;
+    cout << extractor.carneAct << endl;
+    cout << extractor.carronaAct << endl;
+    system("pause");
+
+    archivo.close();
 }

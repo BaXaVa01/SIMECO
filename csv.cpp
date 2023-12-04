@@ -17,7 +17,7 @@ struct DatosSimulacion
     string promedioIndividuosA, poblacionTotalA, aguaDisponibleA, hierbaDisponibleA, carneDisponibleA, carronaDisponibleA;
     string carneDisponible, carronaDisponible, estacionInicial, estacionActual;
     string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
-    string incendios, sequias, inundaciones, huracanes;
+    string incendios, sequias, inundaciones, huracanes, anoInc, anoSeq, anoInd, anoHur;
 };
 struct Extractordatos
 {
@@ -44,6 +44,7 @@ struct Extractordatos
     int cantInd;
     int cantHur;
     float cnum;
+    int cicloInc, cicloSeq, cicloInd, cicloHur;
 };
 
 struct DatosAnimal
@@ -261,11 +262,13 @@ void crearCSV(const DatosSimulacion &datos, string &nombreArchivo, string rutacs
     archivo << datos.incendios << ',';
     archivo << datos.sequias << ',';
     archivo << datos.inundaciones << ',';
-    archivo << datos.huracanes;
+    archivo << datos.huracanes << ',';
+    archivo << datos.anoInc << ',';
+    archivo << datos.anoSeq << ',';
+    archivo << datos.anoInd << ',';
+    archivo << datos.anoHur;
 
     archivo.close();
-
-    cout << "Archivo CSV creado exitosamente en: " << rutacompleta << endl;
     return;
 }
 
@@ -288,7 +291,7 @@ void guardarBinario(const DatosSimulacion &datos, const string &nombreArchivo, c
     }
     else
     {
-        cout << "Datos guardados exitosamente en el archivo binario: " << rutaCompleta << endl;
+        cout << "Datos guardados exitosamente"<<endl;
     }
 
     archivo.close();
