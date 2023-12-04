@@ -733,7 +733,6 @@ int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<P
     // int cantidadCiclos;
     // cin >> cantidadCiclos;
     int vegetacionConsumida = ecosistema.recursosActuales.vegetacion;
-    extract.cnum = cantidadCiclosTotales;
     // int cantidadCiclos;
 
     estaciones estacion;

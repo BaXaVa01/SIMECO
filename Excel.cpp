@@ -85,7 +85,6 @@ void ExcelGenerador(string &usuario, directorios &directorio, bool Auto)
     system("pause");
     if (actualizarNombre(nombreOriginal, nombreNuevo))
     {
-        printf("Archivo clonado exitosamente.\n");
         system("start \"\" \"");
         system(rutaArchivoClonado.c_str());
         system("pause");
