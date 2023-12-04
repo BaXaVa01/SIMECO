@@ -609,6 +609,7 @@ int Fvmain(string &usuario, directorios &directorio)
                 cout << "Ingrese la cantidad de ciclos que desea simular: ";
                 cin >> ciclosSimular;
                 mainRelacionAnimalRecurso(usuario, venados, pumas, datosEcosistema, extractor, estacion, ciclosSimular, cicloGlobal);
+                mainP3();
                 cicloGlobal += ciclosSimular;
                 extractor.aguaAct = datosEcosistema.recursosActuales.agua;
                 contador = 0;
