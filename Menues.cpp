@@ -463,23 +463,17 @@ void eliminarDatos(const string ruta)
 }
 
 string opcionS;
-bool existenDatos(const string &ruta)
-{
-    try
-    {
-        return std::filesystem::file_size(ruta) > 0;
-    }
-    catch (std::filesystem::filesystem_error &e)
-    {
-        return false;
-    }
-}
+
 // int Fvmain(int& ciclo, directorios& path)
 int Fvmain(string &usuario, directorios &directorio)
 {
     // Estos vectores son necesarios siempre para el inicio de la partida
     vector<Venado> venados; // 10 machos y 10 hembras
+    venados.reserve(7000);
     vector<Puma> pumas;     // 1 macho y 1 hembra
+
+    // cout << "El tamano en bytes de la clase venado es de:" << sizeof(Venado) << endl;
+    // cin.get();
 
     int cantidadVenadosHembra, cantidadPumasMacho, cantidadVenadosMacho, cantidadPumasHembra;
     // Esta funcion es solo si el usuario no tiene partida guardada
@@ -566,7 +560,7 @@ int Fvmain(string &usuario, directorios &directorio)
         gotoxy(x + 2, y + 8);
         cout << "5. Generar desastre" << endl;
         gotoxy(x + 2, y + 9);
-        cout << "6. Gestor de Datos de partida" << endl;
+        cout << "6. Gestor de Datos " << endl;
         gotoxy(x + 2, y + 10);
         cout << BLUE << "7. Abrir pagina Web SIMECO" << RESET << endl;
         gotoxy(x + 2, y + 11);
@@ -699,7 +693,7 @@ int Fvmain(string &usuario, directorios &directorio)
                     printBorderLine(40, '*', 11); // Línea superior del cuadro
 
                     gotoxy(x, y + 1);
-                    cout << "         * Gestor de Partida *" << endl; // Texto con margen
+                    cout << "         * Gestor de datos *" << endl; // Texto con margen
 
                     gotoxy(x, y + 2);
                     printBorderLine(40, '*', 11); // Línea inferior del cuadro
@@ -709,9 +703,9 @@ int Fvmain(string &usuario, directorios &directorio)
                     gotoxy(x + 2, y + 4);
                     cout << BLUE << "1. Generar Excel" << RESET << endl;
                     gotoxy(x + 2, y + 5);
-                    cout << GREEN << "2. Guardar Partida" << RESET << endl;
+                    cout << GREEN << "2. Guardar datos" << RESET << endl;
                     gotoxy(x + 2, y + 6);
-                    cout << BLUE << "3. Cargar Partida" << RESET << endl;
+                    cout << BLUE << "3. Cargar datos" << RESET << endl;
 
                     gotoxy(x + 2, y + 8);
                     cout << "Ingrese una opcion: ";
@@ -726,7 +720,7 @@ int Fvmain(string &usuario, directorios &directorio)
                         case 1:
                         {
 
-                            if (Guardado || existenDatos(NombreBinA))
+                            if (Guardado)
                             {
                                 clearScreen();
                                 ExcelGenerador(usuario, directorio, Excel);

@@ -55,19 +55,19 @@ public:
         switch (estacion)
         {
         case Primavera:
-            agua += 20000;
+            agua += 200000;
             vegetacion += 450000;
             break;
         case Verano:
-            agua += 20000;
+            agua += 200000;
             vegetacion += 230000;
             break;
         case Otonio:
-            agua += 45000;  
+            agua += 100000;
             vegetacion += 500000;
             break;
         case Invierno:
-            agua += 50000;
+            agua += 250000;
             vegetacion += 600000;
 
             break;
@@ -76,10 +76,10 @@ public:
         {
             vegetacion = nivelMaxVegetacion;
         }
-        if(agua > nivelMaxAgua){
+        if (agua > nivelMaxAgua)
+        {
             agua = nivelMaxAgua;
         }
-
     }
 };
 // como me gusta mi novia
@@ -227,7 +227,7 @@ private:
                 peso = 136;
             }
             consumo = (44 / 100) * peso;
-            edadRep = true;
+            edadRep = false;
             return;
         }
         // edadRep= 104;
@@ -476,31 +476,46 @@ void reproducirseV(vector<Venado> &venados, estaciones estacion)
         return;
     }
     // Encontrar una hembra disponible para la reproducción
-    int contado = 0;
-    
+
+    int contador = 0;
+    int contadorH = 0;
+    int tamano;
+    int aleatorio;
+
+    for(auto &venado : venados){
+        if(venado.determinarGenero() == Genero::Hembra && venado.EdadrepT()){
+            tamano++;
+        }
+    }
+
     for (auto &Hembra : venados)
     {
-        if (Hembra.determinarGenero() != Genero::Hembra && !Hembra.EdadrepT())
+
+        contador++;
+
+        if (Hembra.determinarGenero() != Genero::Hembra || !Hembra.EdadrepT())
         {
             continue;
         }
 
+        contadorH++;
+        cout << contador << " / " << tamano << endl;
+        cout << "hembrasContador: " << contadorH;
         mt19937 gen(random_device{}());
+        cout << "se genero el numero aleatorio" << endl;
         uniform_int_distribution<> dis(1, 3);
+        aleatorio = dis(gen);
+        cout << "se genero la distribucion >> "<< aleatorio << endl;
 
-        for (int criasv = 0; criasv < dis(gen); criasv++)
+        for (int criasv = 0; criasv < aleatorio; criasv++)
         {
             Genero nuevoGeneroV = (rand() % 2 == 0) ? Genero::Macho : Genero::Hembra;
             cout << "ha nacido un nuevo venado, ";
-            try{
-                venados.push_back(Venado(nuevoGeneroV, 1)); // Se agrega el venado a la lista
-                cout << "Se ha agregado un nuevo venado" << endl;
-            }catch(const std::bad_alloc& e){
-                cout << "No hay memoria suficiente para crear mas venados" << endl;
-                return;
-            }
+            venados.push_back(Venado(nuevoGeneroV, 1)); // Se agrega el venado a la lista
+            cout << "Se ha agregado un nuevo venado" << endl;
         }
     }
+    cout << "finalizo todo" << endl;
 }
 
 void alimentarVenados(vector<Venado> &venados, Recursos &recursos)
@@ -724,7 +739,7 @@ void printBoldText(const string &text)
 
     SetConsoleTextAttribute(hConsole, originalAttrs);
 }
-int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal, int &cantidadCiclosTotales, int cicloGlobal)
+int mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<Puma> &pumas, Ecosistema &ecosistema, Extractordatos &extract, estaciones &estacionglobal, int &cantidadCiclosTotales, int cicloGlobal)
 {
     // Se definen los recursos iniciales del ecosistema
 
@@ -738,11 +753,11 @@ int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<P
 
     estaciones estacion;
     int CicloActual = 1;
-    
+
     for (CicloActual; CicloActual <= cantidadCiclosTotales; CicloActual++)
     {
         cout << "ciclo: " << CicloActual << endl;
-        
+
         estacion = estacionNum(CicloActual + 4 + cicloGlobal);
 
         for (int semanaActual = 0; semanaActual < 13; semanaActual++)
@@ -785,9 +800,9 @@ int  mainRelacionAnimalRecurso(string usuario, vector<Venado> &venados, vector<P
         }
         vegetacionConsumida -= ecosistema.recursosActuales.vegetacion;
         reproducirseP(pumas, estacion);
-        cout << "  1.1 Pumas: " << pumas.size() <<" \n";
+        cout << "  1.1 Pumas: " << pumas.size() << " \n";
         reproducirseV(venados, estacion);
-        cout << "  1.2 Venados: " << venados.size() <<" \n";
+        cout << "  1.2 Venados: " << venados.size() << " \n";
         actualizarCarne(venados, ecosistema.recursosActuales);
         ecosistema.recursosActuales.actualizarRecursos(estacion, vegetacionConsumida);
     }
