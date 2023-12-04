@@ -57,18 +57,18 @@ void ExcelGenerador(string &usuario, directorios &directorio, bool Auto)
     // Cerrar ambos archivos después de la operación
     fclose(archivoOriginal);
     fclose(archivoClonado);
-    
-    cout<<"1. Generar Excel del ultimo ciclo"<<endl;
-    cout<<"2. Elegir ciclo a mostrar en Excel"<<endl;
-    cin>>op;
+
+    cout << "1. Generar Excel del ultimo ciclo" << endl;
+    cout << "2. Elegir ciclo a mostrar en Excel" << endl;
+    cin >> op;
     int Indice;
-    if (op==1)
+    if (op == 1)
     {
-        Auto=true;
+        Auto = true;
     }
-    if (op==2)
+    if (op == 2)
     {
-        Auto=false;
+        Auto = false;
     }
     if (Auto)
     {
@@ -77,10 +77,10 @@ void ExcelGenerador(string &usuario, directorios &directorio, bool Auto)
     else
     {
         system("cls");
-        cout<<"Numero de ciclo a cargar: ";
-        cin>>Indice;
+        cout << "Numero de ciclo a cargar: ";
+        cin >> Indice;
     }
-    nombreOriginal = buscarNombreIndice("datos", Indice, directorio.folderD,".csv");
+    nombreOriginal = buscarNombreIndice("datos", Indice, directorio.folderD, ".csv");
     cout << nombreOriginal;
     system("pause");
     if (actualizarNombre(nombreOriginal, nombreNuevo))

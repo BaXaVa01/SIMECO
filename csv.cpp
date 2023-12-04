@@ -14,36 +14,36 @@ struct DatosSimulacion
     string tasaMortalidadEspecie1, tasaMortalidadEspecie2, tasaMortalidadEspecie3, tasaMortalidadEspecie4;
     string crecimientoPoblacionEspecie1, crecimientoPoblacionEspecie2, crecimientoPoblacionEspecie3, crecimientoPoblacionEspecie4;
     string promedioIndividuos, poblacionTotal, aguaDisponible, hierbaDisponible;
-    string promedioIndividuosA, poblacionTotalA, aguaDisponibleA, hierbaDisponibleA;
+    string promedioIndividuosA, poblacionTotalA, aguaDisponibleA, hierbaDisponibleA, carneDisponibleA, carronaDisponibleA;
     string carneDisponible, carronaDisponible, estacionInicial, estacionActual;
     string anoInicio, anoActual, desastresOcurridos, desastresIniciadosUsuario;
     string incendios, sequias, inundaciones, huracanes;
 };
 struct Extractordatos
 {
-    int contadorMuerteV;
-    int contadorMuerteP;
-    int AnteVenados;
-    int AntePumas;
-    int EdadV;
-    int EdadP;
-    int PV;
-    int PP;
-    int aguaAct;
-    int vegetacionAct;
-    int carronaAct;
-    int carneAct;
-    int aguaA;
+    float contadorMuerteV;
+    float contadorMuerteP;
+    float AnteVenados;
+    float AntePumas;
+    float EdadV;
+    float EdadP;
+    float PV;
+    float PP;
+    float aguaAct;
+    float vegetacionAct;
+    float carronaAct;
+    float carneAct;
+    float aguaA;
     int EstacionA;
     int estacionAct;
-    int vegetacionA;
-    int carronaA;
-    int carneA;
-    int cantInc;
+    float vegetacionA;
+    float carronaA;
+    float carneA;
+    float cantInc;
     int cantSeq;
     int cantInd;
     int cantHur;
-    int cnum;
+    float cnum;
 };
 
 struct DatosAnimal
@@ -55,6 +55,7 @@ DatosAnimal datos;
 
 void GuardarAnimal(const DatosAnimal datos, bool ultimoDelGrupo, const string &fileName)
 {
+
     // Abre el archivo en modo de append para añadir datos al final
     ofstream outFile(fileName, ios::app);
 
@@ -74,6 +75,24 @@ void GuardarAnimal(const DatosAnimal datos, bool ultimoDelGrupo, const string &f
     }
 
     outFile.close();
+}
+void recrearArchivoVacio(const string &nombreArchivo)
+{
+    string rutacompleta = nombreArchivo;
+
+    // Borrar el archivo existente, si existe
+    remove(rutacompleta.c_str());
+
+    // Crear un nuevo archivo vacío
+    ofstream archivo(rutacompleta);
+    if (!archivo)
+    {
+        cerr << "Error al crear el archivo." << endl;
+        return;
+    }
+
+    // El archivo se crea vacío, por lo que no se necesita escribir nada en él
+    archivo.close();
 }
 
 string existeArchivo(const string &nombrebase, const string &ruta, string ext)
@@ -109,6 +128,42 @@ string existeArchivo(const string &nombrebase, const string &ruta, string ext)
     }
 
     return "";
+}
+
+void GuardarRecursos(Extractordatos extractor, string rutacompleta)
+{
+    ofstream archivo(rutacompleta, ios::binary);
+    if (!archivo)
+    {
+        cerr << "Error al crear el archivo binario." << endl;
+        return;
+    }
+
+    // Escribir los datos en el archivo binario
+    archivo.write(reinterpret_cast<const char *>(&extractor.aguaAct), sizeof(extractor.aguaAct));
+    archivo.write(reinterpret_cast<const char *>(&extractor.vegetacionAct), sizeof(extractor.vegetacionAct));
+    archivo.write(reinterpret_cast<const char *>(&extractor.carneAct), sizeof(extractor.carneAct));
+    archivo.write(reinterpret_cast<const char *>(&extractor.carronaAct), sizeof(extractor.carronaAct));
+
+    archivo.close();
+}
+
+void GuardarDesastres(Extractordatos extractor, string rutacompleta)
+{
+    ofstream archivo(rutacompleta, ios::binary);
+    if (!archivo)
+    {
+        cerr << "Error al crear el archivo binario." << endl;
+        return;
+    }
+
+    // Escribir los datos en el archivo binario
+    archivo.write(reinterpret_cast<const char *>(&extractor.cantHur), sizeof(extractor.cantHur));
+    archivo.write(reinterpret_cast<const char *>(&extractor.cantInc), sizeof(extractor.cantInc));
+    archivo.write(reinterpret_cast<const char *>(&extractor.cantInd), sizeof(extractor.cantInd));
+    archivo.write(reinterpret_cast<const char *>(&extractor.cantSeq), sizeof(extractor.cantSeq));
+
+    archivo.close();
 }
 
 string buscarNombreIndice(const string &nombreBase, int indice, const string &ruta, string ext)
@@ -187,9 +242,14 @@ void crearCSV(const DatosSimulacion &datos, string &nombreArchivo, string rutacs
     archivo << datos.poblacionTotal << ',';
     archivo << datos.aguaDisponible << ',';
     archivo << datos.hierbaDisponible << ',';
-
     archivo << datos.carneDisponible << ',';
     archivo << datos.carronaDisponible << ',';
+
+    archivo << datos.aguaDisponibleA << ',';
+    archivo << datos.hierbaDisponibleA << ',';
+    archivo << datos.carneDisponibleA << ',';
+    archivo << datos.carronaDisponibleA << ',';
+
     archivo << datos.estacionInicial << ',';
     archivo << datos.estacionActual << ',';
 
@@ -253,7 +313,7 @@ void cargarDatosBinario(DatosSimulacion &datos, const string &nombreArchivo, con
     return;
 }
 
-void GuardardatosSIMECO(string &usuario, directorios &directorio,DatosSimulacion datosS)
+void GuardardatosSIMECO(string &usuario, directorios &directorio, DatosSimulacion datosS)
 {
 
     string nombreCSV;
