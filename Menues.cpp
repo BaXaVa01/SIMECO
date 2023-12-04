@@ -1018,7 +1018,11 @@ void ExtraerDatos(DatosSimulacion &datos, Extractordatos extract)
     datos.poblacionTotal = to_string(result);
     datos.aguaDisponible = to_string(extract.aguaAct);
     datos.hierbaDisponible = to_string(extract.vegetacionAct);
-    system("pause");
+    
+    datos.aguaDisponibleA = to_string(extract.aguaA);
+    datos.hierbaDisponibleA = to_string(extract.vegetacionA);
+    datos.carneDisponibleA = to_string(extract.carneA);
+    datos.carronaDisponibleA = to_string(extract.carronaA);
 
     datos.carneDisponible = to_string(extract.carneAct);
     datos.carronaDisponible = to_string(extract.carronaAct);
